@@ -24,6 +24,10 @@ import GenreList from './feature/admin/genres/genreList'
 import GenreCreate from './feature/admin/genres/genreCreate'
 import GenreUpdate from './feature/admin/genres/genreUpdate'
 import GenreTrash from './feature/admin/genres/genreTrash'
+import ProductList from './feature/admin/products/productList'
+import ProductCreate from './feature/admin/products/productCreate'
+import ProductUpdate from './feature/admin/products/productUpdate'
+import ProductTrash from './feature/admin/products/productTrash'
 
 
 export const AppRoutes = createBrowserRouter([
@@ -41,6 +45,16 @@ export const AppRoutes = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to='dashboard' /> },
       { path: 'dashboard', element: <Dashboard /> },
+      {
+        path: 'products',
+        children: [
+          { index: true, element: <ProductList /> },
+          { path: 'list', element: <ProductList /> },
+          { path: 'create', element: <ProductCreate /> },
+          { path: ':id/update', element: <ProductUpdate /> },
+          { path: 'trash', element: <ProductTrash /> }
+        ]
+      },
       {
         path: 'categories',
         children: [

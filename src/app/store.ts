@@ -5,9 +5,11 @@ import { apiPublisher } from './services/publisher'
 import { apiAuthor } from './services/author'
 import { apiSupplier } from './services/supplier'
 import { apiGenre } from './services/genre'
+import { apiProduct } from './services/product'
 
 export const store = configureStore({
   reducer: {
+    [apiProduct.reducerPath]: apiProduct.reducer,
     [apiCategory.reducerPath]: apiCategory.reducer,
     [apiPublisher.reducerPath]: apiPublisher.reducer,
     [apiAuthor.reducerPath]: apiAuthor.reducer,
@@ -17,6 +19,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
+      apiProduct.middleware,
       apiCategory.middleware,
       apiImage.middleware,
       apiPublisher.middleware,

@@ -26,8 +26,8 @@ const CategoryList = () => {
   const [searchedColumn, setSearchedColumn] = useState('')
   const searchInput = useRef<InputRef>(null)
  const [deleteCategory] = useDeleteCategoryMutation()
-  const { data: data, isLoading, error } = useGetAllCategoriesQuery()
-  const categories = data?.data
+  const { data, isLoading, error } = useGetAllCategoriesQuery()
+  const categories = data?.categories
 
   const handleSearch = (
     selectedKeys: string[],

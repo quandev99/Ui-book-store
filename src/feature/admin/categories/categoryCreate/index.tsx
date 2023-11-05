@@ -24,9 +24,9 @@ const CategoryCreate = () => {
   const [image, setImage] = useState({})
   const [selectedImage, setSelectedImage] = useState('')
   const [createCategory] = useCreateCategoryMutation()
-  const { data: data, isLoading, error } = useGetAllCategoriesQuery()
+  const { data, isLoading, error } = useGetAllCategoriesQuery()
   const [deleteImage] = useDeleteImageMutation()
-  const categories = data?.data
+  const categories = data?.categories
   const subcategories = getSubcategoriesByParentId(categories)
 
   const onFileChange = async (e: any) => {

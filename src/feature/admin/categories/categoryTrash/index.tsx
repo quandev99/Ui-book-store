@@ -23,7 +23,8 @@ const CategoryTrash = () => {
   const [searchedColumn, setSearchedColumn] = useState('')
   const navigate = useNavigate()
   const searchInput = useRef<InputRef>(null)
-  const { data: data, isLoading, error } = useGetAllDeletedCategoriesQuery()
+  const { data, isLoading, error } = useGetAllDeletedCategoriesQuery()
+  const dataCategories = data?.categories
 const [restoreCategory] = useRestoreCategoryMutation()
 const [forceCategory] = useForceCategoryMutation()
   const handleSearch = (
@@ -249,7 +250,7 @@ const rowSelection: TableRowSelection<DataType> = {
       <Table
         columns={columns}
         rowSelection={{ ...rowSelection }}
-        dataSource={data?.data?.map((brand: any) => ({
+        dataSource={dataCategories?.map((brand: any) => ({
           ...brand,
           key: brand?._id
         }))}

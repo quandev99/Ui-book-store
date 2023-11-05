@@ -24,7 +24,7 @@ const CategoryUpdate = () => {
   const { id } = useParams<{ id: string | any }>()
   const [image, setImage] = useState({})
   const [selectedImage, setSelectedImage] = useState('')
-  const { data: data, isLoading, error } = useGetCategoryByIdQuery(id)
+  const { data, isLoading, error } = useGetCategoryByIdQuery(id)
   const [updateCategory] = useUpdateCategoryMutation()
   const [deleteImage] = useDeleteImageMutation()
   const category = data?.category

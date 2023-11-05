@@ -171,15 +171,9 @@ const ProductList = () => {
       render: (imageArray: any[]) => {
         const firstImage = imageArray[0]; 
         if (firstImage) {
-          return (
-            <Image
-              width={150}
-              height={100}
-              src={firstImage}
-            />
-          );
+          return <Image width={150} height={100} src={firstImage?.url} />
         }
-        return null; // Return null or handle the case where there is no image
+        return null; 
       },
     },
     {

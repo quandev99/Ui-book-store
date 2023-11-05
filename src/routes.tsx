@@ -1,33 +1,34 @@
+import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom'
-import LayoutClient from './layouts/clientLayout'
-import HomePage from './pages/clients/home'
-import LayoutAdmin from './layouts/adminLayout'
-import CategoryList from './feature/admin/categories/categoryList'
-import CategoryCreate from './feature/admin/categories/categoryCreate'
-import SignIn from './pages/clients/signin'
-import Dashboard from './pages/admin/dashboard'
-import CategoryTrash from './feature/admin/categories/categoryTrash'
-import CategoryUpdate from './feature/admin/categories/categoryUpdate'
-import PublisherList from './feature/admin/publishers/publisherList'
-import PublisherCreate from './feature/admin/publishers/publisherCreate'
-import PublisherUpdate from './feature/admin/publishers/publisherUpdate'
-import PublisherTrash from './feature/admin/publishers/publisherTrash'
-import AuthorList from './feature/admin/authors/authorList'
-import AuthorCreate from './feature/admin/authors/authorCreate'
-import AuthorUpdate from './feature/admin/authors/authorUpdate'
-import AuthorTrash from './feature/admin/authors/authorTrash'
-import SupplierList from './feature/admin/genres/genreList'
-import SupplierCreate from './feature/admin/genres/genreCreate'
-import SupplierUpdate from './feature/admin/genres/genreUpdate'
-import SupplierTrash from './feature/admin/genres/genreTrash'
-import GenreList from './feature/admin/genres/genreList'
-import GenreCreate from './feature/admin/genres/genreCreate'
-import GenreUpdate from './feature/admin/genres/genreUpdate'
-import GenreTrash from './feature/admin/genres/genreTrash'
-import ProductList from './feature/admin/products/productList'
-import ProductCreate from './feature/admin/products/productCreate'
-import ProductUpdate from './feature/admin/products/productUpdate'
-import ProductTrash from './feature/admin/products/productTrash'
+const LayoutClient = lazy(() =>  import( './layouts/clientLayout'))
+const HomePage = lazy(() =>  import( './pages/clients/home'))
+const LayoutAdmin = lazy(() =>  import( './layouts/adminLayout'))
+const CategoryList = lazy(() =>  import( './feature/admin/categories/categoryList'))
+const CategoryCreate = lazy(() =>  import( './feature/admin/categories/categoryCreate'))
+const SignIn = lazy(() =>  import( './pages/clients/signin'))
+const Dashboard = lazy(() =>  import( './pages/admin/dashboard'))
+const CategoryTrash = lazy(() =>  import( './feature/admin/categories/categoryTrash'))
+const CategoryUpdate = lazy(() =>  import( './feature/admin/categories/categoryUpdate'))
+const PublisherList = lazy(() =>  import( './feature/admin/publishers/publisherList'))
+const PublisherCreate = lazy(() =>  import( './feature/admin/publishers/publisherCreate'))
+const PublisherUpdate = lazy(() =>  import( './feature/admin/publishers/publisherUpdate'))
+const PublisherTrash = lazy(() =>  import( './feature/admin/publishers/publisherTrash'))
+const AuthorList = lazy(() =>  import( './feature/admin/authors/authorList'))
+const AuthorCreate = lazy(() =>  import( './feature/admin/authors/authorCreate'))
+const AuthorUpdate = lazy(() =>  import( './feature/admin/authors/authorUpdate'))
+const AuthorTrash = lazy(() =>  import( './feature/admin/authors/authorTrash'))
+const SupplierList = lazy(() =>  import( './feature/admin/genres/genreList'))
+const SupplierCreate = lazy(() =>  import( './feature/admin/genres/genreCreate'))
+const SupplierUpdate = lazy(() =>  import( './feature/admin/genres/genreUpdate'))
+const SupplierTrash = lazy(() =>  import( './feature/admin/genres/genreTrash'))
+const GenreList = lazy(() =>  import( './feature/admin/genres/genreList'))
+const GenreCreate = lazy(() =>  import( './feature/admin/genres/genreCreate'))
+const GenreUpdate = lazy(() =>  import( './feature/admin/genres/genreUpdate'))
+const GenreTrash = lazy(() =>  import( './feature/admin/genres/genreTrash'))
+const  ProductList = lazy(() =>  import('./feature/admin/products/productList'))
+const ProductCreate = lazy(() =>  import('./feature/admin/products/productCreate'))
+const ProductUpdate = lazy(() =>  import('./feature/admin/products/productUpdate'))
+const ProductTrash = lazy(() => import('./feature/admin/products/productTrash'))
 
 
 export const AppRoutes = createBrowserRouter([

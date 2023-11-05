@@ -24,7 +24,7 @@ type DataIndex = keyof DataType
 const { Option } = Select
 const ProductList = () => {
   const [current, setCurrent] = useState(1)
-  const [pageSize, setPageSize] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
   const searchInput = useRef<InputRef>(null)
@@ -317,9 +317,9 @@ const ProductList = () => {
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
         <span style={{ marginRight: 8 }}>Show Records:</span>
         <Select defaultValue={pageSize} onChange={handlePageSizeChange} style={{ width: 100 }}>
-          <Option value={10}>1</Option>
-          <Option value={20}>2</Option>
-          <Option value={30}>3</Option>
+          <Option value={10}>10</Option>
+          <Option value={20}>20</Option>
+          <Option value={30}>30</Option>
         </Select>
       </div>
       <Table

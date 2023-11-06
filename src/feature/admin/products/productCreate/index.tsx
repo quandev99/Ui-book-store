@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { Button, Form, Input, Select,Layout, Switch, message } from 'antd';
+import { Button, Form, Input, Select, Layout, Switch, message, Col, Row, theme } from 'antd'
 import { useState } from 'react';
-import { useCreateCategoryMutation, useGetAllCategoriesQuery } from '~/app/services/category';
+import { useGetAllCategoriesQuery } from '~/app/services/category';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useDeleteImageMutation } from '~/app/services/image';
-import { useCreatePublisherMutation, useGetAllPublishersQuery } from '~/app/services/publisher';
-import { useCreateAuthorMutation, useGetAllAuthorsQuery } from '~/app/services/author';
+import {useGetAllPublishersQuery } from '~/app/services/publisher';
+import {useGetAllAuthorsQuery } from '~/app/services/author';
 import { useNavigate } from 'react-router-dom';
 import { useGetAllGenresQuery } from '~/app/services/genre';
 import { useGetAllSuppliersQuery } from '~/app/services/supplier';
@@ -13,14 +13,6 @@ import { useCreateProductMutation } from '~/app/services/product';
 const { Option } = Select;
 const { Content} = Layout;
 const { TextArea } = Input
-const layout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 12 },
-};
-
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
-};
 
 const ProductCreate = () => {
   const navigate = useNavigate()
@@ -103,62 +95,97 @@ const onFileChange = async (event: any) => {
        setImage(updatedImages)
     }
   }
+
+    const { token } = theme.useToken()
+    const formStyle: React.CSSProperties = {
+      maxWidth: 'none',
+      background: token.colorFillAlter,
+      borderRadius: token.borderRadiusLG,
+      padding: 24
+    }
   return (
     <Content>
       <div className='text-2xl text-center mb-5 font-medium'>Thêm cuốn sách</div>
-      <Form {...layout} name='control-ref' onFinish={onFinish} style={{ background: '#ebebeb' }}>
-        <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Name is required!' }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name='price' label='price' rules={[{ required: true, message: 'price is required!' }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name='quantity' label='quantity' rules={[{ required: true, message: 'quantity is required!' }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name='publishing_year'
-          label='Năm xuất bản'
-          rules={[{ required: true, message: 'Năm xuất bản is required!' }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name='description'
-          label='description'
-          rules={[{ required: true, message: 'description is required!' }]}
-        >
-          <TextArea showCount maxLength={1000} placeholder='disable resize' style={{ height: 120, resize: 'none' }} />
-        </Form.Item>
-        <Form.Item name='active' label='Active' valuePropName='checked'>
-          <Switch defaultChecked />
-        </Form.Item>
-        <Form.Item name='category_id' label='Danh mục'>
-          <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingCategory}>
-            {dataCategories?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-          </Select>
-        </Form.Item>
-        <Form.Item name='author_id' label='Tác giả'>
-          <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingAuthor}>
-            {dataAuthors?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-          </Select>
-        </Form.Item>
-        <Form.Item name='publisher_id' label='Nhà xuất bản'>
-          <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingPublisher}>
-            {dataPublishers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-          </Select>
-        </Form.Item>
-        <Form.Item name='supplier_id' label='Nhà cung cấp'>
-          <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingSupplier}>
-            {dataSuppliers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-          </Select>
-        </Form.Item>
-        <Form.Item name='genre_id' label='Kiểu sách'>
-          <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingGenre}>
-            {dataGenres?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-          </Select>
-        </Form.Item>
-        <div className='p-4 h-[500px] w-[500px]'>
+      <Form layout='vertical' name='control-ref' onFinish={onFinish} style={formStyle}>
+        <Row gutter={24}>
+          <Col span={8}>
+            <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Name is required!' }]}>
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item name='price' label='Giá' rules={[{ required: true, message: 'price is required!' }]}>
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item name='quantity' label='Số lượng' rules={[{ required: true, message: 'quantity is required!' }]}>
+              <Input />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={24}>
+          <Col span={12}>
+            <Form.Item
+              name='description'
+              label='Chi tiết'
+              rules={[{ required: true, message: 'description is required!' }]}
+            >
+              <TextArea
+                showCount
+                maxLength={1000}
+                placeholder='disable resize'
+                style={{ height: 120, resize: 'none' }}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              name='publishing_year'
+              label='Năm xuất bản'
+              rules={[{ required: true, message: 'Năm xuất bản is required!' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item name='active' label='Active' valuePropName='checked'>
+              <Switch defaultChecked />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={24}>
+          <Col span={6}>
+            <Form.Item name='category_id' label='Danh mục'>
+              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingCategory}>
+                {dataCategories?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+              </Select>
+            </Form.Item>
+            <Form.Item name='author_id' label='Tác giả'>
+              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingAuthor}>
+                {dataAuthors?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item name='publisher_id' label='Nhà xuất bản'>
+              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingPublisher}>
+                {dataPublishers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+              </Select>
+            </Form.Item>
+            <Form.Item name='supplier_id' label='Nhà cung cấp'>
+              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingSupplier}>
+                {dataSuppliers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item name='genre_id' label='Kiểu sách'>
+              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingGenre}>
+                {dataGenres?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <div className='p-4'>
           <header className='cols-span-1'>
             <p className='text-black mb-5'>
               <span>Vui lòng chọn ảnh tác giả</span>&nbsp;
@@ -184,7 +211,7 @@ const onFileChange = async (event: any) => {
             ))}
           </div>
         </div>
-        <Form.Item {...tailLayout}>
+        <Form.Item >
           <Button type='primary' htmlType='submit'>
             Submit
           </Button>

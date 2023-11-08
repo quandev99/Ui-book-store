@@ -1,72 +1,90 @@
 import axios from 'axios'
-import { Button, Form, Input, Select, Layout, Switch, message } from 'antd'
+import { Button, Form, Input, Select, Layout, Switch, message, Row, Col, Space, theme } from 'antd'
 import { useEffect, useState } from 'react'
 import { DeleteOutlined } from '@ant-design/icons'
 import { useDeleteImageMutation } from '~/app/services/image'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useGetPublisherByIdQuery, useUpdatePublisherMutation } from '~/app/services/publisher'
-import { useGetAuthorByIdQuery, useUpdateAuthorMutation } from '~/app/services/author'
+import { useGetAllPublishersQuery} from '~/app/services/publisher'
+import { useGetAllAuthorsQuery } from '~/app/services/author'
+import { useGetAllCategoriesQuery } from '~/app/services/category'
+import { useGetAllGenresQuery } from '~/app/services/genre'
+import { useGetAllSuppliersQuery } from '~/app/services/supplier'
+import { useGetProductByIdQuery, useUpdateProductMutation } from '~/app/services/product'
+import TextArea from 'antd/es/input/TextArea'
 const { Content } = Layout
-const layout = {
-  labelCol: {
-    span: 7
-  },
-  wrapperCol: {
-    span: 15
-  }
-}
 
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 }
-}
 
 const ProductUpdate = () => {
    const navigate = useNavigate()
   const { id } = useParams<{ id: string | any }>()
-  const [image, setImage] = useState(null)
   const [imageUploading, setImageUploading] = useState(false)
+  
+  const { data: ProductByIdApi, isLoading: isLoadingProductById, error } = useGetProductByIdQuery(id)
+  const dataProductById = ProductByIdApi?.product
+  
+  const [selectedImages, setSelectedImages] = useState<any[]>([...dataProductById?.image])
+  const [image, setImage] = useState<any[]>([...selectedImages])
+  const [updateProduct] = useUpdateProductMutation()
+    const [deleteImage] = useDeleteImageMutation()
+    const { data: categoriesApi, isLoading: isLoadingCategory } = useGetAllCategoriesQuery()
+    const dataCategories = categoriesApi?.categories
+    //author
+    const { data: authorsApi, isLoading: isLoadingAuthor } = useGetAllAuthorsQuery()
+    const dataAuthors = authorsApi?.authors
+    // Publisher
+    const { data: publishersApi, isLoading: isLoadingPublisher } = useGetAllPublishersQuery()
+    const dataPublishers = publishersApi?.publishers
+    // Genre
+    const { data: genresApi, isLoading: isLoadingGenre } = useGetAllGenresQuery()
+    const dataGenres = genresApi?.genres
+    // supperlier
+    const { data: suppliersApi, isLoading: isLoadingSupplier } = useGetAllSuppliersQuery()
+    const dataSuppliers = suppliersApi?.suppliers
 
-  const [selectedImage, setSelectedImage] = useState('')
-  const { data: data, isLoading, error } = useGetAuthorByIdQuery(id)
-  const [updateAuthor] = useUpdateAuthorMutation()
-  const [deleteImage] = useDeleteImageMutation()
-  const authorData = data?.author
-
-const onFileChange = async (e: any) => {
-  const file = e.target.files[0]
-  const formData = {
-    images: file
-  }
-  if (file) {
+const onFileChange = async (event: any) => {
+  const files = event.target.files
+  if (files) {
     setImageUploading(true) // Bắt đầu tải ảnh
     try {
-      const response = await axios.post('http://localhost:2605/api/images/uploads/single', formData, {
+      const formData = new FormData()
+      for (let i = 0; i < files.length; i++) {
+        formData.append(`images`, files[i])
+      }
+
+      const response = await axios.post('http://localhost:2605/api/images/uploads', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       })
-      if (response?.status == 200) {
-        setSelectedImage(response?.data?.url)
-        setImage(response?.data)
+      if (response?.status === 200) {
+        const newImages = response?.data?.urls
+         setSelectedImages((prevSelectedImages) => [...prevSelectedImages, ...newImages])
+         setImage((prevImages) => [...prevImages, ...newImages])
       }
-    } catch (error:any) {
+    } catch (error: any) {
       message.error('Error uploading image: ' + error?.message)
     } finally {
       setImageUploading(false) // Kết thúc tải ảnh dù có lỗi hay không
     }
   } else {
-    setSelectedImage('')
+    setSelectedImages([])
+    setImage([])
     setImageUploading(false) // Kết thúc tải ảnh (trường hợp không có file)
   }
 }
   const [form] = Form.useForm()
   const initialValues = {
-    name: authorData?.name || '',
-    birthdate: authorData?.birthdate || '',
-    bio: authorData?.bio || '',
-    nationality: authorData?.nationality || '',
-    active: authorData?.active || false,
-    image: authorData?.image || image
+    name: dataProductById?.name || '',
+    price: dataProductById?.price || '',
+    quantity: dataProductById?.quantity || '',
+    description: dataProductById?.description || '',
+    publishing_year: dataProductById?.publishing_year || '',
+    category_id: dataProductById?.category_id?._id || '',
+    author_id: dataProductById?.author_id?._id || '',
+    publisher_id: dataProductById?.publisher_id?._id || '',
+    supplier_id: dataProductById?.supplier_id?._id || '',
+    genre_id: dataProductById?.genre_id?._id || '',
+    active: dataProductById?.active || false,
   }
   
   useEffect(() => {
@@ -74,95 +92,179 @@ const onFileChange = async (e: any) => {
   }, [form, initialValues])
 
   const onFinish = async (values: any) => {
+    
     if (imageUploading) {
       // Nếu đang tải ảnh, không cho phép gọi onFinish
       message.warning('Vui lòng đợi cho đến khi ảnh tải xong.')
       return
     }
-
     // Nếu không đang tải ảnh, tiếp tục thực hiện onFinish
     const dataForm = {
-      image: image || authorData?.image,
+      image: image || null,
       _id: id,
       ...values
     }
-
     try {
-      const responsive = await updateAuthor(dataForm).unwrap()
+      const responsive = await updateProduct(dataForm).unwrap()
       if (responsive) {
-        message.success('Cập nhật tác giả thành công!')
-        navigate('/admin/authors')
+        message.success('Cập nhật cuốn sách thành công!')
+        navigate('/admin/products')
       }
     } catch (error:any) {
       message.error('Error: ' + error?.data?.message)
     }
   }
 
-   const handleRemoveImage = async (id: any) => {
-     if (id) {
-       await deleteImage(id)
-       setImage(null)
-       setSelectedImage('')
+
+  const handleRemoveImage = async (publicId: any) => {
+    if (publicId) {
+      await deleteImage(publicId)
+      const updatedImages = selectedImages?.filter((image) => image?.publicId !== publicId)
+      setSelectedImages(updatedImages)
+        const updatedImageList = image?.filter((item) => item?.publicId !== publicId)
+        setImage(updatedImageList)
+    }
+  }
+// css
+     const { token } = theme.useToken()
+     const formStyle: React.CSSProperties = {
+       maxWidth: 'none',
+       background: token.colorFillAlter,
+       borderRadius: token.borderRadiusLG,
+       padding: 24
      }
-   }
   return (
-    <Content className='flex justify-center'>
+    <Content>
       <Form
-        {...layout}
+        style={formStyle}
         form={form}
         name='control-ref'
         layout='vertical'
         onFinish={onFinish}
-        style={{ maxWidth: 600, background: '#e8e8e8' }}
         initialValues={initialValues}
         className='p-4'
       >
-        <div className='text-2xl text-center mb-5 font-medium '>Cập nhật danh mục</div>
-        <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Name is required!' }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name='birthdate' label='Birth date' rules={[{ required: true, message: 'Birth date is required!' }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name='nationality'
-          label='Nationality'
-          rules={[{ required: true, message: 'Nationality is required!' }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name='bio'
-          label='Bio'
-          rules={[{ required: true, message: 'Bio is required!' }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item name='active' label='Active' valuePropName='checked'>
-          <Switch />
-        </Form.Item>
-        <div className='p-4'>
-          <section className='grid grid-cols-2 items-center gap-x-8 h-[200px]'>
-            <header className='cols-span-1'>
-              <p className='text-black mb-5'>
-                <span>Vui lòng chọn ảnh thương hiệu</span>&nbsp;
-              </p>
-              <input type='file' name='image' onChange={onFileChange} />
-            </header>
-            <div className='relative cols-span-1 h-full'>
-              <div className='absolute h-full w-full'>
-                <img src={selectedImage || authorData?.image?.url} className='w-full h-full object-cover' />
-              </div>
-              <div
-                className='absolute w-10 py-2 right-0 top-0 text-black bg-white opacity-60 text-center hover:text-red-600 hover:bg-white hover:opacity-100'
-                onClick={() => handleRemoveImage(image?.publicId || authorData?.image?.publicId)}
+        <div className='text-2xl text-center mb-5 font-medium '>Cập nhật sách</div>
+        <Row gutter={24}>
+          <Col span={8}>
+            <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Name is required!' }]}>
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item name='price' label='Giá' rules={[{ required: true, message: 'price is required!' }]}>
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Space>
+              <Form.Item
+                name='quantity'
+                label='Số lượng'
+                rules={[{ required: true, message: 'quantity is required!' }]}
               >
-                <DeleteOutlined />
-              </div>
+                <Input />
+              </Form.Item>
+              <Form.Item name='active' label='Active' valuePropName='checked'>
+                <Switch defaultChecked />
+              </Form.Item>
+            </Space>
+          </Col>
+        </Row>
+        <Row gutter={24}>
+          <Col span={16} className='grid grid-rows-2 grid-flow-col gap-4'>
+            <div className='row-span-2'>
+              <Form.Item
+                name='description'
+                label='Chi tiết'
+                rules={[{ required: true, message: 'description is required!' }]}
+              >
+                <TextArea
+                  showCount
+                  maxLength={1000}
+                  placeholder='disable resize'
+                  style={{ height: 120, resize: 'none' }}
+                />
+              </Form.Item>
+              <Form.Item name='category_id' label='Danh mục'>
+                <Select
+                  placeholder='Select a option and change input text above'
+                  allowClear
+                  loading={isLoadingCategory}
+                >
+                  {dataCategories?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item name='author_id' label='Tác giả'>
+                <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingAuthor}>
+                  {dataAuthors?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                </Select>
+              </Form.Item>
             </div>
-          </section>
-        </div>
-        <Form.Item {...tailLayout}>
+            <div className='row-span-2'>
+              <div>
+                <Form.Item name='genre_id' label='Kiểu sách'>
+                  <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingGenre}>
+                    {dataGenres?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name='publishing_year'
+                  label='Năm xuất bản'
+                  rules={[{ required: true, message: 'Năm xuất bản is required!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </div>
+              <Form.Item name='publisher_id' label='Nhà xuất bản'>
+                <Select
+                  placeholder='Select a option and change input text above'
+                  allowClear
+                  loading={isLoadingPublisher}
+                >
+                  {dataPublishers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item name='supplier_id' label='Nhà cung cấp'>
+                <Select
+                  placeholder='Select a option and change input text above'
+                  allowClear
+                  loading={isLoadingSupplier}
+                >
+                  {dataSuppliers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                </Select>
+              </Form.Item>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div className='w-full'>
+              <p className='text-black mb-5 text-xl font-medium'>
+                <span>Vui lòng chọn ảnh</span>&nbsp;
+              </p>
+              <input type='file' multiple onChange={onFileChange} />
+            </div>
+            <div className='grid grid-cols-3 gap-5 bg-red-200'>
+              {selectedImages?.map((item) => (
+                <div className='h-[120px] w-[120px] relative' key={item?.publicId}>
+                  <div className='h-full w-full'>
+                    <img
+                      src={item?.url || 'https://cdn0.fahasa.com/skin/frontend/ma_vanese/fahasa/images/fahasa-logo.png'}
+                      className='w-full h-full object-fill'
+                    />
+                  </div>
+                  <div
+                    className='absolute w-10 py-2 right-0 top-0 text-black bg-white opacity-60 text-center hover:text-red-600 hover:bg-white hover:opacity-100'
+                    onClick={() => handleRemoveImage(item?.publicId)}
+                  >
+                    <DeleteOutlined />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Col>
+        </Row>
+        <Row gutter={24}></Row>
+        <Form.Item>
           <Button type='primary' htmlType='submit'>
             Submit
           </Button>

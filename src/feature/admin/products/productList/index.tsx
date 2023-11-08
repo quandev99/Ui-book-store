@@ -319,7 +319,7 @@ const ProductList = () => {
       <Table
         columns={columns}
         dataSource={dataProducts}
-        columns={...selectedColumnsConfig}
+        columns={selectedColumnsConfig}
         pagination={{
           current: current,
           pageSize: pageSize,

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Button, Form, Input, Select, Layout, Switch, message, Col, Row, theme } from 'antd'
+import { Button, Form, Input, Select, Layout, Switch, message, Col, Row, theme, Space } from 'antd'
 import { useState } from 'react';
 import { useGetAllCategoriesQuery } from '~/app/services/category';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -89,10 +89,17 @@ const onFileChange = async (event: any) => {
   }
   const handleRemoveImage = async (publicId: any) => {
     if (publicId) {
-      await deleteImage(publicId)
-      const updatedImages = selectedImages.filter((image) => image?.publicId !== publicId)
-      setSelectedImages(updatedImages)
-       setImage(updatedImages)
+      try {
+        // Gửi yêu cầu xóa ảnh đến máy chủ hoặc API
+        await deleteImage(publicId)
+        // Cập nhật danh sách ảnh trên máy khách bằng cách loại bỏ ảnh đã xóa
+        const updatedImages = selectedImages.filter((image) => image?.publicId !== publicId)
+        setSelectedImages(updatedImages)
+        const updatedImageList = image.filter((item) => item?.publicId !== publicId)
+        setImage(updatedImageList)
+      } catch (error: any) {
+        message.error('Error deleting image: ' + error?.message)
+      }
     }
   }
 
@@ -119,99 +126,114 @@ const onFileChange = async (event: any) => {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item name='quantity' label='Số lượng' rules={[{ required: true, message: 'quantity is required!' }]}>
-              <Input />
-            </Form.Item>
+            <Space>
+              <Form.Item
+                name='quantity'
+                label='Số lượng'
+                rules={[{ required: true, message: 'quantity is required!' }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item name='active' label='Active' valuePropName='checked'>
+                <Switch defaultChecked />
+              </Form.Item>
+            </Space>
           </Col>
         </Row>
         <Row gutter={24}>
-          <Col span={12}>
-            <Form.Item
-              name='description'
-              label='Chi tiết'
-              rules={[{ required: true, message: 'description is required!' }]}
-            >
-              <TextArea
-                showCount
-                maxLength={1000}
-                placeholder='disable resize'
-                style={{ height: 120, resize: 'none' }}
-              />
-            </Form.Item>
+          <Col span={16} className='grid grid-rows-2 grid-flow-col gap-4'>
+            <div className='row-span-2'>
+              <Form.Item
+                name='description'
+                label='Chi tiết'
+                rules={[{ required: true, message: 'description is required!' }]}
+              >
+                <TextArea
+                  showCount
+                  maxLength={1000}
+                  placeholder='disable resize'
+                  style={{ height: 120, resize: 'none' }}
+                />
+              </Form.Item>
+              <Form.Item name='category_id' label='Danh mục'>
+                <Select
+                  placeholder='Select a option and change input text above'
+                  allowClear
+                  loading={isLoadingCategory}
+                >
+                  {dataCategories?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item name='author_id' label='Tác giả'>
+                <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingAuthor}>
+                  {dataAuthors?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                </Select>
+              </Form.Item>
+            </div>
+            <div className='row-span-2'>
+              <div>
+                <Form.Item name='genre_id' label='Kiểu sách'>
+                  <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingGenre}>
+                    {dataGenres?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name='publishing_year'
+                  label='Năm xuất bản'
+                  rules={[{ required: true, message: 'Năm xuất bản is required!' }]}
+                >
+                  <Input />
+                </Form.Item>
+              </div>
+              <Form.Item name='publisher_id' label='Nhà xuất bản'>
+                <Select
+                  placeholder='Select a option and change input text above'
+                  allowClear
+                  loading={isLoadingPublisher}
+                >
+                  {dataPublishers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item name='supplier_id' label='Nhà cung cấp'>
+                <Select
+                  placeholder='Select a option and change input text above'
+                  allowClear
+                  loading={isLoadingSupplier}
+                >
+                  {dataSuppliers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
+                </Select>
+              </Form.Item>
+            </div>
           </Col>
           <Col span={8}>
-            <Form.Item
-              name='publishing_year'
-              label='Năm xuất bản'
-              rules={[{ required: true, message: 'Năm xuất bản is required!' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item name='active' label='Active' valuePropName='checked'>
-              <Switch defaultChecked />
-            </Form.Item>
+            <div className='w-full'>
+              <p className='text-black mb-5 text-xl font-medium'>
+                <span>Vui lòng chọn ảnh</span>&nbsp;
+              </p>
+              <input type='file' multiple onChange={onFileChange} />
+            </div>
+            <div className='grid grid-cols-3 gap-5 bg-red-200'>
+              {selectedImages?.map((item) => (
+                <div className='h-[120px] w-[120px] relative' key={item?.publicId}>
+                  <div className='h-full w-full'>
+                    <img
+                      src={item?.url || 'https://cdn0.fahasa.com/skin/frontend/ma_vanese/fahasa/images/fahasa-logo.png'}
+                      className='w-full h-full object-fill'
+                    />
+                  </div>
+                  <div
+                    className='absolute w-10 py-2 right-0 top-0 text-black bg-white opacity-60 text-center hover:text-red-600 hover:bg-white hover:opacity-100'
+                    onClick={() => handleRemoveImage(item?.publicId)}
+                  >
+                    <DeleteOutlined />
+                  </div>
+                </div>
+              ))}
+            </div>
           </Col>
         </Row>
-        <Row gutter={24}>
-          <Col span={6}>
-            <Form.Item name='category_id' label='Danh mục'>
-              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingCategory}>
-                {dataCategories?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-              </Select>
-            </Form.Item>
-            <Form.Item name='author_id' label='Tác giả'>
-              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingAuthor}>
-                {dataAuthors?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item name='publisher_id' label='Nhà xuất bản'>
-              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingPublisher}>
-                {dataPublishers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-              </Select>
-            </Form.Item>
-            <Form.Item name='supplier_id' label='Nhà cung cấp'>
-              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingSupplier}>
-                {dataSuppliers?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item name='genre_id' label='Kiểu sách'>
-              <Select placeholder='Select a option and change input text above' allowClear loading={isLoadingGenre}>
-                {dataGenres?.map((item: any) => <Option value={item._id}>{item.name}</Option>)}
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <div className='p-4'>
-          <header className='cols-span-1'>
-            <p className='text-black mb-5'>
-              <span>Vui lòng chọn ảnh tác giả</span>&nbsp;
-            </p>
-            <input type='file' multiple onChange={onFileChange} />
-          </header>
-          <div className='flex items-center gap-x-5'>
-            {selectedImages?.map((item) => (
-              <div className='cols-span-1 h-full'>
-                <div className='h-full w-full'>
-                  <img
-                    src={item?.url || 'https://cdn0.fahasa.com/skin/frontend/ma_vanese/fahasa/images/fahasa-logo.png'}
-                    className='w-full h-full object-fill'
-                  />
-                </div>
-                <div
-                  className=' w-10 py-2 right-0 top-0 text-black bg-white opacity-60 text-center hover:text-red-600 hover:bg-white hover:opacity-100'
-                  onClick={() => handleRemoveImage(item?.publicId)}
-                >
-                  <DeleteOutlined />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <Form.Item >
+        <Row gutter={24}></Row>
+        <Form.Item>
           <Button type='primary' htmlType='submit'>
             Submit
           </Button>

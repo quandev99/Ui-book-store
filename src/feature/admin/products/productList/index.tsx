@@ -289,7 +289,7 @@ const ProductList = () => {
         >
           <PlusOutlined />
         </Link>
-        <h1 className='text-center py-5 font-medium text-[20px]'>Quản lý tác giả</h1>
+        <h1 className='text-center py-5 font-medium text-[20px]'>Quản lý sách</h1>
       </div>
       <div style={{ marginBottom: 16 }}>
         <span style={{ marginRight: 8 }}>Show Columns:</span>

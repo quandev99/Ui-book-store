@@ -67,7 +67,7 @@ const GenreUpdate = () => {
             initialValues={initialValues}
             className='p-4'
           >
-            <div className='text-2xl text-center mb-5 font-medium '>Cập nhật nhà cung cấp</div>
+            <div className='text-2xl text-center mb-5 font-medium '>Cập nhật thể loại sách</div>
             <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Name is required!' }]}>
               <Input />
             </Form.Item>

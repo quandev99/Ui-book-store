@@ -60,7 +60,6 @@ const PublisherUpdate = () => {
   useEffect(() => {
     form.setFieldsValue(initialValues)
   }, [form, initialValues])
-  console.log('onFinish', image, publisherData?.image)
     const onFinish = async (values: any) => {
       const dataForm = {
         image: image || publisherData?.image,

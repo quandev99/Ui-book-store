@@ -1,21 +1,11 @@
 
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
-
+import {  createApi } from '@reduxjs/toolkit/dist/query/react'
+import { baseQueryConfig } from './apiConfig'
 
 export const apiProduct = createApi({
   reducerPath: 'product',
   tagTypes: ['Products'],
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:2605/api'
-    // prepareHeaders: (headers, { getState }) => {
-    //   // By default, if we have a token in the store, let's use that for authenticated requests
-    //   const token = (getState() as RootState).auth.token
-    //   if (token) {
-    //     headers.set('authorization', `Bearer ${token}`)
-    //   }
-    //   return headers
-    // }
-  }),
+  baseQuery: baseQueryConfig,
   endpoints: (builder) => ({
     getAllProducts: builder.query<any, void>({
       query: () => ({

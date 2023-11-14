@@ -1,23 +1,11 @@
-import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes'
-import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions'
-import { BaseQueryApi, BaseQueryFn, EndpointDefinitions, createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
-import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers'
+import { createApi } from '@reduxjs/toolkit/dist/query/react'
+import { baseQueryConfig } from './apiConfig'
 
 
 export const apiCategory = createApi({
   reducerPath: 'category',
   tagTypes: ['Categories'],
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:2605/api'
-    // prepareHeaders: (headers, { getState }) => {
-    //   // By default, if we have a token in the store, let's use that for authenticated requests
-    //   const token = (getState() as RootState).auth.token
-    //   if (token) {
-    //     headers.set('authorization', `Bearer ${token}`)
-    //   }
-    //   return headers
-    // }
-  }),
+  baseQuery: baseQueryConfig,
   endpoints: (builder) => ({
     getAllCategories: builder.query<any, void>({
       query: () => ({

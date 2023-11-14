@@ -1,13 +1,11 @@
 import {
   createApi,
-  fetchBaseQuery
 } from '@reduxjs/toolkit/dist/query/react'
+import { baseQueryConfig } from './apiConfig'
 export const apiImage = createApi({
   reducerPath: 'images',
   tagTypes: ['Images'],
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:2605/api'
-  }),
+  baseQuery: baseQueryConfig,
   endpoints: (builder) => ({
     deleteImage: builder.mutation<any, void>({
       query: (id: any) => ({
@@ -15,8 +13,7 @@ export const apiImage = createApi({
         method: 'DELETE'
       }),
       invalidatesTags: ['Images']
-    }),
-
+    })
   })
 })
 

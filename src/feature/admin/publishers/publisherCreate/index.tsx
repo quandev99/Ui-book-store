@@ -1,11 +1,9 @@
-import axios from 'axios';
-import { Button, Form, Input, Select,Layout, Switch, message } from 'antd';
+import { Button, Form, Input,Layout, Switch, message } from 'antd';
 import { useState } from 'react';
-import { useCreateCategoryMutation, useGetAllCategoriesQuery } from '~/app/services/category';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useDeleteImageMutation } from '~/app/services/image';
+import { useCreateImageMutation, useDeleteImageMutation } from '~/app/services/image';
 import { useCreatePublisherMutation } from '~/app/services/publisher';
-const { Option } = Select;
+import { useNavigate } from 'react-router-dom';
 const { Content} = Layout;
 const layout = {
   labelCol: { span: 8 },
@@ -17,29 +15,41 @@ const tailLayout = {
 };
 
 const PublisherCreate = () => {
+   const navigate = useNavigate()
+  const [imageUploading, setImageUploading] = useState(false)
   const [image, setImage] = useState({})
   const [selectedImage, setSelectedImage] = useState('')
   const [createPublisher] = useCreatePublisherMutation()
   const [deleteImage] = useDeleteImageMutation()
+  const [createImage] = useCreateImageMutation()
 
   const onFileChange = async (e: any) => {
     const file = e.target.files[0]
-    const formData = {
-      images: file
-    }
+    const formData = new FormData()
+    formData.append('images', file)
     if (file) {
-      const response = await axios.post('http://localhost:2605/api/images/uploads/single', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      setImageUploading(true) // Bắt đầu tải ảnh
+      try {
+        const response = await createImage(formData as any)
+        if (response || response?.data) {
+          setSelectedImage(response?.data?.url)
+          setImage(response?.data)
         }
-      })
-      setSelectedImage(response?.data?.url)
-      setImage(response?.data)
+      } catch (error: any) {
+        message.error('Error uploading image: ' + error?.message)
+      } finally {
+        setImageUploading(false)
+      }
     } else {
       setSelectedImage('')
+      setImageUploading(false) 
     }
   }
   const onFinish = async (values: any) => {
+      if (imageUploading) {
+        message.warning('Vui lòng đợi cho đến khi ảnh tải xong.')
+        return
+      }
     const dataForm = {
       image: image || undefined,
       ...values
@@ -48,6 +58,7 @@ const PublisherCreate = () => {
       const responsive = await createPublisher(dataForm).unwrap()
       if (responsive) {
         message.success('Thêm nhà xuất bản!')
+        navigate('/admin/authors')
       }
     } catch (error) {
       message.error('Error: ' + error?.data?.message)

@@ -1,5 +1,9 @@
 import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom'
+import UserList from './feature/admin/users/userList';
+import UserCreate from './feature/admin/users/userCreate';
+import UserUpdate from './feature/admin/users/userUpdate';
+import UserTrash from './feature/admin/users/userTrash';
 const LayoutClient = lazy(() =>  import( './layouts/clientLayout'))
 const HomePage = lazy(() =>  import( './pages/clients/home'))
 const LayoutAdmin = lazy(() =>  import( './layouts/adminLayout'))
@@ -104,6 +108,16 @@ export const AppRoutes = createBrowserRouter([
           { path: 'create', element: <AuthorCreate /> },
           { path: ':id/update', element: <AuthorUpdate /> },
           { path: 'trash', element: <AuthorTrash /> }
+        ]
+      },
+      {
+        path: 'users',
+        children: [
+          { index: true, element: <UserList /> },
+          { path: 'list', element: <UserList /> },
+          { path: 'create', element: <UserCreate /> },
+          { path: ':id/update', element: <UserUpdate /> },
+          { path: 'trash', element: <UserTrash /> }
         ]
       }
     ]

@@ -6,8 +6,8 @@ interface CustomBaseQueryApi extends BaseQueryApi {
 
 export const prepareHeaders = (headers: Headers, { extraData }: CustomBaseQueryApi) => {
   if (extraData) {
-    headers.set('authorization', import.meta.env.VITE_ACCESS_TOKEN)
   }
+  headers.set('authorization', import.meta.env.VITE_ACCESS_TOKEN)
   headers.set('x-api-key', import.meta.env.VITE_API_KEY)
   return headers
 }

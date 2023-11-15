@@ -1,14 +1,14 @@
-import React, { useRef, useState } from 'react'
-import { useDeleteCategoryMutation, useGetAllCategoriesQuery } from '~/app/services/category'
-import { DeleteOutlined, EditOutlined, FilterOutlined, SearchOutlined } from '@ant-design/icons'
+import  { useRef, useState } from 'react'
+
+import { DeleteOutlined, LoadingOutlined, RedoOutlined, SearchOutlined } from '@ant-design/icons'
 import type { InputRef } from 'antd'
-import { Button, Input, Space, Table, Switch, Image, Popconfirm, message } from 'antd'
+import { Button, Input, Space, Table, Image, Popconfirm, message } from 'antd'
 import type { ColumnType, ColumnsType } from 'antd/es/table'
-import type { FilterConfirmProps, FilterValue, TableRowSelection } from 'antd/es/table/interface'
-import { Link } from 'react-router-dom'
-import { TablePaginationConfig } from 'antd/lib'
-import Highlighter from 'react-highlight-words'
-import { useDeletePublisherMutation, useGetAllPublishersQuery } from '~/app/services/publisher'
+import type { FilterConfirmProps, TableRowSelection } from 'antd/es/table/interface'
+import { Link, useNavigate } from 'react-router-dom'
+
+import { useForceAuthorMutation, useGetAllDeletedAuthorsQuery, useRestoreAuthorMutation } from '~/app/services/author'
+import { useForceUserMutation, useGetAllDeletedUsersQuery, useRestoreUserMutation } from '~/app/services/user'
 
 interface DataType {
   key: string
@@ -17,18 +17,18 @@ interface DataType {
   founded: string
   address: string
   phone_number: string
-  active: boolean
 }
 type DataIndex = keyof DataType
 
-
-const PublisherList = () => {
+const UserTrash = () => {
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
+  const navigate = useNavigate()
   const searchInput = useRef<InputRef>(null)
-  const { data: publishers, isLoading, error } = useGetAllPublishersQuery()
-  const dataPublishers = publishers?.publishers
- const [deletePublisher] = useDeletePublisherMutation()
+  const { data: dataUserApi, isLoading, error } = useGetAllDeletedUsersQuery()
+  const dataUsers = dataUserApi?.users
+const [restoreUser] = useRestoreUserMutation()
+const [forceUser] = useForceUserMutation()
   const handleSearch = (
     selectedKeys: string[],
     confirm: (param?: FilterConfirmProps) => void,
@@ -44,19 +44,26 @@ const PublisherList = () => {
     setSearchText('')
   }
 
-  const handleDeletePublisher = async (categoryId:any) => {
+  const handleRestore = async (id: any) => {
     try {
-      const responsive = await deletePublisher(categoryId).unwrap()
-      if (responsive) {
-        message.success('Xóa danh mục thành công!')
+       const responsive = await restoreUser(id).unwrap()
+       if (responsive) {
+        message.success('Khôi phục tài khoản thành công!')
+         navigate('/admin/users')
       }
     } catch (error) {
-      const errorWithMessage = error as { data: { message: string } }
-      message.error('Error: ' + errorWithMessage?.data?.message)
+      message.error('Error' + error)
     }
   }
-  const onChange =async (checked: boolean) => {
-    console.log(`switch to ${checked}`)
+  const handleForce = async (id: any) => {
+    try {
+       const responsive = await forceUser(id).unwrap()
+       if (responsive) {
+         message.success('Xóa vĩnh viễn tài khoản!')
+       }
+    } catch (error) {
+      message.error('Error' + error)
+    }
   }
   const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
@@ -128,12 +135,10 @@ const PublisherList = () => {
         text
       )
   })
-const toggleExpand = (record:any) => {
-  console.log("toggleExpand", record);
-}
+
   const columns: ColumnsType<DataType> = [
     {
-      title: 'Tên NXB',
+      title: 'Tên Tác Giả',
       dataIndex: 'name',
       key: '1',
       width: '20%',
@@ -150,52 +155,43 @@ const toggleExpand = (record:any) => {
       }
     },
     {
-      title: 'Năm thành lập',
-      dataIndex: 'founded',
-      key: '2',
+      title: 'Năm Sinh',
+      dataIndex: 'birthdate',
+      key: '3',
       width: '10%',
       render: (record: any) => {
         return <div>{record}</div>
       }
     },
     {
-      title: 'address',
-      dataIndex: 'address',
-      key: '3',
+      title: 'Quốc Tịch',
+      dataIndex: 'nationality',
+      key: '4',
       sorter: (a, b) => a?.name.length - b?.name?.length,
       render: (record: any) => {
         return <div>{record}</div>
       }
     },
     {
-      title: 'phone_number',
-      dataIndex: 'phone_number',
-      key: '4',
-      render: (record: any) => {
-        return <div>{record}</div>
-      }
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'active',
-      key: '5',
-      render: (record: any) => {
-        return <Switch checked={record} onChange={onChange} />
-      }
-    },
-    {
       title: 'Action',
-      key: '6',
+      key: '5',
       render: (record: any) => (
-        <Space size='middle' key={record?._id}>
-          <Link to={`/admin/publishers/${record?._id}/update`} className='bg-sky-400 text-white px-4 py-2 rounded-md '>
-            <EditOutlined />
-          </Link>
+        <Space size='middle'>
           <Popconfirm
+            title='Bạn có chắc muốn xóa vĩnh viễn'
             placement='topRight'
-            title='Delete the publishers'
-            description='Are you sure to delete this publishers?'
-            onConfirm={() => handleDeletePublisher(record?._id)}
+            onConfirm={() => handleForce(record._id)}
+            okText='Yes'
+            cancelText='No'
+          >
+            <Button>
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+          <Popconfirm
+            title='Bạn có muốn khôi phục'
+            placement='topRight'
+            onConfirm={() => handleRestore(record._id)}
             okText='Yes'
             cancelText='No'
           >
@@ -208,6 +204,7 @@ const toggleExpand = (record:any) => {
     }
   ]
 
+ 
   if (error) {
     if ('data' in error) {
       if (error.data) {
@@ -221,45 +218,39 @@ const toggleExpand = (record:any) => {
       return <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: Error connect server</div>
     }
   }
+/// 
 
-  ///
-  const rowSelection: TableRowSelection<DataType> = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
-    },
-    onSelect: (record, selected, selectedRows) => {
-      console.log(record, selected, selectedRows)
-    },
-    onSelectAll: (selected, selectedRows, changeRows) => {
-      console.log(selected, selectedRows, changeRows)
-    }
+const rowSelection: TableRowSelection<DataType> = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
+  },
+  onSelect: (record, selected, selectedRows) => {
+    console.log(record, selected, selectedRows)
+  },
+  onSelectAll: (selected, selectedRows, changeRows) => {
+    console.log(selected, selectedRows, changeRows)
   }
-
+}
   return (
     <div>
-      <div>
-        <Link
-          to='/admin/publishers/create'
-          className='bg-green-500 px-2 py-2 rounded-sm mr-auto absolute right-10 text-white hover:bg-green-600 transition-all duration-200'
-        >
-          Thêm mới
-        </Link>
-        <h1 className='text-center py-5 font-medium text-[20px]'>Quản lý nhà xuát bản</h1>
-      </div>
+      <Link
+        to='/admin/users/list'
+        className='bg-green-500 px-2 py-2 text-2xl rounded-sm mr-auto absolute right-10 text-white hover:bg-green-600 transition-all duration-200'
+      >
+        <RedoOutlined />
+      </Link>
+      <h1 className='text-center py-5 font-medium text-[20px]'>Danh sách tài khoản đã xóa mềm</h1>
       <Table
         columns={columns}
-        dataSource={dataPublishers}
         rowSelection={{ ...rowSelection }}
+        dataSource={dataUsers?.map((author: any) => ({
+          ...author,
+          key: author?._id
+        }))}
         loading={isLoading}
-        key={dataPublishers?._id}
       />
-      <div className='text-red-500'>
-        <Link to={'/admin/publishers/trash'} className='text-2xl p-2 bg-slate-200 rounded-md'>
-          <DeleteOutlined />
-        </Link>
-      </div>
     </div>
   )
 }
 
-export default PublisherList
+export default UserTrash

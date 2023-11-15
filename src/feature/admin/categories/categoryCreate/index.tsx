@@ -3,7 +3,8 @@ import { Button, Form, Input, Select,Layout, Switch, message } from 'antd';
 import { useState } from 'react';
 import { useCreateCategoryMutation, useGetAllCategoriesQuery } from '~/app/services/category';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useDeleteImageMutation } from '~/app/services/image';
+import { useCreateImageMutation, useDeleteImageMutation } from '~/app/services/image';
+import { useNavigate } from 'react-router-dom';
 const { Option } = Select;
 const { Content} = Layout;
 const layout = {
@@ -21,32 +22,45 @@ const tailLayout = {
    return subcategories
  }
 const CategoryCreate = () => {
+  const navigate = useNavigate()
+   const [imageUploading, setImageUploading] = useState(false)
   const [image, setImage] = useState({})
   const [selectedImage, setSelectedImage] = useState('')
   const [createCategory] = useCreateCategoryMutation()
   const { data, isLoading, error } = useGetAllCategoriesQuery()
   const [deleteImage] = useDeleteImageMutation()
+    const [createImage] = useCreateImageMutation()
   const categories = data?.categories
   const subcategories = getSubcategoriesByParentId(categories)
 
   const onFileChange = async (e: any) => {
-    const file = e.target.files[0]
-    const formData = {
-      images: file
-    }
-    if (file) {
-      const response = await axios.post('http://localhost:2605/api/images/uploads/single', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      setSelectedImage(response?.data?.url)
-      setImage(response?.data)
-    } else {
-      setSelectedImage('')
-    }
+   const file = e.target.files[0]
+   const formData = new FormData()
+   formData.append('images', file)
+   if (file) {
+     setImageUploading(true) // Bắt đầu tải ảnh
+     try {
+       const response = await createImage(formData as any)
+       if (response || response?.data) {
+         setSelectedImage(response?.data?.url)
+         setImage(response?.data)
+       }
+     } catch (error: any) {
+       message.error('Error uploading image: ' + error?.message)
+     } finally {
+       setImageUploading(false) // Kết thúc tải ảnh dù có lỗi hay không
+     }
+   } else {
+     setSelectedImage('')
+     setImageUploading(false) // Kết thúc tải ảnh (trường hợp không có file)
+   }
   }
   const onFinish = async (values: any) => {
+     if (imageUploading) {
+       // Nếu đang tải ảnh, không cho phép gọi onFinish
+       message.warning('Vui lòng đợi cho đến khi ảnh tải xong.')
+       return
+     }
     const dataForm = {
       image: image || undefined,
       ...values
@@ -55,6 +69,7 @@ const CategoryCreate = () => {
       const responsive = await createCategory(dataForm).unwrap()
       if (responsive) {
         message.success('Thêm danh mục!')
+         navigate('/admin/categories')
       }
     } catch (error) {
       message.error('Error: ' + error?.data?.message)
@@ -80,7 +95,7 @@ const CategoryCreate = () => {
           </Select>
         </Form.Item>
         <Form.Item name='active' label='Active' valuePropName='checked'>
-          <Switch defaultChecked />
+          <Switch defaultChecked unCheckedChildren='unActive' checkedChildren='active' />
         </Form.Item>
         <div className='p-4'>
           <section className='grid grid-cols-2 items-center gap-x-8 h-[200px]'>

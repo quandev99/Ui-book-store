@@ -1,10 +1,13 @@
+import axios from 'axios';
 import { Button, Form, Input, Select,Layout, Switch, message } from 'antd';
 import { useState } from 'react';
 import { useCreateCategoryMutation, useGetAllCategoriesQuery } from '~/app/services/category';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useCreateImageMutation, useDeleteImageMutation } from '~/app/services/image';
+import { useDeleteImageMutation } from '~/app/services/image';
+import { useCreatePublisherMutation } from '~/app/services/publisher';
 import { useCreateAuthorMutation } from '~/app/services/author';
 import { useNavigate } from 'react-router-dom';
+const { Option } = Select;
 const { Content} = Layout;
 const layout = {
   labelCol: { span: 8 },
@@ -15,24 +18,28 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 
-const AuthorCreate = () => {
+const UserCreate = () => {
   const navigate = useNavigate()
     const [imageUploading, setImageUploading] = useState(false)
   const [image, setImage] = useState({})
   const [selectedImage, setSelectedImage] = useState('')
   const [createAuthor] = useCreateAuthorMutation()
   const [deleteImage] = useDeleteImageMutation()
-  const [createImage] = useCreateImageMutation()
 
 const onFileChange = async (e: any) => {
   const file = e.target.files[0]
-  const formData = new FormData()
-  formData.append('images', file)
+  const formData = {
+    images: file
+  }
   if (file) {
     setImageUploading(true) // Bắt đầu tải ảnh
     try {
-      const response = await createImage(formData as any)
-      if (response || response?.data) {
+      const response = await axios.post('http://localhost:2605/api/images/uploads/single', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      if (response?.status == 200) {
         setSelectedImage(response?.data?.url)
         setImage(response?.data)
       }
@@ -75,7 +82,7 @@ const onFileChange = async (e: any) => {
   }
   return (
     <Content>
-      <div className='text-2xl text-center mb-5 font-medium'>Thêm tác giả</div>
+      <div className='text-2xl text-center mb-5 font-medium'>Thêm tài khoản</div>
       <Form {...layout} name='control-ref' onFinish={onFinish} style={{ maxWidth: 600, background: '#ebebeb' }}>
         <Form.Item name='name' label='Name' rules={[{ required: true, message: 'Name is required!' }]}>
           <Input />
@@ -100,7 +107,7 @@ const onFileChange = async (e: any) => {
           <section className='grid grid-cols-2 items-center gap-x-8 h-[200px]'>
             <header className='cols-span-1'>
               <p className='text-black mb-5'>
-                <span>Vui lòng chọn ảnh tác giả</span>&nbsp;
+                <span>Vui lòng chọn ảnh tài khoản</span>&nbsp;
               </p>
               <input type='file' onChange={onFileChange} />
             </header>
@@ -130,4 +137,4 @@ const onFileChange = async (e: any) => {
   )
 }
 
-export default AuthorCreate
+export default UserCreate

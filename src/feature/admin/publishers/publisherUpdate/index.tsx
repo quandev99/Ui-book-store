@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Button, Form, Input, Select, Layout, Switch, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { DeleteOutlined } from '@ant-design/icons'
-import { useDeleteImageMutation } from '~/app/services/image'
+import { useCreateImageMutation, useDeleteImageMutation } from '~/app/services/image'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetPublisherByIdQuery, useUpdatePublisherMutation } from '~/app/services/publisher'
 const { Content } = Layout
@@ -22,30 +22,37 @@ const tailLayout = {
 const PublisherUpdate = () => {
    const navigate = useNavigate()
   const { id } = useParams<{ id: string | any }>()
+  const [imageUploading, setImageUploading] = useState(false)
   const [image, setImage] = useState(undefined)
   const [selectedImage, setSelectedImage] = useState('')
   const { data: data, isLoading, error } = useGetPublisherByIdQuery(id)
   const [updatePublisher] = useUpdatePublisherMutation()
   const [deleteImage] = useDeleteImageMutation()
+  const [createImage] = useCreateImageMutation()
   const publisherData = data?.publisher
 
-  const onFileChange = async (e: any) => {
-    const file = e.target.files[0]
-    const formData = {
-      images: file
-    }
-    if (file) {
-      const response = await axios.post('http://localhost:2605/api/images/uploads/single', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      setSelectedImage(response?.data?.url)
-      setImage(response?.data)
-    } else {
-      setSelectedImage('')
-    }
-  }
+   const onFileChange = async (e: any) => {
+     const file = e.target.files[0]
+     const formData = new FormData()
+     formData.append('images', file)
+     if (file) {
+       setImageUploading(true) // Bắt đầu tải ảnh
+       try {
+         const response = await createImage(formData as any)
+         if (response || response?.data) {
+           setSelectedImage(response?.data?.url)
+           setImage(response?.data)
+         }
+       } catch (error: any) {
+         message.error('Error uploading image: ' + error?.message)
+       } finally {
+         setImageUploading(false)
+       }
+     } else {
+       setSelectedImage('')
+       setImageUploading(false)
+     }
+   }
  
   const [form] = Form.useForm()
   const initialValues = {
@@ -61,6 +68,10 @@ const PublisherUpdate = () => {
     form.setFieldsValue(initialValues)
   }, [form, initialValues])
     const onFinish = async (values: any) => {
+       if (imageUploading) {
+         message.warning('Vui lòng đợi cho đến khi ảnh tải xong.')
+         return
+       }
       const dataForm = {
         image: image || publisherData?.image,
         _id: id,

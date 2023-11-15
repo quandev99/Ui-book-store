@@ -54,9 +54,9 @@ const items: MenuItem[] = [
     getItem(<NavLink to='/admin/genres/list'>List Genre</NavLink>, '12', <UnorderedListOutlined />),
     getItem(<NavLink to='/admin/genres/create'>Create Genre</NavLink>, '13', <PlusOutlined />)
   ]),
-  getItem('User', 'sub77', <UserOutlined />, [
-    getItem(<NavLink to='/admin'>List User</NavLink>, '19', <TeamOutlined />),
-    getItem(<NavLink to='/admin'>Create User</NavLink>, '110', <UserAddOutlined />)
+  getItem('User', 'sub7', <UserOutlined />, [
+    getItem(<NavLink to='/admin/users/list'>List User</NavLink>, '19', <TeamOutlined />),
+    getItem(<NavLink to='/admin/users/create'>Create User</NavLink>, '110', <UserAddOutlined />)
   ]),
   getItem('Files', '111', <FileOutlined />)
 ]

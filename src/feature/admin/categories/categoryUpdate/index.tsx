@@ -3,8 +3,8 @@ import { Button, Form, Input, Select, Layout, Switch, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useCreateCategoryMutation, useGetAllCategoriesQuery, useGetCategoryByIdQuery, useUpdateCategoryMutation } from '~/app/services/category'
 import { DeleteOutlined } from '@ant-design/icons'
-import { useDeleteImageMutation } from '~/app/services/image'
-import { useParams } from 'react-router-dom'
+import { useCreateImageMutation, useDeleteImageMutation } from '~/app/services/image'
+import { useNavigate, useParams } from 'react-router-dom'
 const { Option } = Select
 const { Content } = Layout
 const layout = {
@@ -22,30 +22,38 @@ const tailLayout = {
 
 const CategoryUpdate = () => {
   const { id } = useParams<{ id: string | any }>()
+  const navigate = useNavigate()
+     const [imageUploading, setImageUploading] = useState(false)
   const [image, setImage] = useState({})
   const [selectedImage, setSelectedImage] = useState('')
   const { data, isLoading, error } = useGetCategoryByIdQuery(id)
   const [updateCategory] = useUpdateCategoryMutation()
   const [deleteImage] = useDeleteImageMutation()
+  const [createImage] = useCreateImageMutation()
   const category = data?.category
 
-  const onFileChange = async (e: any) => {
-    const file = e.target.files[0]
-    const formData = {
-      images: file
-    }
-    if (file) {
-      const response = await axios.post('http://localhost:2605/api/images/uploads/single', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      setSelectedImage(response?.data?.url)
-      setImage(response?.data)
-    } else {
-      setSelectedImage('')
-    }
-  }
+ const onFileChange = async (e: any) => {
+   const file = e.target.files[0]
+   const formData = new FormData()
+   formData.append('images', file)
+   if (file) {
+     setImageUploading(true) // Bắt đầu tải ảnh
+     try {
+       const response = await createImage(formData as any)
+       if (response || response?.data) {
+         setSelectedImage(response?.data?.url)
+         setImage(response?.data)
+       }
+     } catch (error: any) {
+       message.error('Error uploading image: ' + error?.message)
+     } finally {
+       setImageUploading(false) // Kết thúc tải ảnh dù có lỗi hay không
+     }
+   } else {
+     setSelectedImage('')
+     setImageUploading(false) // Kết thúc tải ảnh (trường hợp không có file)
+   }
+ }
 
   const [form] = Form.useForm()
   const initialValues = {
@@ -58,6 +66,10 @@ const CategoryUpdate = () => {
     form.setFieldsValue(initialValues)
   }, [form, initialValues])
     const onFinish = async (values: any) => {
+       if (imageUploading) {
+         message.warning('Vui lòng đợi cho đến khi ảnh tải xong.')
+         return
+       }
       const dataForm = {
         image: category?.image || image,
         _id: id,
@@ -67,6 +79,7 @@ const CategoryUpdate = () => {
         const responsive = await updateCategory(dataForm).unwrap()
         if (responsive) {
           message.success('Sửa danh mục thành công!')
+          navigate('/admin/categories')
         }
       } catch (error) {
           message.error('Error: ' + error?.data?.message)

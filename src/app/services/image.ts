@@ -13,8 +13,24 @@ export const apiImage = createApi({
         method: 'DELETE'
       }),
       invalidatesTags: ['Images']
+    }),
+    createImage: builder.mutation<any, void>({
+      query: (file) => ({
+        url: `/images/uploads/single`,
+        method: 'POST',
+        body: file
+      }),
+      invalidatesTags: ['Images']
+    }),
+    createImages: builder.mutation<any, void>({
+      query: (files) => ({
+        url: `/images/uploads`,
+        method: 'POST',
+        body: files
+      }),
+      invalidatesTags: ['Images']
     })
   })
 })
 
-export const { useDeleteImageMutation } = apiImage
+export const { useDeleteImageMutation, useCreateImageMutation, useCreateImagesMutation } = apiImage

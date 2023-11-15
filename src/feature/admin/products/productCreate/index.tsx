@@ -3,7 +3,7 @@ import { Button, Form, Input, Select, Layout, Switch, message, Col, Row, theme, 
 import { useState } from 'react';
 import { useGetAllCategoriesQuery } from '~/app/services/category';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useDeleteImageMutation } from '~/app/services/image';
+import { useCreateImagesMutation, useDeleteImageMutation } from '~/app/services/image';
 import {useGetAllPublishersQuery } from '~/app/services/publisher';
 import {useGetAllAuthorsQuery } from '~/app/services/author';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +21,7 @@ const ProductCreate = () => {
   const [selectedImages, setSelectedImages] = useState([])
   const [createProduct] = useCreateProductMutation()
   const [deleteImage] = useDeleteImageMutation()
+  const [createImages] = useCreateImagesMutation()
   const { data: categoriesApi, isLoading: isLoadingCategory } = useGetAllCategoriesQuery()
   const dataCategories = categoriesApi?.categories
 //author
@@ -47,12 +48,8 @@ const onFileChange = async (event: any) => {
         formData.append(`images`, files[i])
       }
 
-      const response = await axios.post('http://localhost:2605/api/images/uploads', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      if (response?.status === 200) {
+      const response = await createImages(formData as any)
+      if (response?.data) {
         setSelectedImages(response?.data?.urls)
         setImage(response?.data.urls)
       }

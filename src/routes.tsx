@@ -4,6 +4,9 @@ import UserList from './feature/admin/users/userList';
 import UserCreate from './feature/admin/users/userCreate';
 import UserUpdate from './feature/admin/users/userUpdate';
 import UserTrash from './feature/admin/users/userTrash';
+import OderMain from './feature/admin/orders/orderMain';
+import ListOder from './feature/admin/orders/orderList';
+import ProductPage from './pages/clients/product';
 const LayoutClient = lazy(() =>  import( './layouts/clientLayout'))
 const HomePage = lazy(() =>  import( './pages/clients/home'))
 const LayoutAdmin = lazy(() =>  import( './layouts/adminLayout'))
@@ -41,6 +44,7 @@ export const AppRoutes = createBrowserRouter([
     element: <LayoutClient />,
     children: [
       { index: true, element: <HomePage /> },
+      { path: 'products', element: <ProductPage /> },
       { path: 'sign-in', element: <SignIn /> }
     ]
   },
@@ -118,6 +122,15 @@ export const AppRoutes = createBrowserRouter([
           { path: 'create', element: <UserCreate /> },
           { path: ':id/update', element: <UserUpdate /> },
           { path: 'trash', element: <UserTrash /> }
+        ]
+      },
+      {
+        path: 'orders',
+        element: <OderMain />,
+        children: [
+          { index: true, element: <ListOder /> },
+          { path: 'list', element: <ListOder /> }
+          // { path: ':id/update', element: <UserUpdate /> }
         ]
       }
     ]

@@ -1,13 +1,15 @@
 import { Outlet } from 'react-router-dom'
+import Footer from '~/components/common/footer'
+import Header from '~/components/common/header'
 
 const LayoutClient = () => {
   return (
     <div>
-      <header>Header</header>
-      <main>
-          <Outlet></Outlet>
+      <Header></Header>
+      <main className='w-xl p-10 mx-auto  bg-white w-full'>
+        <Outlet></Outlet>
       </main>
-      <footer>footer</footer>
+      <Footer></Footer>
     </div>
   )
 }

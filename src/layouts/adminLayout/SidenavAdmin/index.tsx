@@ -12,7 +12,8 @@ import {
   SolutionOutlined,
   ReadOutlined,
   BlockOutlined,
-  FolderOpenOutlined
+  FolderOpenOutlined,
+  ShoppingCartOutlined
 } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import {   Menu } from 'antd'
@@ -56,7 +57,10 @@ const items: MenuItem[] = [
   ]),
   getItem('User', 'sub7', <UserOutlined />, [
     getItem(<NavLink to='/admin/users/list'>List User</NavLink>, '19', <TeamOutlined />),
-    getItem(<NavLink to='/admin/users/create'>Create User</NavLink>, '110', <UserAddOutlined />)
+    getItem(<NavLink to='/admin/users/create'>Create User</NavLink>, '21', <UserAddOutlined />)
+  ]),
+  getItem('Order', 'sub8', <ShoppingCartOutlined />, [
+    getItem(<NavLink to='/admin/orders/list'>List Order</NavLink>, '22', <ShoppingCartOutlined />)
   ]),
   getItem('Files', '111', <FileOutlined />)
 ]

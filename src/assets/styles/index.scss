@@ -8,3 +8,51 @@
 // .ant-menu-title-content .active{
 //     @apply   bg-white shadow-lg font-semibold rounded w-full h-full;
 // }
+.menu-item {
+  position: relative;
+}
+
+.submenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: -70px;
+  background-color: #f4f3f3;
+  padding: 10px;
+  width: 100%;
+  transition: opacity 0.3s, max-height 0.3s;
+  opacity: 0;
+  max-height: 0;
+  min-width: 200px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  border-bottom: 1px solid #ccc;
+  font-size: 14px;
+}
+.submenu li a {
+  display: block;
+}
+
+.menu-item:hover .submenu {
+  display: block;
+  opacity: 1;
+  max-height: 500px; /* Giá trị tối đa cho chiều cao */
+  transition: opacity 0.3s, max-height 0.3s;
+  padding: 10px 20px;
+}
+
+.submenu li {
+  display: block;
+  color: #333;
+  padding: 5px 0;
+  transition: background 0.3s;
+}
+
+.submenu li:hover {
+  background-color: #ccc;
+}
+
+/// slider home page
+// button.slick-arrow.slick-prev{
+//    background-color: red;
+// }

@@ -23,7 +23,7 @@ const ProductCreate = () => {
   const [deleteImage] = useDeleteImageMutation()
   const [createImages] = useCreateImagesMutation()
   const { data: categoriesApi, isLoading: isLoadingCategory } = useGetAllCategoriesQuery()
-  const dataCategories = categoriesApi?.categories
+  const dataCategories = categoriesApi?.categories.filter((category) => category?.parent )
 //author
 const { data: authorsApi, isLoading: isLoadingAuthor } = useGetAllAuthorsQuery()
 const dataAuthors = authorsApi?.authors

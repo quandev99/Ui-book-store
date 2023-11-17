@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react'
 
 import ReactPaginate from 'react-paginate'
+import { useGetAllProductsByClientQuery, useGetAllProductsQuery } from '~/app/services/product'
+import ProductItem from './components'
+import { useGetAllCategoriesQuery } from '~/app/services/category'
+import { useGetAllGenresQuery } from '~/app/services/genre'
+import { useGetAllSuppliersQuery } from '~/app/services/supplier'
+import { useGetAllPublishersQuery } from '~/app/services/publisher'
 
 const dataFakePrice = [
   { value: { maxPrice: 50000 }, title: 'Dưới 50,000₫' },
@@ -18,17 +24,27 @@ const dataFakePrice = [
 ]
 const ProductPage = () => {
   const [url, setUrl] = useState('')
- 
-
-  const pageCount = [1,2,3]?.pagination?.totalPages
+   const { data: productsApi, isLoading, error } = useGetAllProductsByClientQuery(url as any)
+  const dataProducts = productsApi?.products;
+   const { data:categoriesApi, isLoading: LoadingCate } = useGetAllCategoriesQuery()
+   const categories = categoriesApi?.categories?.filter((category) => category?.parent)
+    const { data: gendersApi, isLoading: LoadingGender } = useGetAllGenresQuery()
+    const dataGenres = gendersApi?.genres
+   const { data: suppliersApi } = useGetAllSuppliersQuery()
+   const dataSuppliers = suppliersApi?.suppliers
+    const { data: publishersApi } = useGetAllPublishersQuery()
+    const dataPublishers = publishersApi?.publishers
+   console.log('dataProducts', dataProducts)
+  const pageCount = productsApi?.pagination?.totalPages
   const [limit] = useState(10)
   const [page, setPage] = useState(1)
   const [sortValue, setSortValue] = useState('asc')
 
   const [categoryId, setCategoryId] = useState('')
-  const [brandId, setBrandId] = useState('')
-  const [colorId, setColorId] = useState('')
-  const [sizeId, setSizeId] = useState('')
+  const [genderId, setGenderId] = useState('')
+  const [supplierId, setSupplierId] = useState('')
+  const [publisherId, setPublisherId] = useState('')
+  const [authorId, setAuthor] = useState('')
   const [search, setSearch] = useState('')
   const [checkboxStates, setCheckboxStates] = useState([])
   const [priceFilter, setPriceFilter] = useState()
@@ -50,12 +66,14 @@ const ProductPage = () => {
   useEffect(() => {
     if ([]) {
       setUrl(
-        `?_page=${page}&_limit=${+limit}&_sort=createdAt&_order=${sortValue}&_category_id=${categoryId}&_brand_id=${brandId}&_size_id=${sizeId}&_color_id=${colorId}&_search=${
+        `?_page=${page}&_limit=${+limit}&_sort=createdAt&_order=${sortValue}&_category_id=${categoryId}
+        &_supplier_id=${supplierId}&_publisher_id=${publisherId}&_author_id=${authorId}&_genre_id=${genderId}&_search=${
           search || ''
-        }&${priceFilter}`
+        }
+        &${priceFilter}`
       )
     }
-  }, [page, limit, sortValue, categoryId, brandId, colorId, sizeId, search, priceFilter])
+  }, [page, limit, sortValue, categoryId, genderId, supplierId, publisherId, search, priceFilter])
 
   ///select option
   const handlePageClick = (event: any) => {
@@ -69,25 +87,25 @@ const ProductPage = () => {
     }
   }
 
-  const handleSortBrand = (id: any) => {
-    if (brandId === id) {
-      setBrandId('')
+  const handleSortGender = (id: any) => {
+    if (genderId === id) {
+      setGenderId('')
     } else {
-      setBrandId(id)
+      setGenderId(id)
     }
   }
-  const handleSortColor = (id: any) => {
-    if (colorId === id) {
-      setColorId('')
+  const handleSortSupperlier = (id: any) => {
+    if (supplierId === id) {
+      setSupplierId('')
     } else {
-      setColorId(id || '')
+      setSupplierId(id || '')
     }
   }
-  const handleSortSize = (id: any) => {
-    if (sizeId === id) {
-      setSizeId('')
+  const handlePublisher = (id: any) => {
+    if (publisherId === id) {
+      setPublisherId('')
     } else {
-      setSizeId(id || '')
+      setPublisherId(id || '')
     }
   }
   const handleSearchInputChange = (event: any) => {
@@ -150,26 +168,21 @@ const ProductPage = () => {
                   Danh mục sản phẩm
                 </h4>
                 <ul className=' border-gray-300  pt-3'>
-                  {[
-                    { _id: 'adsaassad', category_name: 'asdsadasdasd' },
-                    { _id: 'adsaassads', category_name: 'asdsadsasdasd' }
-                  ]?.map((category: any) => (
+                  {categories?.map((category: any) => (
                     <li
                       key={category?._id}
                       className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
                     >
                       <input
                         type='checkbox'
-                        name={category?.category_name}
+                        name={category?.name}
                         className='cursor-pointer '
-                        id={category?.category_name}
+                        id={category?.name}
                         onClick={() => handleSortCategory(category?._id)}
                         checked={categoryId === category?._id}
                       />
-                      <label htmlFor={category?.category_name} className='block w-full'>
-                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>
-                          {category?.category_name}
-                        </h1>
+                      <label htmlFor={category?.name} className='block w-full'>
+                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{category?.name}</h1>
                       </label>
                     </li>
                   ))}
@@ -178,29 +191,74 @@ const ProductPage = () => {
 
               <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
                 <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
-                  Thương hiệu
+                  Loại sách
                 </h4>
                 <ul className='border-gray-300  pt-3'>
-                  {[
-                    { _id: 'adsaasssad', brand_name: 'asdswadasdasd' },
-                    { _id: 'adsaaswsads', brand_name: 'asdsawdsasdasd' }
-                  ]?.map((brand: any) => (
+                  {dataGenres?.map((gender: any) => (
                     <li
-                      key={brand?._id}
+                      key={gender?._id}
                       className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
                     >
                       <input
                         type='checkbox'
                         className='cursor-pointer '
-                        name={brand?.brand_name}
-                        id={brand?.brand_name}
-                        onClick={() => handleSortBrand(brand?._id)}
-                        checked={brandId === brand?._id}
+                        name={gender?.name}
+                        id={gender?.name}
+                        onClick={() => handleSortGender(gender?._id)}
+                        checked={genderId === gender?._id}
                       />
-                      <label htmlFor={brand?.brand_name} className='block w-full'>
-                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>
-                          {brand?.brand_name}
-                        </h1>
+                      <label htmlFor={gender?.name} className='block w-full'>
+                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{gender?.name}</h1>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
+                <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
+                  Nhà Cung Cấp
+                </h4>
+                <ul className='border-gray-300  pt-3'>
+                  {dataSuppliers?.map((supperlier: any) => (
+                    <li
+                      key={supperlier?._id}
+                      className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
+                    >
+                      <input
+                        type='checkbox'
+                        className='cursor-pointer '
+                        name={supperlier?.name}
+                        id={supperlier?.name}
+                        onClick={() => handleSortSupperlier(supperlier?._id)}
+                        checked={supplierId === supperlier?._id}
+                      />
+                      <label htmlFor={supperlier?.name} className='block w-full'>
+                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{supperlier?.name}</h1>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
+                <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
+                  Nhà Phát Hành
+                </h4>
+                <ul className='border-gray-300  pt-3'>
+                  {dataPublishers?.map((publisher: any) => (
+                    <li
+                      key={publisher?._id}
+                      className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
+                    >
+                      <input
+                        type='checkbox'
+                        className='cursor-pointer '
+                        name={publisher?.name}
+                        id={publisher?.name}
+                        onClick={() => handlePublisher(publisher?._id)}
+                        checked={supplierId === publisher?._id}
+                      />
+                      <label htmlFor={publisher?.name} className='block w-full'>
+                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{publisher?.name}</h1>
                       </label>
                     </li>
                   ))}
@@ -212,10 +270,7 @@ const ProductPage = () => {
                   Lọc giá
                 </h4>
                 <ul className='grid grid-cols-4 md:grid-cols-1 gap-3 w-[350px] md:w-[200px] md:ml-3 border-gray-300  pt-3'>
-                  {[
-                    { title: 'adsaawsssad', value: 'asdswadasdasd' },
-                    { title: 'adsaaswwsads', value: 'asdsawdsasdasd' }
-                  ]?.map((item) => (
+                  {dataFakePrice?.map((item) => (
                     <li
                       key={item.title}
                       className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
@@ -235,10 +290,6 @@ const ProductPage = () => {
                   ))}
                 </ul>
               </div>
-
-      
-
-        
             </div>
             <div className='col-span-4'>
               <div className='grid grid-cols-1 w-full'>
@@ -266,12 +317,10 @@ const ProductPage = () => {
                   </div>
                 </div>
               </div>
-              {!true ? (
+              {dataProducts ? (
                 <div className='grid grid-cols-1 w-full'>
                   <div className='grid grid-cols-4 gap-4 my-5'>
-                    {[]?.map((item: any) => {
-                      return <ProductFeature key={item._id} product={item} />
-                    })}
+                    {dataProducts?.map((item) => <ProductItem key={item._id} item={item}></ProductItem>)}
                   </div>
                   <div className='grid grid-cols-1'>
                     <ol className='flex items-center justify-center grid-cols-1 gap-1 text-xs font-medium w-full py-10'>

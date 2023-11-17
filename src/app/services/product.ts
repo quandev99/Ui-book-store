@@ -14,6 +14,13 @@ export const apiProduct = createApi({
       }),
       providesTags: ['Products']
     }),
+    getAllProductsByClient: builder.query<any, void>({
+      query: (url) => ({
+        url: '/products' + url,
+        method: 'GET'
+      }),
+      providesTags: ['Products']
+    }),
     getProductById: builder.query<any, void>({
       query: (_id) => ({
         url: `/products/${_id}/getById`,
@@ -73,6 +80,7 @@ export const apiProduct = createApi({
 
 export const {
   useGetAllProductsQuery,
+  useGetAllProductsByClientQuery,
   useForceProductMutation,
   useRestoreProductMutation,
   useDeleteProductMutation,

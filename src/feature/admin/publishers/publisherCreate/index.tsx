@@ -58,7 +58,7 @@ const PublisherCreate = () => {
       const responsive = await createPublisher(dataForm).unwrap()
       if (responsive) {
         message.success('Thêm nhà xuất bản!')
-        navigate('/admin/authors')
+        navigate('/admin/publishers')
       }
     } catch (error) {
       message.error('Error: ' + error?.data?.message)

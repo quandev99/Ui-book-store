@@ -10,7 +10,7 @@ const BannerHomePage = () => {
     autoplaySpeed: 3000
   }
   return (
-    <div className='w-full h-[500px]'>
+    <div className='w-full h-[500px] mb-10'>
       <Slider {...settings}>
         <div className='w-full h-full'>
           <img

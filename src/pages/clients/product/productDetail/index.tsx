@@ -12,7 +12,6 @@ const ProductDetailPage = () => {
   const categoryId = dataProductById?.category_id?._id
   const { data: dataProductByCate } = useGetProductByCateQuery(categoryId)
   const uniqueProductByCategory = dataProductByCate?.products?.filter(product => product?._id !== id)
-  console.log('dataProductByCate', uniqueProductByCategory)
   let dataImage = dataProductById?.image
   const [largeImage, setLargeImage] = useState('')
 

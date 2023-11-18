@@ -28,6 +28,13 @@ export const apiProduct = createApi({
       }),
       providesTags: ['Products']
     }),
+    getProductByCate: builder.query<any, void>({
+      query: (category) => ({
+        url: `/products/${category}/getByCate`,
+        method: 'GET'
+      }),
+      providesTags: ['Products']
+    }),
     getAllDeletedProducts: builder.query<any, void>({
       query: () => ({
         url: '/products/trash',
@@ -81,6 +88,7 @@ export const apiProduct = createApi({
 export const {
   useGetAllProductsQuery,
   useGetAllProductsByClientQuery,
+  useGetProductByCateQuery,
   useForceProductMutation,
   useRestoreProductMutation,
   useDeleteProductMutation,

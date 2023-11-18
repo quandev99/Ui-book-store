@@ -7,6 +7,7 @@ import UserTrash from './feature/admin/users/userTrash';
 import OderMain from './feature/admin/orders/orderMain';
 import ListOder from './feature/admin/orders/orderList';
 import ProductPage from './pages/clients/product';
+import ProductDetailPage from './pages/clients/product/productDetail';
 const LayoutClient = lazy(() =>  import( './layouts/clientLayout'))
 const HomePage = lazy(() =>  import( './pages/clients/home'))
 const LayoutAdmin = lazy(() =>  import( './layouts/adminLayout'))
@@ -44,8 +45,14 @@ export const AppRoutes = createBrowserRouter([
     element: <LayoutClient />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'products', element: <ProductPage /> },
-      { path: 'sign-in', element: <SignIn /> }
+      {
+        path: 'products',
+        children: [
+          { index: true, element: <ProductPage /> },
+          { path: ':id', element: <ProductDetailPage /> },
+          { path: 'sign-in', element: <SignIn /> }
+        ]
+      },
     ]
   },
   {

@@ -6,7 +6,7 @@ import SideNavAmin from './SidenavAdmin'
 import HeaderAdmin from './headerAdmin'
 import type { ThemeConfig } from 'antd'
 const {  Content, Footer, Sider } = Layout
-const { getDesignToken, useToken, darkAlgorithm, compactAlgorithm, defaultAlgorithm } = theme
+const { defaultAlgorithm } = theme
 
 const config: ThemeConfig = {
   token: {
@@ -43,7 +43,7 @@ const LayoutAdmin = () => {
    const [collapsed, setCollapsed] = useState(false)
     const {
       token: { colorBgContainer }
-    } = theme.useToken()
+    } = theme?.useToken()
   return (
     <div>
       <ConfigProvider theme={config}>

@@ -50,9 +50,9 @@ export const AppRoutes = createBrowserRouter([
         children: [
           { index: true, element: <ProductPage /> },
           { path: ':id', element: <ProductDetailPage /> },
-          { path: 'sign-in', element: <SignIn /> }
         ]
       },
+      { path: 'sign-in', element: <SignIn /> }
     ]
   },
   {

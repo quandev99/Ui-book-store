@@ -1,8 +1,12 @@
 import { LoginOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 const Header = () => {
+  const authData = useSelector((state) => state)
+  const {user,tokens} = authData.authSlice
+  console.log('user,tokens', user,tokens)
   return (
     <div className='w-xl p-10 mx-auto h-[100px] bg-white w-full'>
       <div className='flex items-center justify-between'>

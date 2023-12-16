@@ -127,7 +127,7 @@ const { Statistic, Divider } = StatisticCard
       </Row>
 
       <RcResizeObserver
-        key='resize-observer'
+        key='100001'
         onResize={(offset) => {
           setResponsive(offset.width < 596)
         }}

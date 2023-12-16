@@ -11,7 +11,7 @@ const useAuthenticatedApi = () => {
       headers.set('authorization', tokens?.accessToken);
     }
     if (user && user._id) {
-      headers.set('x-client-id', user._id);
+      headers.set('x-client-id', user?._id);
     }
     headers.set('x-api-key', import.meta.env.VITE_API_KEY);
 

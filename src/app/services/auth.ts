@@ -1,10 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/dist/query/react'
-import { baseQueryConfig } from './apiConfig'
-
+import { baseQueryWithReauth } from './apiConfig'
 export const apiAuth = createApi({
   reducerPath: 'auth',
   tagTypes: ['Auths'],
-  baseQuery: baseQueryConfig,
+  baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     getAllAuths: builder.query<any, void>({
       query: () => ({
@@ -29,11 +28,20 @@ export const apiAuth = createApi({
       invalidatesTags: ['Auths']
     }),
     logout: builder.mutation<any, void>({
-      query: (data: any) => {
-        const { _id, ...body } = data
+      query: () => {
         return {
           url: `/auths/logout`,
           method: 'POST'
+        }
+      },
+      invalidatesTags: ['Auths']
+    }),
+    refreshToken: builder.mutation<any, void>({
+      query: (body: any) => {
+        return {
+          url: `/auths/refreshToken`,
+          method: 'POST',
+          body
         }
       },
       invalidatesTags: ['Auths']
@@ -41,4 +49,5 @@ export const apiAuth = createApi({
   })
 })
 
-export const { useLoginMutation } = apiAuth
+export const { useLoginMutation, useLogoutMutation, useRefreshTokenMutation } = apiAuth
+

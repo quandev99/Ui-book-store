@@ -1,12 +1,12 @@
 
 import { createApi } from '@reduxjs/toolkit/dist/query/react'
-import { baseQueryConfig } from './apiConfig'
+import { baseQueryWithReauth } from './apiConfig'
 
 
 export const apiGenre = createApi({
   reducerPath: 'genre',
   tagTypes: ['Genres'],
-  baseQuery: baseQueryConfig,
+  baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     getAllGenres: builder.query<any, void>({
       query: () => ({

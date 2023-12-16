@@ -18,8 +18,7 @@ const SignIn = () => {
      try {
        const { metaData } = await login(values).unwrap()
        if (metaData) {
-         dispatch(setCredentials(metaData))
-          localStorage.setItem('accessToken', JSON.stringify(metaData.tokens.accessToken))
+          localStorage.setItem('dataUsers', JSON.stringify(metaData))
          navigate('/')
         }
      } catch (err) {

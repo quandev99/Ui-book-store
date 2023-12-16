@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Button, Form, Input, Select, Layout, Switch, message, Row, Col, Space, theme ,Spin} from 'antd'
+import { useForm } from 'antd/lib/form/Form'
 import { useEffect, useState } from 'react'
 import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons'
 import { useCreateImagesMutation, useDeleteImageMutation } from '~/app/services/image'
@@ -80,7 +81,7 @@ const onFileChange = async (event: any) => {
     setImageUploading(false) // Kết thúc tải ảnh (trường hợp không có file)
   }
 }
-  const [form] = Form.useForm()
+  const [form] =useForm()
   const initialValues = {
     name: dataProductById?.name || '',
     price: dataProductById?.price || '',

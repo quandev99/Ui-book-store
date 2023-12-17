@@ -36,7 +36,6 @@ const ProductPage = () => {
     const dataPublishers = publishersApi?.publishers
     const { data: authorsApi } = useGetAllAuthorsQuery()
     const dataAuthors = authorsApi?.authors
-   console.log('dataProducts', dataProducts)
   const pageCount = productsApi?.pagination?.totalPages
   const [limit] = useState(10)
   const [page, setPage] = useState(1)

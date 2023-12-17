@@ -5,7 +5,7 @@ const ProductItem = (item: any) => {
   const { _id, image, name, price } = item?.item || {}
 
   return (
-    <div className='flex flex-col h-full p-3 bg-white rounded-lg select-none movie-cart '>
+    <div className='flex flex-col h-full p-3 bg-white rounded-lg select-none movie-cart shadow-xl'>
       <Link to='' className='overflow-hidden rounded-md h-[250px]'>
         <span className='absolute z-10 bg-yellow-300 px-3'>{'8'} %</span>
         <img
@@ -21,7 +21,7 @@ const ProductItem = (item: any) => {
         <div className='flex items-center justify-between mb-10 text-sm '>
           <span className='font-bold text-[#CD151C] text-[15px]'>{formatPrice(price) + ' đ'}</span>
         </div>
-        <button className='w-full py-2 text-white  duration-300 transition-all  rounded-lg cursor-pointer hover:text-primary bg-[#fcaf17] hover:bg-white hover:border border-secondary mt-auto'>
+        <button className='w-full py-2 text-white  duration-300 transition-all  rounded-lg cursor-pointer hover:text-primary bg-primary hover:bg-white hover:border  mt-auto'>
           Xem chi tiết
         </button>
       </div>

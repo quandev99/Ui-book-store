@@ -21,7 +21,7 @@ const Header = () => {
     }
   }, [dispatch, tokens?.accessToken])
   const userImage = user?.image
-  console.log(userImage)
+  const userEmail = user?.name
   const userRole = decodedToken?.role
   const [logout] = useLogoutMutation()
 const handleLogout = async () => {
@@ -30,17 +30,12 @@ const handleLogout = async () => {
     localStorage.removeItem('dataUsers')
     dispatch(resetState())
     const data = await logout().unwrap()
-    console.log('logged', data)
     if (data) alert(data?.message)
-    location.reload()
+    location.href="/"
   } catch (error) {
     console.log("Failed to log out", error)
   }
 }
-  // console.log('User ID:', userId)
-  // console.log('User Email:', userEmail)
-  // console.log('User Role:', userRole)
-  // console.log('user,tokens', user,tokens)
   return (
     <div className='w-xl p-10 mx-auto h-[100px] bg-white w-full'>
       <div className='flex items-center justify-between'>
@@ -101,6 +96,9 @@ const handleLogout = async () => {
               {userRole == 0 ? (
                 <ul className='submenu'>
                   <li>
+                    <Link to=''>{userEmail}</Link>
+                  </li>
+                  <li>
                     <Link to=''>Thông tin tài khoản</Link>
                   </li>
                   <li>
@@ -112,6 +110,9 @@ const handleLogout = async () => {
                 </ul>
               ) : userRole == 1 ? (
                 <ul className='submenu'>
+                  <li>
+                    <Link to='/'>{userEmail}</Link>
+                  </li>
                   <li>
                     <Link to=''>Thông tin tài khoản</Link>
                   </li>

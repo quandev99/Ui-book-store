@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom'
+import CartPage from './pages/clients/cart';
 const UserList = lazy(() =>  import(  './feature/admin/users/userList'))
 const UserCreate = lazy(() =>  import(  './feature/admin/users/userCreate'))
 const UserUpdate = lazy(() =>  import(  './feature/admin/users/userUpdate'))
@@ -52,6 +53,7 @@ export const AppRoutes = createBrowserRouter([
           { path: ':id', element: <ProductDetailPage /> },
         ]
       },
+      { path: 'carts', element: <CartPage /> },
       { path: 'sign-in', element: <SignIn /> }
     ]
   },

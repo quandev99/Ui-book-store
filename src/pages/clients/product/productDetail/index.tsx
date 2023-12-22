@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
-import { useNavigate, useParams } from 'react-router-dom'
+import {  useNavigate, useParams } from 'react-router-dom'
 import { useGetProductByCateQuery, useGetProductByIdQuery } from "~/app/services/product";
 import { Modal, Rate } from "antd";
 import formatPrice from "~/utils/fomatPrice";
 import ProductItem from "../components";
+import { useAddToCartMutation } from "~/app/services/cart";
+import { getUserData } from "~/store/helper/getDataLocalStorage";
 const ProductDetailPage = () => {
+  
   const { id }: any = useParams()
   const { data: ProductByIdApi, isLoading: isLoadingProductById, error } = useGetProductByIdQuery(id)
   const dataProductById = ProductByIdApi?.product
@@ -14,6 +17,11 @@ const ProductDetailPage = () => {
   const uniqueProductByCategory = dataProductByCate?.products?.filter(product => product?._id !== id)
   let dataImage = dataProductById?.image
   const [largeImage, setLargeImage] = useState('')
+  // Cart 
+  const navigate = useNavigate()
+  const { user:userData } = getUserData()
+  const userId = userData?._id
+  const [addToCart] = useAddToCartMutation()
 
   const handleThumbnailClick = (item: any) => {
     setLargeImage(item?.url)
@@ -46,22 +54,22 @@ const ProductDetailPage = () => {
     if (count <= 1) return
     setCount((count) => count - 1)
   }
-
     const addToCartItem = async () => {
-    // const dataCart = {
-    //   user_id: userData?._id,
-    //   quantity: count,
-    //   variantProductId: idVariant,
-    // };
-    // try {
-    //   const responsive = await addToCart(dataCart).unwrap();
-    //   if (responsive) {
-    //     toast.success("Thêm sản phâm thành công!");
-    //     navigate("/carts");
-    //   }
-    // } catch (error: any) {
-    //   toast.error("Error: " + error.data.message);
-    // }
+    const dataCart = {
+      userId,
+      quantity: Number(count),
+      productId: id
+    }
+    try {
+      const responsive = await addToCart({data:dataCart}).unwrap()
+      console.log("responsive",responsive)
+      if (responsive?.cart) {
+        alert("Thêm sản phâm thành công!");
+        navigate("/carts");
+      }
+    } catch (error: any) {
+      console.log('Error: ' + error?.data?.message)
+    }
   };
 
   // chính sách đổi trả

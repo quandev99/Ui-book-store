@@ -15,12 +15,14 @@ import { apiProduct } from './services/product'
 import { apiUser } from './services/user'
 import authReducer from '../store/authSlice/authSlice'
 import { apiAuth } from './services/auth'
+import { cartReducer } from '~/store/cartSlice/cartSlice'
+import { apiCart } from './services/cart'
 
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['authSlice']
+  whitelist: ['authSlice',"cartSlice"]
 }
 const rootReducer = combineReducers({
   [apiProduct.reducerPath]: apiProduct.reducer,
@@ -31,8 +33,10 @@ const rootReducer = combineReducers({
   [apiGenre.reducerPath]: apiGenre.reducer,
   [apiUser.reducerPath]: apiUser.reducer,
   [apiImage.reducerPath]: apiImage.reducer,
+  [apiCart.reducerPath]: apiCart.reducer,
   [apiAuth.reducerPath]: apiAuth.reducer,
-  authSlice: authReducer
+  authSlice: authReducer,
+  cartSlice: cartReducer
 })
 
 const attinalMiddleware = [
@@ -44,7 +48,8 @@ const attinalMiddleware = [
   apiAuthor.middleware,
   apiGenre.middleware,
   apiUser.middleware,
-  apiAuth.middleware
+  apiAuth.middleware,
+  apiCart.middleware
 ]
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 export const store = configureStore({

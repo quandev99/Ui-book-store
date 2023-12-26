@@ -8,17 +8,24 @@ import formatPrice from '~/utils/fomatPrice'
 
 const CartPage = () => {
   
+  const [errUpdate, setErrUpdate] =useState<any>({error:"",productId:""})
   const [checkedAll, setCheckedAll] =useState(false)
   const [loadingChecked, setLoadingChecked] =useState(false)
   const { user: userData } = getUserData()
   const userId = userData?._id
-  const { data: dataCartApi, isLoading } = useGetCartByUserQuery(userId)
+  const { data: dataCartApi, isLoading,error } = useGetCartByUserQuery(userId)
   const dataCart = dataCartApi?.cart
   const isCheckedAll = dataCart?.products.every((item) => item.is_checked == true)
-useEffect(() => {
-  setCheckedAll(isCheckedAll)
-}, [isCheckedAll])
 
+useEffect(() => {
+  if (dataCart && dataCart?.products) {
+    dataCart?.products.forEach((product) => {
+      inputRefs.current[product._id] = React.createRef()
+    })
+    setErrUpdate({ error: '', productId: '' })
+  }
+  setCheckedAll(isCheckedAll)
+}, [dataCart?.products, isCheckedAll])
   const [addCheckedProduct] = useAddCheckedProductMutation()
   const [addCheckedAllProduct] = useAddCheckedAllProductMutation()
   const [removeCartItem] = useRemoveCartItemMutation()
@@ -101,14 +108,6 @@ const deleteAllCartUser = async () => {
 const [updatedQuantities, setUpdatedQuantities] = useState({})
 const inputRefs = useRef({})
 
-useEffect(() => {
-  if (dataCart && dataCart?.products) {
-    dataCart?.products.forEach((product) => {
-      inputRefs.current[product._id] = React.createRef()
-    })
-  }
-}, [dataCart?.products])
-
 
 const increase = async (product) => {
   const newQuantity = Math.max(0, Number(product?.quantity + 1))
@@ -129,6 +128,7 @@ const increase = async (product) => {
     }
   } catch (error) {
     if (error && error.status === 402) {
+     setErrUpdate({ error: error?.data?.message, productId: product?._id })
       setUpdatedQuantities((prevQuantities) => ({
         ...prevQuantities,
         [product?._id]: Number(product?.quantity)
@@ -159,6 +159,7 @@ const decrease = async (product) => {
       }
   } catch (error) {
     if (error && error.status === 402) {
+     setErrUpdate({ error: error?.data?.message, productId: product?._id })
       setUpdatedQuantities((prevQuantities) => ({
         ...prevQuantities,
         [product?._id]: Number(product?.quantity)
@@ -198,6 +199,7 @@ const handleBlur = async (product) => {
       }
     } catch (error) {
       if (error && error.status === 402) {
+        setErrUpdate({ error: error?.data?.message, productId: product?._id })
         setUpdatedQuantities((prevQuantities) => ({
           ...prevQuantities,
           [product?._id]: Number(product?.quantity)
@@ -206,12 +208,11 @@ const handleBlur = async (product) => {
         console.log('Error:', error.data.message)
       }
     } finally {
+      console.log("asdad")
       setLoadingChecked(false)
     }
   }
 }
-
- 
 
   return (
     <div className='w-full'>
@@ -286,6 +287,7 @@ const handleBlur = async (product) => {
                                   </Link>
                                   <div className=''>{formatPrice(product?.product_price) || 0 + '  đ'}</div>
                                 </div>
+                                {errUpdate && errUpdate.productId == product?._id && <div className='text-red-500 p-2 '>{errUpdate?.error}</div>}
                               </div>
                             </td>
                             <td className='whitespace-nowrap py-2 text-gray-700  hidden lg:table-cell'>

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { useLogoutMutation } from '~/app/services/auth'
+import { useGetCartByUserQuery } from '~/app/services/cart'
 import { decodeAccessToken } from '~/hooks/decodeToken'
 import { JwtPayload } from '~/interfaces/JwtPayload'
 import { resetState } from '~/store/authSlice/authSlice'
@@ -11,6 +12,9 @@ import { getUserData } from '~/store/helper/getDataLocalStorage'
 const Header = () => {
   const dispatch = useDispatch()
   const { user, tokens } = getUserData()
+  const userId = user?._id
+  const { data: dataCartApi } = useGetCartByUserQuery(userId)
+  const dataCart = dataCartApi?.cart
   const [decodedToken, setDecodedToken] = useState<any | null>(null)
   useEffect(() => {
     if (tokens?.accessToken) {
@@ -69,12 +73,12 @@ const handleLogout = async () => {
           </ul>
           <div className='flex cursor-pointer items-center gap-x-5'>
             <div className='ml-2'>
-              <Link to="carts" className='relative mr-4 '>
+              <Link to='carts' className='relative mr-4 '>
                 <span className=' transition-all text-2xl'>
                   <ShoppingCartOutlined />
                 </span>
                 <span className='absolute text-center px-1 text-sm leading-4; rounded-[50%]  bg-primary text-white'>
-                  0
+                  {dataCart?.products?.length}
                 </span>
               </Link>
               <span className=' text-black transition-all text-2xl'>

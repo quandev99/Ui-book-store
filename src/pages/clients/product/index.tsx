@@ -9,6 +9,7 @@ import { useGetAllSuppliersQuery } from '~/app/services/supplier'
 import { useGetAllPublishersQuery } from '~/app/services/publisher'
 import { useGetAllAuthorsQuery } from '~/app/services/author'
 import BookItemSkeleton from '~/components/loading/BookItemSkeleton'
+import { v4 } from 'uuid'
 
 const dataFakePrice = [
   { value: { _minPrice: 0, _maxPrice: 150000 }, title: '0₫ - 150,000₫' },
@@ -22,6 +23,7 @@ const dataFakePrice = [
   },
   { value: { _minPrice: 500000 }, title: '500,000₫ trở lên' }
 ]
+const itemsPerPage = 20
 const ProductPage = () => {
   const [url, setUrl] = useState('')
    const { data: productsApi, isLoading, error } = useGetAllProductsByClientQuery(url as any)
@@ -348,7 +350,10 @@ const ProductPage = () => {
               </div>
               <div className='grid grid-cols-1 w-full'>
                 <div className='grid grid-cols-4 gap-4 my-5'>
-                  {isLoading && [1, 2, 3,4,5,6,7,8,9,10]?.map(() => <BookItemSkeleton></BookItemSkeleton>)}
+                  {isLoading &&
+                    (new Array(itemsPerPage)
+                      .fill(0)
+                      .map(() => <BookItemSkeleton key={`${v4()}`}></BookItemSkeleton>))}
                 </div>
               </div>
               {!error && dataProducts ? (

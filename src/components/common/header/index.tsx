@@ -6,20 +6,18 @@ import { useLogoutMutation } from '~/app/services/auth'
 import { decodeAccessToken } from '~/hooks/decodeToken'
 import { JwtPayload } from '~/interfaces/JwtPayload'
 import { resetState } from '~/store/authSlice/authSlice'
+import { getUserData } from '~/store/helper/getDataLocalStorage'
 
 const Header = () => {
   const dispatch = useDispatch()
-  const authData = useSelector((state : any) => state)
-  const dataUsers = JSON.parse(localStorage.getItem('dataUsers') || '{}')
-  const { user, tokens } = dataUsers
+  const { user, tokens } = getUserData()
   const [decodedToken, setDecodedToken] = useState<any | null>(null)
   useEffect(() => {
     if (tokens?.accessToken) {
-      // Decode the token
       const decoded: JwtPayload | null = decodeAccessToken(tokens?.accessToken)
       setDecodedToken(decoded)
     }
-  }, [dispatch, tokens?.accessToken])
+  }, [ tokens?.accessToken])
   const userImage = user?.image
   const userEmail = user?.name
   const userRole = decodedToken?.role
@@ -71,14 +69,14 @@ const handleLogout = async () => {
           </ul>
           <div className='flex cursor-pointer items-center gap-x-5'>
             <div className='ml-2'>
-              <span className='relative mr-4 '>
+              <Link to="carts" className='relative mr-4 '>
                 <span className=' transition-all text-2xl'>
                   <ShoppingCartOutlined />
                 </span>
                 <span className='absolute text-center px-1 text-sm leading-4; rounded-[50%]  bg-primary text-white'>
                   0
                 </span>
-              </span>
+              </Link>
               <span className=' text-black transition-all text-2xl'>
                 <UserOutlined />
               </span>
@@ -99,10 +97,10 @@ const handleLogout = async () => {
                     <Link to=''>{userEmail}</Link>
                   </li>
                   <li>
-                    <Link to=''>Thông tin tài khoản</Link>
+                    <Link to='/admin'>Trang quản trị</Link>
                   </li>
                   <li>
-                    <Link to='/admin'>Trang quản trị</Link>
+                    <Link to=''>Thông tin tài khoản</Link>
                   </li>
                   <li>
                     <button onClick={handleLogout}>Đăng xuất</button>
@@ -114,10 +112,10 @@ const handleLogout = async () => {
                     <Link to='/'>{userEmail}</Link>
                   </li>
                   <li>
-                    <Link to=''>Thông tin tài khoản</Link>
+                    <Link to='/admin'>Trang nhân viên</Link>
                   </li>
                   <li>
-                    <Link to='/admin'>Trang nhân viên</Link>
+                    <Link to=''>Thông tin tài khoản</Link>
                   </li>
                   <li>
                     <button onClick={handleLogout}>Đăng xuất</button>

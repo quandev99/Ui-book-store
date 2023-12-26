@@ -169,7 +169,7 @@ const ProductDetailPage = () => {
             <div className='mb-5'>
               <p>
                 <span className='text-primary text-3xl font-medium'>
-                  {formatPrice(dataProductById?.price) + '  đ' || 'Đang cập nhật'}
+                  {formatPrice(dataProductById?.price) || 'Đang cập nhật'}
                 </span>
               </p>
             </div>

@@ -22,39 +22,72 @@ export const apiCart = createApi({
       invalidatesTags: ['Carts']
     }),
     addCheckedProduct: builder.mutation<ApiResponse, any>({
-      query: ({ data }) => ({
+      query: (data) => ({
         url: `/carts/addCheckedProduct`,
         method: 'POST',
         body: data
       }),
       invalidatesTags: ['Carts']
     }),
-    removeCartItem: builder.mutation<any, void>({
-      query: (cartItem) => {
-        return {
-          url: `/carts/remove`,
-          method: 'PATCH',
-          body: cartItem
-        }
-      },
+    addCheckedAllProduct: builder.mutation<ApiResponse, any>({
+      query: (data) => ({
+        url: `/carts/addCheckedAllProduct`,
+        method: 'POST',
+        body: data
+      }),
       invalidatesTags: ['Carts']
     }),
-    UpdateCartItem: builder.query<any, void>({
+    updateCartItem: builder.mutation<any, void>({
       query: (dataUpdate) => ({
         url: `/carts/update`,
         method: 'PATCH',
         body: dataUpdate
       }),
-      providesTags: ['Carts']
+      invalidatesTags: ['Carts']
     }),
-    deleteAllCartByUser: builder.query<any, void>({
-      query: (_id) => ({
-        url: `/carts/deleteAll/${_id}`,
-        method: 'PATCH'
+    removeCartItem: builder.mutation<any, void>({
+      query: (data) => ({
+        url: `/carts/remove`,
+        method: 'PATCH',
+        body: data
       }),
-      providesTags: ['Carts']
+      invalidatesTags: ['Carts']
+    }),
+    increaseQuantity: builder.mutation<any, void>({
+      query: (data) => ({
+        url: `/carts/increase`,
+        method: 'POST',
+        body: data
+      }),
+      invalidatesTags: ['Carts']
+    }),
+    decreaseQuantity: builder.mutation<any, void>({
+      query: (data) => ({
+        url: `/carts/decrease`,
+        method: 'POST',
+        body: data
+      }),
+      invalidatesTags: ['Carts']
+    }),
+    deleteAllCart: builder.mutation<any, void>({
+      query: (data) => ({
+        url: `/carts/deleteAllCart`,
+        method: 'POST',
+        body: data
+      }),
+      invalidatesTags: ['Carts']
     })
   })
 })
 
-export const { useGetCartByUserQuery, useAddToCartMutation, useAddCheckedProductMutation } = apiCart
+export const {
+  useGetCartByUserQuery,
+  useAddToCartMutation,
+  useAddCheckedProductMutation,
+  useAddCheckedAllProductMutation,
+  useUpdateCartItemMutation,
+  useRemoveCartItemMutation,
+  useIncreaseQuantityMutation,
+  useDecreaseQuantityMutation,
+  useDeleteAllCartMutation
+} = apiCart

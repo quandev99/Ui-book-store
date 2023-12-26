@@ -1,3 +1,4 @@
 export default function formatPrice(num: any) {
-  return num?.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+  const formattedNum = num?.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+  return formattedNum ? `${formattedNum} đ` : ''
 }

@@ -19,7 +19,7 @@ const ProductItem = (item: any) => {
           <Link to={`/products/${_id}`}>{name}</Link>
         </h5>
         <div className='flex items-center justify-between mb-10 text-sm '>
-          <span className='font-bold text-[#CD151C] text-[15px]'>{formatPrice(price) + ' đ'}</span>
+          <span className='font-bold text-[#CD151C] text-[15px]'>{formatPrice(price)}</span>
         </div>
         <button className='w-full py-2 text-white  duration-300 transition-all  rounded-lg cursor-pointer hover:text-primary bg-primary hover:bg-white hover:border  mt-auto'>
           Xem chi tiết

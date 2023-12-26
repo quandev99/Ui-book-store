@@ -25,4 +25,5 @@ interface Cart {
 export interface ApiResponse {
   message: string
   cart: Cart
+  success:Boolean
 }

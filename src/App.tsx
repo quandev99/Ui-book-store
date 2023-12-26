@@ -1,10 +1,11 @@
 import { RouterProvider } from 'react-router-dom'
 import { AppRoutes } from './routes'
 import {  Suspense } from 'react'
+import { LoadingPage } from './components/loading/LoadingPage'
 function App() {
   return (
     <div className='min-h-screen'>
-      <Suspense fallback={<div className='text-2xl text-red-500 bg-blue-200'>Loading...</div>}>
+      <Suspense fallback={<LoadingPage/>}>
         <RouterProvider router={AppRoutes} />
       </Suspense>
     </div>

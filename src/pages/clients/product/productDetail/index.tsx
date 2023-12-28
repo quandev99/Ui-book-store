@@ -16,6 +16,8 @@ const ProductDetailPage = () => {
   const { data: dataProductByCate } = useGetProductByCateQuery(categoryId)
   const uniqueProductByCategory = dataProductByCate?.products?.filter(product => product?._id !== id)
   let dataImage = dataProductById?.image
+  const isQuantity = dataProductById?.quantity <= 0
+  console.log("isQuantity", isQuantity)
   const [largeImage, setLargeImage] = useState('')
   // Cart 
   const navigate = useNavigate()
@@ -68,7 +70,7 @@ const ProductDetailPage = () => {
         navigate("/carts");
       }
     } catch (error: any) {
-      console.log('Error: ' + error?.data?.message)
+      alert(error?.data?.message);
     }
   };
 
@@ -199,9 +201,12 @@ const ProductDetailPage = () => {
               </div>
               <button
                 onClick={addToCartItem}
-                className={`col-span-2 hover:shadow-md bg-[#1f66ef] rounded-full transition-all hover:bg-blue-800 text-white font-medium w-full p-2 text-center`}
+                disabled={isQuantity}
+                className={`col-span-2 hover:shadow-md ${
+                  isQuantity ? `bg-[#234a99]` : `bg-[#1f66ef]`
+                } rounded-full transition-all hover:bg-blue-800 text-white font-medium w-full p-2 text-center`}
               >
-                {'Mua hàng'}
+                {isQuantity ? 'Tạm thời hết hàng' : 'Mua hàng'}
               </button>
             </div>
           </div>

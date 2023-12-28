@@ -122,7 +122,7 @@ const increase = async (product) => {
     if (result?.success) {
       setUpdatedQuantities((prevQuantities) => ({
         ...prevQuantities,
-        [product?._id]: Number(product.quantity - 1)
+        [product?._id]: Number(product.quantity + 1)
       }))
       setLoadingChecked(false)
     }
@@ -153,7 +153,7 @@ const decrease = async (product) => {
       if (result?.success) {
         setUpdatedQuantities((prevQuantities) => ({
           ...prevQuantities,
-          [product?._id]: Number((product.quantity - 1))
+          [product?._id]: +newQuantity !== 0 ? Number(product.quantity - 1) : 1
         }))
         setLoadingChecked(false)
       }
@@ -191,7 +191,7 @@ const handleBlur = async (product) => {
       const data = {
         userId,
         productId: product?.product_id?._id,
-        newQuantity: newQuantity
+        newQuantity: newQuantity 
       }
       const result = await updateCartItem(data as any).unwrap()
       if (result?.success) {

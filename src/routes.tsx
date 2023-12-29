@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom'
-const CartPage =lazy(() =>  import(   './pages/clients/cart'))
+const CheckOut = lazy(() =>  import( './pages/clients/checkout'))
+const CartPage = lazy(() =>  import(   './pages/clients/cart'))
 const UserList = lazy(() =>  import(  './feature/admin/users/userList'))
 const UserCreate = lazy(() =>  import(  './feature/admin/users/userCreate'))
 const UserUpdate = lazy(() =>  import(  './feature/admin/users/userUpdate'))
@@ -50,10 +51,11 @@ export const AppRoutes = createBrowserRouter([
         path: 'products',
         children: [
           { index: true, element: <ProductPage /> },
-          { path: ':id', element: <ProductDetailPage /> },
+          { path: ':id', element: <ProductDetailPage /> }
         ]
       },
       { path: 'carts', element: <CartPage /> },
+      { path: 'checkout', element: <CheckOut /> },
       { path: 'sign-in', element: <SignIn /> }
     ]
   },

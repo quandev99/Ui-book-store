@@ -74,3 +74,26 @@
     background-position-x: -200%;
   }
 }
+
+
+// Checkout (forms)
+.custom-radio {
+  width: 10px;
+  height: 10px;
+}
+.custom-radio > div {
+  box-shadow: 0 0 0 5px white;
+}
+
+.custom-radio input:checked + div {
+  @apply bg-blue-500;
+  box-shadow: 0 0 0 2.5px white, 0 0 0 5px #3b82f6;
+}
+
+.custom-checkbox input:checked + div .custom-checkbox-square {
+  background-color: #3b82f6;
+}
+.custom-checkbox-square {
+  width: 20px;
+  height: 20px;
+}

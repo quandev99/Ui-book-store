@@ -371,7 +371,7 @@ const handleBlur = async (product) => {
                     )
                   })}
                 <div className=' bg-[#d26e4b] hover:bg-[#b86142] transition-all duration-200 text-white text-center w-full mt-3'>
-                  <Link to={`/checkouts`} className='uppercase block py-3 font-medium'>
+                  <Link to={`/checkout`} className='uppercase block py-3 font-medium'>
                     Tiến hành thanh toán
                   </Link>
                 </div>

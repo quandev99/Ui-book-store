@@ -13,6 +13,13 @@ export const apiCart = createApi({
       }),
       providesTags: ['Carts']
     }),
+    getCartByUserChecked: builder.query<any, void>({
+      query: (_id) => ({
+        url: `/carts/getCartByUserChecked/${_id}`,
+        method: 'GET'
+      }),
+      providesTags: ['Carts']
+    }),
     addToCart: builder.mutation<ApiResponse, { data: dataAddToCart }>({
       query: ({ data }) => ({
         url: `/carts/add`,
@@ -82,6 +89,7 @@ export const apiCart = createApi({
 
 export const {
   useGetCartByUserQuery,
+  useGetCartByUserCheckedQuery,
   useAddToCartMutation,
   useAddCheckedProductMutation,
   useAddCheckedAllProductMutation,

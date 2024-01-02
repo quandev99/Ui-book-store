@@ -4,22 +4,28 @@ import * as yup from "yup";
 import InputHook from "~/components/forms/input/input";
 import Radio from "~/components/forms/radio";
 import { getUserData } from "~/store/helper/getDataLocalStorage";
-import { useGetCartByUserCheckedQuery, useGetCartByUserQuery } from "~/app/services/cart";
+import { useGetCartByUserCheckedQuery } from "~/app/services/cart";
+import formatPrice from "~/utils/fomatPrice";
+import React from "react";
+import { useAddBillMutation } from "~/app/services/bill";
 const schema = yup
   .object({
     userName: yup.string().required('Please enter your userName'),
+    userNote: yup.string().required('Please enter your userNote'),
+    userAddress: yup.string().required('Please enter your userAddress'),
+    userPhone: yup.string().required('Please enter your userPhone'),
     payment: yup
       .string()
       .required('Please select your Payment')
-      .oneOf(['nhanhang', 'vnpay'], 'Bạn phải chọn một phương thức thanh toán')
+      .oneOf(['CashPayment', 'vnpay'], 'Bạn phải chọn một phương thức thanh toán')
   })
   .required()
 const CheckOut = () => {
   const { user: userData } = getUserData()
   const userId = userData?._id
   const { data: dataCartApi, isLoading, error } = useGetCartByUserCheckedQuery(userId)
+const [addBill]=  useAddBillMutation()
   const dataCart = dataCartApi?.cart
-  console.log("dataCart: " , dataCart)
     const {
       handleSubmit,
       getValues,
@@ -32,26 +38,34 @@ const CheckOut = () => {
       resolver: yupResolver(schema),
       mode: 'onChange',
       defaultValues: {
-        payment: 'nhanhang'
+        payment: 'CashPayment'
       }
     })
-    const onSubmit = (values) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(values)
-          console.log('values', values)
-          reset({
-            userName: 'quandeptrai',
-            payment: 'nhanhang'
-          })
-        }, 5000)
-      })
+    const onSubmit = async (values) => {
+      const data: any = {
+        user_id: userId,
+        bill_note: values.userNote,
+        bill_shippingAddress: values.userAddress,
+        bill_phoneNumber: values.userPhone,
+        payment_method: values.payment || undefined
+      }
+      
+      console.log('Success', data)
+      // return 
+      const resolve = await addBill(data).unwrap()
+      alert("Đặt hàng thành công!")
+      // return new Promise((resolve, reject) => {
+      //     reset({
+      //       userName: 'quandeptrai',
+      //       payment: ''
+      //     })
+      // })
     }
       const watchPayment = watch('payment')
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='mx-auto my-10 '>
       <div className='grid grid-cols-3 gap-4'>
-        <div>
+        <div className='shadow-2xl  p-4'>
           <h2 className='text-2xl font-bold'>Thông tin giao hàng</h2>
           <div className='flex flex-col gap-3 mb-2'>
             <label htmlFor='userName' className='cursor-pointer'>
@@ -110,15 +124,15 @@ const CheckOut = () => {
             {errors?.userNote && <p className='text-sm text-red-500 '>{errors?.userNote?.message}</p>}
           </div>
         </div>
-        <div>
+        <div className='shadow-2xl p-4 bg-slate-50'>
           <h2 className='text-2xl font-bold'>Phương thức thánh toán</h2>
-          <div className='flex flex-col gap-3 my-5'>
+          <div className='flex flex-col gap-3 my-5 '>
             <div className='flex flex-col gap-5 cursor-pointer'>
               <div className='flex items-center gap-x-3'>
-                <Radio control={control} name='payment' value='nhanhang' checked={watchPayment === 'nhanhang'}></Radio>
+                <Radio control={control} name='payment' value='CashPayment' checked={watchPayment === 'CashPayment'}></Radio>
                 <span className='cursor-pointer'>Thanh toán khi nhận hàng</span>
               </div>
-              <div className='flex items-center gap-x-3'>
+              <div className='flex items-center gap-x-3  '>
                 <Radio control={control} name='payment' value='vnpay' checked={watchPayment === 'vnpay'}></Radio>
                 <span className='cursor-pointer'>Thanh toán bằng VnPay</span>
               </div>
@@ -126,9 +140,60 @@ const CheckOut = () => {
             {errors.payment && <p className='text-sm text-red-500 '>{errors.payment.message}</p>}
           </div>
         </div>
-        <div>
-          <div>
+        <div className='shadow-2xl  p-4'>
+          <h2 className='text-2xl font-bold'>Sản phẩm</h2>
+          <tbody>
+            {dataCart !== null &&
+              dataCart?.products?.map((product: any) => {
+                return (
+                  <tr key={product?._id}>
+                    <td className=' col-span-2 gap-2 flex lg:m-4 lg:space-x-2 w-full'>
+                      <div className='w-[60px] h-[60px] relative'>
+                        <div className='w-full h-full  border border-1 shadow-md absolute'>
+                          <img
+                            src={product?.product_id?.image[0]?.url || product?.product_image}
+                            alt='No image'
+                            className='object-cover h-full w-full '
+                          />
+                        </div>
+                        <div className=' text-white w-5 h-5 rounded-full bg-primary flex items-center justify-center  absolute top-0 right-0 z-50'>
+                          <span className='text-xs'>{product.quantity}</span>
+                        </div>
+                      </div>
+                      <div className='flex flex-col gap-y-5'>
+                        <span className='text-xs'>{product?.product_name}</span>
+                        <span>{formatPrice(product?.product_price) || 0 + '  đ'}</span>
+                      </div>
+                    </td>
 
+                    <td className='text-center whitespace-nowrap lg:text-[16px]  col-span-1  font-medium text-primary'>
+                      {formatPrice(product?.product_price * product?.quantity) || 0 + '  đ'}
+                    </td>
+                  </tr>
+                )
+              })}
+          </tbody>
+          <hr />
+          <div className='box-content px-4 py-3'>
+            {dataCart?.totals &&
+              dataCart?.totals.length > 0 &&
+              dataCart?.totals?.map((total: any, index) => {
+                return (
+                  <React.Fragment key={total?.code + index}>
+                    <div className=' flex justify-between py-3' key={total?.code}>
+                      <h1>{total?.title}</h1>
+                      <span
+                        className={`${
+                          total?.code == 'grand_total' ? 'text-2xl font-bold text-red-500' : 'font-medium '
+                        }`}
+                      >
+                        {formatPrice(total?.price) || 0}
+                      </span>
+                    </div>
+                    <hr />
+                  </React.Fragment>
+                )
+              })}
           </div>
           <div>
             <button
@@ -141,7 +206,7 @@ const CheckOut = () => {
               {isSubmitting ? (
                 <div className='w-5 h-5 rounded-full  border-2 border-white border-t-transparent transition-all mx-auto animate-spin'></div>
               ) : (
-                'Submit'
+                'Đặt Hàng'
               )}
             </button>
           </div>

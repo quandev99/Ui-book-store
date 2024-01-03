@@ -6,9 +6,9 @@ export const apiBill = createApi({
   tagTypes: ['Bills'],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    getAll: builder.query<any, void>({
-      query: () => ({
-        url: `/bills`,
+    getAllBills: builder.query<any, void>({
+      query: (data) => ({
+        url: `/bills${data}`,
         method: 'GET'
       }),
       providesTags: ['Bills']
@@ -20,8 +20,8 @@ export const apiBill = createApi({
       }),
       providesTags: ['Bills']
     }),
-    addBill: builder.mutation<ApiResponse, { data: dataAddToCart }>({
-      query: ({ data }) => ({
+    addBill: builder.mutation<any, any>({
+      query: (data) => ({
         url: `/bills/add`,
         method: 'POST',
         body: data
@@ -39,4 +39,4 @@ export const apiBill = createApi({
   })
 })
 
-export const { useAddBillMutation } = apiBill
+export const { useGetAllBillsQuery, useAddBillMutation } = apiBill

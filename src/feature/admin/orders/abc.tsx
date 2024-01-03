@@ -1,13 +1,19 @@
 import { Table, TableProps, Tabs } from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useGetAllBillsQuery } from '~/app/services/bill'
 
 const ListOderItem = ({tabKey}) => {
-  console.log('ListOderItem', tabKey)
+  const [url, setUrl] = useState(tabKey)
+ const { data: dataBillsApi, isLoading, error } = useGetAllBillsQuery(url)
+ console.log('tabKey', tabKey)
+  useEffect(() => {
+    setUrl(`?_page=${1}&_limit=${10}&_sort=createdAt&bill_status=${url}`)
+  }, [dataBillsApi])
   const columns: ColumnsType<any> = [
     {
       title: 'Name',
-      dataIndex: 'name'
+      dataIndex: 'bill_user_name'
     },
     {
       title: 'Chinese Score',
@@ -18,37 +24,29 @@ const ListOderItem = ({tabKey}) => {
       }
     },
     {
-      title: 'Math Score',
-      dataIndex: 'math',
+      title: 'Địa chỉ',
+      dataIndex: 'bill_shipping_Address',
       sorter: {
-        compare: (a, b) => a.math - b.math,
+        compare: (a, b) => a. bill_shipping_Address - b. bill_shipping_Address,
         multiple: 2
       }
     },
     {
-      title: 'English Score',
-      dataIndex: 'english',
+      title: 'Số điện thoại',
+      dataIndex: 'bill_phoneNumber',
       sorter: {
-        compare: (a, b) => a.english - b.english,
+        compare: (a, b) => a.bill_phoneNumber - b.bill_phoneNumber,
         multiple: 1
       }
     }
   ]
-
-  const data = [
-    { key: '1', name: 'John Brown', chinese: 98, math: 60, english: 70 },
-    { key: '2', name: 'Jim Green', chinese: 98, math: 66, english: 89 },
-    { key: '3', name: 'Joe Black', chinese: 98, math: 90, english: 70 },
-    { key: '4', name: 'Jim Red', chinese: 88, math: 99, english: 89 }
-  ]
-
   const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra)
   }
 
   return (
     <div className='mb-5'>
-      <Table columns={columns} dataSource={data} onChange={onChange} />
+      <Table columns={columns} dataSource={dataBillsApi?.bills} onChange={onChange} />
     </div>
   )
 }

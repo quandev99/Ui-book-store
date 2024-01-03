@@ -44,6 +44,7 @@ const [addBill]=  useAddBillMutation()
     const onSubmit = async (values) => {
       const data: any = {
         user_id: userId,
+        bill_userName: values.userName,
         bill_note: values.userNote,
         bill_shippingAddress: values.userAddress,
         bill_phoneNumber: values.userPhone,
@@ -54,12 +55,14 @@ const [addBill]=  useAddBillMutation()
       // return 
       const resolve = await addBill(data).unwrap()
       alert("Đặt hàng thành công!")
-      // return new Promise((resolve, reject) => {
-      //     reset({
-      //       userName: 'quandeptrai',
-      //       payment: ''
-      //     })
-      // })
+      if (resolve)
+        reset({
+          userName: 'quandeptrai',
+          userNote: '',
+          userAddress: '',
+          userPhone: '',
+          payment: 'CashPayment'
+        })
     }
       const watchPayment = watch('payment')
   return (

@@ -1,14 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/dist/query/react'
 import { baseQueryWithReauth } from './apiConfig'
-import { ApiResponse, dataAddToCart } from '~/interfaces/Cart'
 export const apiBill = createApi({
   reducerPath: 'bill',
   tagTypes: ['Bills'],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    getAllBills: builder.query<any, void>({
-      query: (data) => ({
-        url: `/bills${data}`,
+    getAllBills: builder.query<any, any>({
+      query: ({ page, limit, bill_status }) => ({
+        url: `/bills?_page=${page}&_limit=${limit}&_sort=createdAt&_bill_status=${bill_status}`,
         method: 'GET'
       }),
       providesTags: ['Bills']
@@ -28,15 +27,18 @@ export const apiBill = createApi({
       }),
       invalidatesTags: ['Bills']
     }),
-    updateCartItem: builder.mutation<any, void>({
-      query: (dataUpdate) => ({
-        url: `/carts/update`,
+    updateBillStatus: builder.mutation<any, any>({
+      query: (data) => {
+        const { id, ...body } = data
+        return {
+        url: `/bills/updateBillStatus/${id}`,
         method: 'PATCH',
-        body: dataUpdate
-      }),
+        body
+        }
+      },
       invalidatesTags: ['Bills']
     })
   })
 })
 
-export const { useGetAllBillsQuery, useAddBillMutation } = apiBill
+export const { useGetAllBillsQuery, useAddBillMutation,useUpdateBillStatusMutation } = apiBill

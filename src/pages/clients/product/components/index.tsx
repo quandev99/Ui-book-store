@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import formatPrice from '~/utils/fomatPrice'
+import { formatPrice } from '~/utils/format'
 
 const ProductItem = (item: any) => {
   const { _id, image, name, price } = item?.item || {}

@@ -3,7 +3,7 @@ import Slider from "react-slick";
 import {  useNavigate, useParams } from 'react-router-dom'
 import { useGetProductByCateQuery, useGetProductByIdQuery } from "~/app/services/product";
 import { Modal, Rate } from "antd";
-import formatPrice from "~/utils/fomatPrice";
+import {formatPrice} from "~/utils/format";
 import ProductItem from "../components";
 import { useAddToCartMutation } from "~/app/services/cart";
 import { getUserData } from "~/store/helper/getDataLocalStorage";

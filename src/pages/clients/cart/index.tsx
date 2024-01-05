@@ -4,7 +4,7 @@ import { useAddCheckedAllProductMutation, useAddCheckedProductMutation, useDecre
 import { LoadingPage } from '~/components/loading/LoadingPage'
 import LoadingSkeleton from '~/components/loading/LoadingSkeleton'
 import { getUserData } from '~/store/helper/getDataLocalStorage'
-import formatPrice from '~/utils/fomatPrice'
+import { formatPrice } from '~/utils/format'
 
 const CartPage = () => {
   

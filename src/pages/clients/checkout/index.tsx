@@ -5,9 +5,9 @@ import InputHook from "~/components/forms/input/input";
 import Radio from "~/components/forms/radio";
 import { getUserData } from "~/store/helper/getDataLocalStorage";
 import { useGetCartByUserCheckedQuery } from "~/app/services/cart";
-import formatPrice from "~/utils/fomatPrice";
 import React from "react";
 import { useAddBillMutation } from "~/app/services/bill";
+import { formatPrice } from "~/utils/format";
 const schema = yup
   .object({
     userName: yup.string().required('Please enter your userName'),

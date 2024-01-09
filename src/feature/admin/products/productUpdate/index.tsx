@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Button, Form, Input, Select, Layout, Switch, message, Row, Col, Space, theme ,Spin} from 'antd'
 import { useForm } from 'antd/lib/form/Form'
 import { useEffect, useState } from 'react'

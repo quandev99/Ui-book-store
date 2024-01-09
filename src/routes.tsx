@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom'
+import UpdateOrder from './feature/admin/orders/orderUpdate';
 const CheckOut = lazy(() =>  import( './pages/clients/checkout'))
 const CartPage = lazy(() =>  import(   './pages/clients/cart'))
 const UserList = lazy(() =>  import(  './feature/admin/users/userList'))
@@ -140,8 +141,8 @@ export const AppRoutes = createBrowserRouter([
         element: <OderMain />,
         children: [
           { index: true, element: <ListOder /> },
-          { path: 'list', element: <ListOder /> }
-          // { path: ':id/update', element: <UserUpdate /> }
+          { path: 'list', element: <ListOder /> },
+          { path: ':id/update', element: <UpdateOrder /> }
         ]
       }
     ]

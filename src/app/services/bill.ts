@@ -12,9 +12,9 @@ export const apiBill = createApi({
       }),
       providesTags: ['Bills']
     }),
-    getBillByUser: builder.query<any, void>({
-      query: (_id) => ({
-        url: `/bills/getById/${_id}`,
+    getBillById: builder.query<any, any>({
+      query: (id) => ({
+        url: `/bills/getById/${id}`,
         method: 'GET'
       }),
       providesTags: ['Bills']
@@ -31,9 +31,9 @@ export const apiBill = createApi({
       query: (data) => {
         const { id, ...body } = data
         return {
-        url: `/bills/updateBillStatus/${id}`,
-        method: 'PATCH',
-        body
+          url: `/bills/updateBillStatus/${id}`,
+          method: 'PATCH',
+          body
         }
       },
       invalidatesTags: ['Bills']
@@ -41,4 +41,4 @@ export const apiBill = createApi({
   })
 })
 
-export const { useGetAllBillsQuery, useAddBillMutation,useUpdateBillStatusMutation } = apiBill
+export const { useGetAllBillsQuery, useAddBillMutation,useUpdateBillStatusMutation ,useGetBillByIdQuery} = apiBill

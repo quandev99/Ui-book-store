@@ -1,11 +1,12 @@
 import { Table, TableProps, Tabs } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useState } from 'react'
-import { useGetAllBillsQuery, useUpdateBillStatusMutation } from '~/app/services/bill'
+import { useGetAllBillsQuery} from '~/app/services/bill'
 import { formatDate } from '~/utils/format'
 import { Sorter } from '~/utils/sorter'
 import TableCustom from './orderList/asss'
 import { EditOutlined } from '@ant-design/icons'
+import { Link } from 'react-router-dom'
 
 const ListOderItem = ({tabKey}: any) => {
   const [page, setPage] = useState<number>(1)
@@ -14,7 +15,6 @@ const ListOderItem = ({tabKey}: any) => {
   const params = {
     page, limit, bill_status:tabKey
   }
-  const [updateBillStatus] = useUpdateBillStatusMutation()
  const { data: dataBillsApi, isLoading, error } = useGetAllBillsQuery(params)
  const dataBills = dataBillsApi?.bills ?? null
   const columns: ColumnsType<any> = [
@@ -71,23 +71,18 @@ const ListOderItem = ({tabKey}: any) => {
       title: 'Thao tác',
        render: (record: any) => {
         return (
-          <div onClick={() => handlerUpdateBillStatus(record?._id)} className='text-white px-1 py-1 bg-green-500 rounded-md text-center'>
+          <Link
+            to={`/admin/orders/${record?._id}/update`}
+            className='text-white px-1 py-1 block bg-green-500 rounded-md text-center'
+          >
             <EditOutlined />
-          </div>
+          </Link>
         )
       }
     }
   ]
   const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra)
-  }
-  const handlerUpdateBillStatus = async (id) => {
-    const data = {
-      id,
-      newStatus: 'Confirmed'
-    }
-    const result = await updateBillStatus(data).unwrap();
-    console.log(result);
   }
   return (
     <div className='mb-5'>

@@ -1,5 +1,5 @@
 import { Tabs } from 'antd'
-import React, { useCallback, useEffect } from 'react'
+import React from 'react'
 import ListOrderItem from '../abc'
   const tabContent = [
     { key: '',  title: 'Tất cả' },
@@ -20,12 +20,10 @@ const ListOrder = () => {
   return (
     <>
       <div className='mb-5 '>
-        <Tabs
-          activeKey={activeTab}
-          defaultActiveKey={activeTab}
-          onChange={handleTabChange}
-          tabBarGutter={90}
-        >
+        <div className='flex items-center justify-between p-4'>
+          <h1 className='text-xl font-bold'>Danh sách đơn hàng</h1>
+        </div>
+        <Tabs activeKey={activeTab} defaultActiveKey={activeTab} onChange={handleTabChange} tabBarGutter={90}>
           {tabContent.map((item) => (
             <Tabs.TabPane key={item.key} tab={item.title}>
               <ListOrderItem tabKey={activeTab} />

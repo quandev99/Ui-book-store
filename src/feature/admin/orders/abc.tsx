@@ -11,12 +11,14 @@ import { Link } from 'react-router-dom'
 const ListOderItem = ({tabKey}: any) => {
   const [page, setPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
-   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const params = {
-    page, limit, bill_status:tabKey
+    page,
+    limit,
+    bill_status: tabKey
   }
- const { data: dataBillsApi, isLoading, error } = useGetAllBillsQuery(params)
- const dataBills = dataBillsApi?.bills ?? null
+  const { data: dataBillsApi, isLoading, error } = useGetAllBillsQuery(params)
+  const dataBills = dataBillsApi?.bills ?? null
   const columns: ColumnsType<any> = [
     {
       title: 'Mã đơn hàng',
@@ -69,7 +71,7 @@ const ListOderItem = ({tabKey}: any) => {
     },
     {
       title: 'Thao tác',
-       render: (record: any) => {
+      render: (record: any) => {
         return (
           <Link
             to={`/admin/orders/${record?._id}/update`}
@@ -84,6 +86,21 @@ const ListOderItem = ({tabKey}: any) => {
   const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra)
   }
+   if (error) {
+     if ('data' in error) {
+       if (error.data) {
+         const errorWithMessage = error as { data: { message: string } }
+         return (
+           <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>
+             Error: {errorWithMessage?.data?.message}
+           </div>
+         )
+       }
+     } else {
+       // Xử lý trường hợp `error` không có thuộc tính 'data' ở đây
+       return <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: Error connect server</div>
+     }
+   }
   return (
     <div className='mb-5'>
       <TableCustom loading={isLoading} dataSource={dataBills} columns={columns} onChange={onChange} />

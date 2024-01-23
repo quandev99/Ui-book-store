@@ -7,7 +7,6 @@ const UserList = lazy(() =>  import(  './feature/admin/users/userList'))
 const UserCreate = lazy(() =>  import(  './feature/admin/users/userCreate'))
 const UserUpdate = lazy(() =>  import(  './feature/admin/users/userUpdate'))
 const UserTrash = lazy(() =>  import(  './feature/admin/users/userTrash'))
-const OderMain = lazy(() =>  import(  './feature/admin/orders/orderMain'))
 const ListOder = lazy(() =>  import(  './feature/admin/orders/orderList'))
 const ProductPage = lazy(() =>  import(  './pages/clients/product'))
 const ProductDetailPage = lazy(() => import('./pages/clients/product/productDetail'))
@@ -138,7 +137,6 @@ export const AppRoutes = createBrowserRouter([
       },
       {
         path: 'orders',
-        element: <OderMain />,
         children: [
           { index: true, element: <ListOder /> },
           { path: 'list', element: <ListOder /> },

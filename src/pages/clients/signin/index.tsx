@@ -5,9 +5,9 @@ import { Layout, Menu, Button, Row, Col, Typography, Form, Input, Switch } from 
 import { useDispatch } from 'react-redux'
 import { useLoginMutation } from '~/app/services/auth'
 import { setCredentials } from '~/store/authSlice/authSlice'
+import { handleError, handleSuccess } from '~/utils/toast'
 const { Title } = Typography
 const {  Content } = Layout
-
 const imageLoGo = 'https://cdn0.fahasa.com/skin/frontend/ma_vanese/fahasa/images/fahasa-logo.png'
 const SignIn = () => {
      const dispatch = useDispatch()
@@ -18,11 +18,13 @@ const SignIn = () => {
      try {
        const { metaData } = await login(values).unwrap()
        if (metaData) {
-          localStorage.setItem('dataUsers', JSON.stringify(metaData))
-         navigate('/')
+         localStorage.setItem('dataUsers', JSON.stringify(metaData))
+         handleSuccess('welcome')
+         //  navigate('/')
         }
-     } catch (err) {
-     console.log('err:', err)
+        location.href = '/'
+     } catch (error) {
+       handleError(error)
      }
     }
 

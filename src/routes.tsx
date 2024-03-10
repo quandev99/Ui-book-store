@@ -1,13 +1,16 @@
 import { lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router-dom'
 import UpdateOrder from './feature/admin/orders/orderUpdate';
+import AccountPage from './pages/clients/customer/account';
+import OrderPage from './pages/clients/customer/order';
+import OrderAdmin from './feature/admin/orders';
+const CustomerPage = lazy(() => import('./pages/clients/customer'))
 const CheckOut = lazy(() =>  import( './pages/clients/checkout'))
 const CartPage = lazy(() =>  import(   './pages/clients/cart'))
 const UserList = lazy(() =>  import(  './feature/admin/users/userList'))
 const UserCreate = lazy(() =>  import(  './feature/admin/users/userCreate'))
 const UserUpdate = lazy(() =>  import(  './feature/admin/users/userUpdate'))
 const UserTrash = lazy(() =>  import(  './feature/admin/users/userTrash'))
-const ListOder = lazy(() =>  import(  './feature/admin/orders/orderList'))
 const ProductPage = lazy(() =>  import(  './pages/clients/product'))
 const ProductDetailPage = lazy(() => import('./pages/clients/product/productDetail'))
 const LayoutClient = lazy(() =>  import( './layouts/clientLayout'))
@@ -55,6 +58,15 @@ export const AppRoutes = createBrowserRouter([
         ]
       },
       { path: 'carts', element: <CartPage /> },
+      {
+        path: 'customer',
+        element: <CustomerPage />,
+        children: [
+          { index: true, element: <Navigate to='account' /> },
+          { path: 'account', element: <AccountPage /> },
+          { path: 'order', element: <OrderPage /> }
+        ]
+      },
       { path: 'checkout', element: <CheckOut /> },
       { path: 'sign-in', element: <SignIn /> }
     ]
@@ -138,8 +150,8 @@ export const AppRoutes = createBrowserRouter([
       {
         path: 'orders',
         children: [
-          { index: true, element: <ListOder /> },
-          { path: 'list', element: <ListOder /> },
+          { index: true, element: <OrderAdmin /> },
+          { path: 'list', element: <OrderAdmin /> },
           { path: ':id/update', element: <UpdateOrder /> }
         ]
       }

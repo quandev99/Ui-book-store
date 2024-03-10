@@ -1,20 +1,21 @@
 import { LoginOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useLogoutMutation } from '~/app/services/auth'
 import { useGetCartByUserQuery } from '~/app/services/cart'
 import { decodeAccessToken } from '~/hooks/decodeToken'
 import { JwtPayload } from '~/interfaces/JwtPayload'
 import { resetState } from '~/store/authSlice/authSlice'
 import { getUserData } from '~/store/helper/getDataLocalStorage'
-
+import { handleSuccess } from '~/utils/toast'
 const Header = () => {
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const { user, tokens } = getUserData()
   const userId = user?._id
   const { data: dataCartApi } = useGetCartByUserQuery(userId)
-  const dataCart = dataCartApi?.cart
+  const dataCart = dataCartApi?.carts
   const [decodedToken, setDecodedToken] = useState<any | null>(null)
   useEffect(() => {
     if (tokens?.accessToken) {
@@ -22,7 +23,7 @@ const Header = () => {
       setDecodedToken(decoded)
     }
   }, [ tokens?.accessToken])
-  const userImage = user?.image
+  const userImage = user?.image?.url || 'https://cdn0.fahasa.com/skin/frontend/ma_vanese/fahasa/images/fahasa-logo.png'
   const userEmail = user?.name
   const userRole = decodedToken?.role
   const [logout] = useLogoutMutation()
@@ -32,8 +33,9 @@ const handleLogout = async () => {
     localStorage.removeItem('dataUsers')
     dispatch(resetState())
     const data = await logout().unwrap()
-    if (data) alert(data?.message)
-    location.href="/"
+    if (data) handleSuccess('logout')
+    // navigate("/")
+  location.href = '/'
   } catch (error) {
     console.log("Failed to log out", error)
   }
@@ -88,7 +90,7 @@ const handleLogout = async () => {
             <div className='account menu-item'>
               {user && userImage ? (
                 <Link to='/sign-in' className=' w-10 h-10 block'>
-                  <img className='rounded-full w-full h-full object-cover' src={userImage?.url} alt='Avata' />
+                  <img className='rounded-full w-full h-full object-cover' src={userImage} alt='Avatar' />
                 </Link>
               ) : (
                 <Link to='/sign-in'>
@@ -104,7 +106,7 @@ const handleLogout = async () => {
                     <Link to='/admin'>Trang quản trị</Link>
                   </li>
                   <li>
-                    <Link to=''>Thông tin tài khoản</Link>
+                    <Link to='customer'>Thông tin tài khoản</Link>
                   </li>
                   <li>
                     <button onClick={handleLogout}>Đăng xuất</button>
@@ -119,7 +121,7 @@ const handleLogout = async () => {
                     <Link to='/admin'>Trang nhân viên</Link>
                   </li>
                   <li>
-                    <Link to=''>Thông tin tài khoản</Link>
+                    <Link to='customer'>Thông tin tài khoản</Link>
                   </li>
                   <li>
                     <button onClick={handleLogout}>Đăng xuất</button>

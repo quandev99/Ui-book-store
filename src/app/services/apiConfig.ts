@@ -35,6 +35,7 @@ export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, Fetch
   extraOptions
 ) => {
   let result = await baseQueryConfig(args, api, extraOptions)
+  // console.log("result 11111 ádsad",api, result);
   if (result?.error && result?.error?.status === 401 && result?.error?.data?.message === 'Token has expired') {
     const dataUsers = JSON.parse(localStorage.getItem('dataUsers') || '{}')
     if (dataUsers && dataUsers.tokens && dataUsers.tokens.refreshToken) {
@@ -49,8 +50,8 @@ export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, Fetch
         api,
         extraOptions
       )
-      if (refreshResult.data) {
-        const { user, refreshToken, accessToken } = refreshResult?.data?.metaData
+      if (refreshResult?.data) {
+        const { refreshToken, accessToken } = refreshResult?.data?.metaData
         // Update values in localStorage directly
         const newDataUsers = JSON.parse(localStorage.getItem('dataUsers') || '{}')
         newDataUsers.tokens.accessToken = accessToken
@@ -63,12 +64,15 @@ export const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, Fetch
       } else {
         // // Refresh token failed, log out the user
         // api.dispatch(logout());
+        localStorage.removeItem('dataUsers')
+        window.location.replace('/sign-in')
         // // Return the original error
         return result
       }
     } else {
       // No refresh token available, log out the user
       // api.dispatch(loggedOut());
+      localStorage.removeItem('dataUsers')
       // // Return the original error
       return result
     }

@@ -24,7 +24,7 @@ type DataIndex = keyof DataType
 const { Option } = Select
 const ProductList = () => {
   const [current, setCurrent] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(5)
   const [searchText, setSearchText] = useState('')
   const [searchedColumn, setSearchedColumn] = useState('')
   const searchInput = useRef<InputRef>(null)

@@ -14,7 +14,7 @@ const CartPage = () => {
   const { user: userData } = getUserData()
   const userId = userData?._id
   const { data: dataCartApi, isLoading,error } = useGetCartByUserQuery(userId)
-  const dataCart = dataCartApi?.cart
+  const dataCart = dataCartApi?.carts
   const isCheckedAll = dataCart?.products.every((item) => item.is_checked == true)
 
 useEffect(() => {

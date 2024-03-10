@@ -14,9 +14,17 @@ export const apiImage = createApi({
       }),
       invalidatesTags: ['Images']
     }),
-    createImage: builder.mutation<any, void>({
+    updateImage: builder.mutation({
       query: (file) => ({
-        url: `/images/uploads/single`,
+        url: `/images/${file.publicId}`,
+        method: 'PUT',
+        body: file.formData
+      }),
+      invalidatesTags: ['Images']
+    }),
+    createImage: builder.mutation({
+      query: (file) => ({
+        url: `/images/upload`,
         method: 'POST',
         body: file
       }),
@@ -33,4 +41,4 @@ export const apiImage = createApi({
   })
 })
 
-export const { useDeleteImageMutation, useCreateImageMutation, useCreateImagesMutation } = apiImage
+export const { useDeleteImageMutation, useCreateImageMutation, useCreateImagesMutation, useUpdateImageMutation } = apiImage

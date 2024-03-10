@@ -1,23 +1,30 @@
 import { Table, TableProps, Tabs } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useState } from 'react'
-import { useGetAllBillsQuery} from '~/app/services/bill'
+import {  useGetBillByUserQuery } from '~/app/services/bill'
 import { formatDate } from '~/utils/format'
 import { Sorter } from '~/utils/sorter'
-import TableCustom from './orderList/asss'
 import { EditOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
+import TableCustom from '~/components/ant/AntTable'
+import { getUserData } from '~/store/helper/getDataLocalStorage'
 
-const ListOderItem = ({tabKey}: any) => {
+const ListOrderCustomer = ({ tabKey }: any) => {
+  const { user } = getUserData()
+  const userId = user?._id
   const [page, setPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
+  const [current, setCurrent] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const params = {
+    userId,
     page,
     limit,
     bill_status: tabKey
   }
-  const { data: dataBillsApi, isLoading, error } = useGetAllBillsQuery(params)
+  
+  const { data: dataBillsApi, isLoading, error } = useGetBillByUserQuery(params)
   const dataBills = dataBillsApi?.bills ?? null
   const columns: ColumnsType<any> = [
     {
@@ -74,7 +81,7 @@ const ListOderItem = ({tabKey}: any) => {
       render: (record: any) => {
         return (
           <Link
-            to={`/admin/orders/${record?._id}/update`}
+            to={`/customer/order/${record?._id}/update`}
             className='text-white px-1 py-1 block bg-green-500 rounded-md text-center'
           >
             <EditOutlined />
@@ -86,26 +93,44 @@ const ListOderItem = ({tabKey}: any) => {
   const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra)
   }
-   if (error) {
-     if ('data' in error) {
-       if (error.data) {
-         const errorWithMessage = error as { data: { message: string } }
-         return (
-           <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>
-             Error: {errorWithMessage?.data?.message}
-           </div>
-         )
-       }
-     } else {
-       // Xử lý trường hợp `error` không có thuộc tính 'data' ở đây
-       return <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: Error connect server</div>
-     }
-   }
+  if (error) {
+    if ('data' in error) {
+      if (error.data) {
+        const errorWithMessage = error as { data: { message: string } }
+        return (
+          <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>
+            Error: {errorWithMessage?.data?.message}
+          </div>
+        )
+      }
+    } else {
+      // Xử lý trường hợp `error` không có thuộc tính 'data' ở đây
+      return <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: Error connect server</div>
+    }
+  }
   return (
     <div className='mb-5'>
-      <TableCustom loading={isLoading} dataSource={dataBills} columns={columns} onChange={onChange} />
+      <TableCustom
+        loading={isLoading}
+        dataSource={dataBills}
+        columns={columns}
+        onChange={onChange}
+        pagination={{
+          current: current,
+          pageSize: pageSize,
+          total: dataBills?.length || 0,
+          showSizeChanger: true,
+          onChange: (page, size) => {
+            setCurrent(page) // Cập nhật trạng thái trang hiện tại
+          },
+          onShowSizeChange: (current, size) => {
+            setCurrent(current) // Cập nhật trạng thái trang hiện tại
+            setPageSize(size) // Cập nhật trạng thái số lượng dòng trên mỗi trang
+          }
+        }}
+      />
     </div>
   )
 }
 
-export default ListOderItem
+export default ListOrderCustomer

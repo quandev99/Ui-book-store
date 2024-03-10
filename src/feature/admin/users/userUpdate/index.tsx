@@ -35,7 +35,7 @@ const UserUpdate = () => {
 const onFileChange = async (e: any) => {
   const file = e.target.files[0]
   const formData  = new FormData()
-  formData.append('images', file)
+  formData.append('image', file)
   if (file) {
     setImageUploading(true) // Bắt đầu tải ảnh
     try {

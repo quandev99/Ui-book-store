@@ -8,7 +8,7 @@ export const apiCart = createApi({
   endpoints: (builder) => ({
     getCartByUser: builder.query<any, void>({
       query: (_id) => ({
-        url: `/carts/getCartByUser/${_id}`,
+        url: `/carts/getCartByUser/${_id}/getCartByUser`,
         method: 'GET'
       }),
       providesTags: ['Carts']

@@ -17,7 +17,7 @@ const schema = yup
     payment: yup
       .string()
       .required('Please select your Payment')
-      .oneOf(['CashPayment', 'vnpay'], 'Bạn phải chọn một phương thức thanh toán')
+      .oneOf(['CashPayment', 'OnlinePayment'], 'Bạn phải chọn một phương thức thanh toán')
   })
   .required()
 const CheckOut = () => {

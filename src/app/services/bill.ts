@@ -7,14 +7,21 @@ export const apiBill = createApi({
   endpoints: (builder) => ({
     getAllBills: builder.query<any, any>({
       query: ({ page, limit, bill_status }) => ({
-        url: `/bills?_page=${page}&_limit=${limit}&_sort=createdAt&_bill_status=${bill_status}`,
+        url: `/bills?_bill_status=${bill_status}&_page=${page}&_limit=${limit}&_sort=createdAt&_order=asc`,
+        method: 'GET'
+      }),
+      providesTags: ['Bills']
+    }),
+    getBillByUser: builder.query<any, any>({
+      query: ({ userId, page, limit, bill_status }) => ({
+        url: `/bills/getBillByUser?_userId=${userId}&_bill_status=${bill_status}&_page=${page}&_limit=${limit}&_sort=createdAt&_order=asc`,
         method: 'GET'
       }),
       providesTags: ['Bills']
     }),
     getBillById: builder.query<any, any>({
-      query: (id) => ({
-        url: `/bills/getById/${id}`,
+      query: (orderId) => ({
+        url: `/bills/getBillById/${orderId}`,
         method: 'GET'
       }),
       providesTags: ['Bills']
@@ -41,4 +48,5 @@ export const apiBill = createApi({
   })
 })
 
-export const { useGetAllBillsQuery, useAddBillMutation,useUpdateBillStatusMutation ,useGetBillByIdQuery} = apiBill
+export const { useGetAllBillsQuery, useGetBillByUserQuery, useAddBillMutation, useUpdateBillStatusMutation, useGetBillByIdQuery } =
+  apiBill

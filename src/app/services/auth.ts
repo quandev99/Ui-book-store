@@ -21,7 +21,7 @@ export const apiAuth = createApi({
     }),
     login: builder.mutation<any, void>({
       query: (data: any) => ({
-        url: `/auths/signin`,
+        url: `/auths/sign-in`,
         method: 'POST',
         body: data
       }),

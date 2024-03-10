@@ -23,7 +23,6 @@ const items = [
   { index: 3, key: 'Completed', title: 'Hoàn thành' },
   { index: 4, key: 'Abort', title: 'Đã Hủy' }
 ]
-const description = 'You can hover on the dot.'
 const UpdateOrder = () => {
   const [current, setCurrent] = useState(0)
   const [billStatus, setBillStatus] = useState("")

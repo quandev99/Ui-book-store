@@ -2,7 +2,7 @@ import { Table, TableProps, Tabs } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import React, { useEffect, useState } from 'react'
 import {  useGetBillByUserQuery } from '~/app/services/bill'
-import { formatDate } from '~/utils/format'
+import { formatDate, formatPrice } from '~/utils/format'
 import { Sorter } from '~/utils/sorter'
 import { EditOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
@@ -32,7 +32,18 @@ const ListOrderCustomer = ({ tabKey }: any) => {
       dataIndex: 'bill_code'
     },
     {
-      title: 'Tên khách hàng',
+      title: 'Thời gian',
+      dataIndex: 'createdAt',
+      sorter: {
+        compare: Sorter.DEFAULT,
+        multiple: 2
+      },
+      render: (record: any) => {
+        return <div>{formatDate(record)}</div>
+      }
+    },
+    {
+      title: 'Người nhận',
       dataIndex: 'bill_user_name'
     },
     {
@@ -40,11 +51,19 @@ const ListOrderCustomer = ({ tabKey }: any) => {
       dataIndex: 'bill_details',
       render: (record: any) => {
         return <div>{record?.length}</div>
+      },
+      sorter: {
+        compare: Sorter.DEFAULT,
+        multiple: 3
       }
     },
     {
-      title: 'Phương thức thanh toán',
-      dataIndex: 'payment_method',
+      title: 'Tổng tiền',
+      dataIndex: 'bill_totals',
+      render: (record: any) => {
+        const priceBill = record.find((item) => item?.code === 'grand_total')?.price
+        return <div className='font-medium text-primary'>{formatPrice(priceBill)}</div>
+      },
       sorter: {
         compare: Sorter.DEFAULT,
         multiple: 3
@@ -63,17 +82,6 @@ const ListOrderCustomer = ({ tabKey }: any) => {
             {bill_status}
           </div>
         )
-      }
-    },
-    {
-      title: 'Thời gian',
-      dataIndex: 'createdAt',
-      sorter: {
-        compare: Sorter.DEFAULT,
-        multiple: 2
-      },
-      render: (record: any) => {
-        return <div>{formatDate(record)}</div>
       }
     },
     {

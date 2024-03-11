@@ -9,8 +9,9 @@ export const ToastMessages = {
     created: 'Your account was created',
     Empty: 'No result found with that query ',
     logout: 'Đăng xuất thành công',
-    updateBill: "Cập nhật đơn hàng thành công",
-    cancelBill: "Hủy đơn hàng thành công",
+    updateBill: 'Cập nhật đơn hàng thành công',
+    cancelBill: 'Hủy đơn hàng thành công',
+    addReview: 'Đánh giá thành công'
   },
   error: {
     400: 'Bad Request',

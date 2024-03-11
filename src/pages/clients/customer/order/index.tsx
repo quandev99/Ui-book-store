@@ -1,8 +1,8 @@
 import React from 'react'
 import { Tabs } from 'antd'
 import { tabContent } from '~/constans'
-import ListOrderCustomer from '../components/ListOrderCustomer'
 import { TabPane } from '~/components/ant/TabPane'
+import ListOrderCustomer from './components/ListOrderCustomer'
 
 const OrderPage = () => {
   const [activeTab, setActiveTab] = React.useState('')

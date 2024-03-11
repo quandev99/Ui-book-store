@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom'
 import { LoadingOutlined } from '@ant-design/icons'
 import { formatDate, formatPrice } from '~/utils/format'
 import { handleSuccess } from '~/utils/toast'
+import Reviews from '../components/ReviewOrder'
 const customDot: StepsProps['progressDot'] = (dot, { status, index }) => (
   <Popover
     content={
@@ -105,6 +106,15 @@ const UpdateOrderCustomer = () => {
       <p>{formatDate(dataBillUser?.updatedAt)}</p>
     </div>
   )
+
+  // Review
+   const [open, setOpen] = useState(false)
+   const [reviewBillId, setReviewBillId] = useState(null)
+   const openReviewModal = (billId: string | any) => {
+    console.log("openReviewModal", billId);
+     setOpen(true)
+     setReviewBillId(billId)
+   }
   return (
     <div>
       {isLoading && (
@@ -210,25 +220,38 @@ const UpdateOrderCustomer = () => {
                 {dataBillUser?.status ? 'Đã thanh toán' : 'Chưa thanh toán'}
               </span>
             </div>
-              <button
-                onClick={updateBill}
-                disabled={!billSucceeded}
-                className={`text-white  w-full mt-5 p-2 block rounded-md ${
-                  billSucceeded ? 'bg-blue-500' : 'bg-blue-200'
-                }`}
-              >
-                Cập nhật
-              </button>
-            
-              <button
-                onClick={handleCancelBill}
-                disabled={hiddenButton}
-                className={`text-white bg-primary w-full mt-5 p-2 block rounded-md ${
-                  hiddenButton ? 'bg-red-200' : ' bg-primary'
-                }`}
-              >
-                Hủy
-              </button>
+            <button
+              onClick={updateBill}
+              disabled={!billSucceeded}
+              className={`text-white  w-full mt-5 p-2 block rounded-md ${
+                billSucceeded ? 'bg-blue-500' : 'bg-blue-200'
+              }`}
+            >
+              Cập nhật
+            </button>
+
+            <button
+              onClick={handleCancelBill}
+              disabled={hiddenButton}
+              className={`text-white bg-primary w-full mt-5 p-2 block rounded-md ${
+                hiddenButton ? 'bg-red-200' : ' bg-primary'
+              }`}
+            >
+              Hủy
+            </button>
+            {
+            // dataBillUser?.status_name === 'Completed' && dataBillUser?.isReview === true 
+            true
+            && (
+              <div>
+                <button
+                  className='  px-5 max-w-[200px] bg-yellow-400 hover:bg-yellow-600 text-white border-2 border-green-100 hover:border-green-300  transition-all rounded-md w-full  py-2'
+                  onClick={() => openReviewModal(dataBillUser?._id)}
+                >
+                  Đánh giá
+                </button>
+                <Reviews open={open} setOpen={setOpen} billId={reviewBillId} />
+              </div>)}
           </div>
         </div>
       </div>

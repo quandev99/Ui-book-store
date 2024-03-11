@@ -44,9 +44,26 @@ export const apiBill = createApi({
         }
       },
       invalidatesTags: ['Bills']
+    }),
+    cancelBill: builder.mutation<any, any>({
+      query: (data) => {
+        const { id, ...body } = data
+        return {
+          url: `/bills/cancelBill/${id}`,
+          method: 'PATCH',
+          body
+        }
+      },
+      invalidatesTags: ['Bills']
     })
   })
 })
 
-export const { useGetAllBillsQuery, useGetBillByUserQuery, useAddBillMutation, useUpdateBillStatusMutation, useGetBillByIdQuery } =
-  apiBill
+export const {
+  useGetAllBillsQuery,
+  useGetBillByUserQuery,
+  useCancelBillMutation,
+  useAddBillMutation,
+  useUpdateBillStatusMutation,
+  useGetBillByIdQuery
+} = apiBill

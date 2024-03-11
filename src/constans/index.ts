@@ -8,7 +8,9 @@ export const ToastMessages = {
     welcome: 'Chào mừng bạn đến với Book Store!',
     created: 'Your account was created',
     Empty: 'No result found with that query ',
-    logout: 'Đăng xuất thành công'
+    logout: 'Đăng xuất thành công',
+    updateBill: "Cập nhật đơn hàng thành công",
+    cancelBill: "Hủy đơn hàng thành công",
   },
   error: {
     400: 'Bad Request',

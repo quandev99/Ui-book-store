@@ -4,6 +4,7 @@ import UpdateOrder from './feature/admin/orders/orderUpdate';
 import AccountPage from './pages/clients/customer/account';
 import OrderPage from './pages/clients/customer/order';
 import OrderAdmin from './feature/admin/orders';
+import UpdateOrderCustomer from './pages/clients/customer/order/updateOrder';
 const CustomerPage = lazy(() => import('./pages/clients/customer'))
 const CheckOut = lazy(() =>  import( './pages/clients/checkout'))
 const CartPage = lazy(() =>  import(   './pages/clients/cart'))
@@ -64,7 +65,14 @@ export const AppRoutes = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to='account' /> },
           { path: 'account', element: <AccountPage /> },
-          { path: 'order', element: <OrderPage /> }
+          {
+            path: 'order',
+            children: [
+              // { index: true, element: <OrderPage /> },
+              { path: '', element: <OrderPage /> },
+              { path: ':id/update', element: <UpdateOrderCustomer /> }
+            ]
+          }
         ]
       },
       { path: 'checkout', element: <CheckOut /> },

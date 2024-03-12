@@ -1,9 +1,9 @@
 
 export const ToastMessages = {
   success: {
-    removed: 'removed from cart successfully!',
+    removed: 'Bạn xóa sản phẩm ra khỏi giỏ hàng!',
     removedOrder: 'Order was removed successfully!',
-    added: 'added to cart',
+    addToCart: 'Bạn đã thêm giỏ hàng thành công!',
     thanks: 'Thank you for choose us!!',
     welcome: 'Chào mừng bạn đến với Book Store!',
     created: 'Your account was created',
@@ -32,4 +32,8 @@ export const tabContent = [
   // { key: 'DeliveryFailed', title: 'Giao Hàng Thất Bại' },
   { key: 'Completed', title: 'Hoàn thành' },
   { key: 'Abort', title: 'Đã Hủy' }
+]
+export const tabContentProductId = [
+  { key: 'description', title: 'Chi tiết sản phẩm' },
+  { key: 'review', title: 'Đánh giá' }
 ]

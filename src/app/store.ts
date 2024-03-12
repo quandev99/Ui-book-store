@@ -18,6 +18,7 @@ import { apiAuth } from './services/auth'
 import { cartReducer } from '~/store/cartSlice/cartSlice'
 import { apiCart } from './services/cart'
 import { apiBill } from './services/bill'
+import { apiReView } from './services/review'
 
 
 const persistConfig = {
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   [apiCart.reducerPath]: apiCart.reducer,
   [apiAuth.reducerPath]: apiAuth.reducer,
   [apiBill.reducerPath]: apiBill.reducer,
+  [apiReView.reducerPath]: apiReView.reducer,
   authSlice: authReducer,
   cartSlice: cartReducer
 })
@@ -52,7 +54,8 @@ const attinalMiddleware = [
   apiUser.middleware,
   apiAuth.middleware,
   apiCart.middleware,
-  apiBill.middleware
+  apiBill.middleware,
+  apiReView.middleware
 ]
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 export const store = configureStore({

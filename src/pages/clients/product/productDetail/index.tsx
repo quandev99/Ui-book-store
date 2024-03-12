@@ -2,26 +2,28 @@ import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import {  useNavigate, useParams } from 'react-router-dom'
 import { useGetProductByCateQuery, useGetProductByIdQuery } from "~/app/services/product";
-import { Modal, Rate } from "antd";
+import { Modal, Rate, Tabs } from "antd";
 import {formatPrice} from "~/utils/format";
 import ProductItem from "../components";
 import { useAddToCartMutation } from "~/app/services/cart";
 import { getUserData } from "~/store/helper/getDataLocalStorage";
+import { tabContentProductId } from "~/constans";
+import DescriptionProduct from "../components/DescriptionProduct";
+import { handleSuccess } from "~/utils/toast";
+import ListReviewProduct from "../components/ListReviewProduct";
 const ProductDetailPage = () => {
-  
   const { id }: any = useParams()
   const { data: ProductByIdApi, isLoading: isLoadingProductById, error } = useGetProductByIdQuery(id)
   const dataProductById = ProductByIdApi?.product
   const categoryId = dataProductById?.category_id?._id
   const { data: dataProductByCate } = useGetProductByCateQuery(categoryId)
-  const uniqueProductByCategory = dataProductByCate?.products?.filter(product => product?._id !== id)
+  const uniqueProductByCategory = dataProductByCate?.products?.filter((product) => product?._id !== id)
   let dataImage = dataProductById?.image
   const isQuantity = dataProductById?.quantity <= 0
-  console.log("isQuantity", isQuantity)
   const [largeImage, setLargeImage] = useState('')
-  // Cart 
+  // Cart
   const navigate = useNavigate()
-  const { user:userData } = getUserData()
+  const { user: userData } = getUserData()
   const userId = userData?._id
   const [addToCart] = useAddToCartMutation()
 
@@ -56,32 +58,51 @@ const ProductDetailPage = () => {
     if (count <= 1) return
     setCount((count) => count - 1)
   }
-    const addToCartItem = async () => {
+  const addToCartItem = async () => {
     const dataCart = {
       userId,
       quantity: Number(count),
       productId: id
     }
     try {
-      const responsive = await addToCart({data:dataCart}).unwrap()
-      console.log("responsive",responsive)
+      const responsive = await addToCart({ data: dataCart }).unwrap()
       if (responsive?.cart) {
-        alert("Thêm sản phâm thành công!");
-        navigate("/carts");
+        handleSuccess('addToCart')
+        navigate('/carts')
       }
     } catch (error: any) {
-      alert(error?.data?.message);
+      console.log(error?.data?.message)
     }
-  };
+  }
 
   // chính sách đổi trả
   const [isModalVisible, setIsModalVisible] = useState(false)
-   const handleModalABD = () => {
-     setIsModalVisible(true)
-   }
-   const handleModalClose = () => {
-     setIsModalVisible(false)
-   }
+  const handleModalABD = () => {
+    setIsModalVisible(true)
+  }
+  const handleModalClose = () => {
+    setIsModalVisible(false)
+  }
+
+  // description
+  const [activeTab, setActiveTab] = useState('description')
+  const handleTabChange = (key: any) => {
+    setActiveTab(key)
+  }
+  const TabPane = (tabContentProductId, id) => {
+    return tabContentProductId.map((item) => {
+      return {
+        key: item.key,
+        label: item.title,
+        children:
+          item.key === 'description' ? (
+            <DescriptionProduct description={dataProductById?.description} />
+          ) : (
+            <ListReviewProduct productId={id} />
+          )
+      }
+    })
+  }
   return (
     <>
       <div className='container mx-auto px-[50px]'>
@@ -103,8 +124,8 @@ const ProductDetailPage = () => {
                     largeImage
                       ? largeImage
                       : dataProductById?.image[0]?.url
-                      ? dataProductById?.image[0]?.url
-                      : 'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'
+                        ? dataProductById?.image[0]?.url
+                        : 'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'
                   }
                   className='w-full h-full object-cover block'
                 />
@@ -161,8 +182,8 @@ const ProductDetailPage = () => {
             </div>
             <div className='flex items-center gap-2 my-5'>
               <div>
-                <Rate disabled value={0} className='text-sm' />
-                <span className='ml-2 text-sm'>({0} )</span>
+                <Rate disabled value={dataProductById?.average_score} className='text-sm' />
+                <span className='ml-2 text-sm'>({dataProductById?.average_score || 0} )</span>
               </div>
               <div className='text-[#4a9352] font-medium'>{0} Lượt xem</div>
               <div className='text-[#7a7b43] font-medium'>{1} Lượt bán</div>
@@ -212,11 +233,19 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
+      <div className='  mb-5'>
+        <Tabs
+          activeKey={activeTab}
+          onChange={handleTabChange}
+          defaultActiveKey={activeTab}
+          items={TabPane(tabContentProductId, id)}
+        ></Tabs>
+      </div>
       <div className='grid w-full mb-5'>
         <h3 className='text-2xl font-medium'>Sản phẩm liên quan</h3>
         <div className='mt-[15px] grid grid-cols-5 gap-5'>
           {uniqueProductByCategory && uniqueProductByCategory.length > 0 ? (
-            uniqueProductByCategory.map((item: any) => <ProductItem key={item._id} item={item} />)
+            uniqueProductByCategory.map((item: any) => <ProductItem key={item?._id} item={item} />)
           ) : (
             <p>Cuốn sách không có danh mục liên quan</p>
           )}

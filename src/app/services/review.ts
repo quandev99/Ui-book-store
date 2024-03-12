@@ -5,6 +5,13 @@ export const apiReView = createApi({
   tagTypes: ['ReViews'],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
+    getAllReviews: builder.query<any, any>({
+      query: ({ search, page = 1, limit = 5 }) => ({
+        url: `/reviews?_search=${search}&_page=${page}&_limit=${limit}&_sort=createdAt&_order=asc`,
+        method: 'GET'
+      }),
+      providesTags: ['ReViews']
+    }),
     addReView: builder.mutation<any, any>({
       query: (data) => ({
         url: `/reviews/add`,
@@ -12,8 +19,15 @@ export const apiReView = createApi({
         body: data
       }),
       invalidatesTags: ['ReViews']
+    }),
+    getReviewProductId: builder.query<any, any>({
+      query: ({ productId, page = 1, limit = 5 }) => ({
+        url: `/reviews/${productId}?_page=${page}&_limit=${limit}&_sort=createdAt&_order=asc`,
+        method: 'GET'
+      }),
+      providesTags: ['ReViews']
     })
   })
 })
 
-export const { useAddReViewMutation } = apiReView
+export const { useAddReViewMutation, useGetReviewProductIdQuery } = apiReView

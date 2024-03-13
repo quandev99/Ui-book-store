@@ -1,5 +1,4 @@
-import React, { useRef, useState } from 'react'
-import { useDeleteCategoryMutation, useGetAllCategoriesQuery } from '~/app/services/category'
+import React from 'react'
 import { DeleteOutlined, EditOutlined, EyeOutlined, FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import type { InputRef } from 'antd'
 import { Button, Input, Space, Table, Switch, Image, Popconfirm, message, Modal, Select, Checkbox } from 'antd'
@@ -7,8 +6,10 @@ import type { ColumnType, ColumnsType } from 'antd/es/table'
 import type { FilterConfirmProps, FilterValue, TableRowSelection } from 'antd/es/table/interface'
 import { Link } from 'react-router-dom'
 import Highlighter from 'react-highlight-words'
-import { useDeleteAuthorMutation, useGetAllAuthorsQuery } from '~/app/services/author'
+import { useDeleteAuthorMutation } from '~/app/services/author'
 import { useGetAllProductsQuery } from '~/app/services/product'
+import TableCustom from '~/components/ant/AntTable'
+import { Sorter } from '~/utils/sorter'
 
 interface DataType {
   key: string
@@ -23,20 +24,33 @@ type DataIndex = keyof DataType
 
 const { Option } = Select
 const ProductList = () => {
-  const [current, setCurrent] = useState(1)
-  const [pageSize, setPageSize] = useState(5)
-  const [searchText, setSearchText] = useState('')
-  const [searchedColumn, setSearchedColumn] = useState('')
-  const searchInput = useRef<InputRef>(null)
-  const { data: productsApi, isLoading, error } = useGetAllProductsQuery()
-  const dataProducts = productsApi?.products
+  const [current, setCurrent] = React.useState<number>(1)
+  const [pageSize, setPageSize] = React.useState<number>(5)
+  const [searchText, setSearchText] = React.useState('')
+  const [searchedColumn, setSearchedColumn] = React.useState('')
+  const searchInput = React.useRef<InputRef>(null)
+  const dataQuery = {
+      category_id:  '',
+      supplier_id : '',
+      publisher_id : '',
+      author_id : '',
+      genre_id : '',
+      search: searchText,
+      page: current,
+      limit: pageSize,
+      sort: 'createdAt',
+      order: 'asc'
+  }
+  const { data: productsApi, isLoading, error } = useGetAllProductsQuery(dataQuery)
+  const dataProducts = productsApi?.products ?? null
+  const totalItems = productsApi?.pagination?.totalItems ?? null
   const [deleteAuthor] = useDeleteAuthorMutation()
 
   /// modal
   // State variable for selected name details
-  const [selectedNameDetails, setSelectedNameDetails] = useState(null)
+  const [selectedNameDetails, setSelectedNameDetails] = React.useState(null)
   // State variable to control modal visibility
-  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isModalVisible, setIsModalVisible] = React.useState(false)
 
   const handleNameClick = (name: any) => {
     // Find the details of the clicked name from the dataProducts
@@ -98,23 +112,28 @@ const ProductList = () => {
             onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
             icon={<SearchOutlined />}
             size='small'
-            style={{ width: 90 }}
+            style={{ width: 90, backgroundColor: 'tomato' }}
           >
-            Search
+            Tìm kiếm
           </Button>
-          <Button onClick={() => clearFilters && handleReset(clearFilters)} size='small' style={{ width: 90 }}>
-            Reset
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size='small'
+            style={{ width: 90, backgroundColor: 'tomato' }}
+          >
+            Xóa
           </Button>
           <Button
             type='link'
             size='small'
+            icon={<FilterOutlined/>}
             onClick={() => {
               confirm({ closeDropdown: false })
               setSearchText((selectedKeys as string[])[0])
               setSearchedColumn(dataIndex)
             }}
           >
-            Filter
+            Lọc
           </Button>
           <Button
             type='link'
@@ -123,7 +142,7 @@ const ProductList = () => {
               close()
             }}
           >
-            close
+            Đóng
           </Button>
         </Space>
       </div>
@@ -160,7 +179,9 @@ const ProductList = () => {
       dataIndex: 'name',
       key: '1',
       width: '20%',
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: {
+        compare: Sorter.TEXT
+      },
       ...getColumnSearchProps('name')
     },
     {
@@ -169,19 +190,21 @@ const ProductList = () => {
       key: '2',
       width: '10%',
       render: (imageArray: any[]) => {
-        const firstImage = imageArray[0]; 
+        const firstImage = imageArray[0]
         if (firstImage) {
           return <Image width={150} height={100} src={firstImage?.url} />
         }
-        return null; 
-      },
+        return null
+      }
     },
     {
       title: 'Giá',
       dataIndex: 'price',
       key: '3',
       width: '10%',
-      sorter: (a, b) => a?.name.length - b?.name?.length,
+      sorter: {
+        compare: Sorter.DEFAULT
+      },
       render: (record: any) => {
         return <div>{record}</div>
       }
@@ -190,7 +213,9 @@ const ProductList = () => {
       title: 'Số lượng',
       dataIndex: 'quantity',
       key: '4',
-      sorter: (a, b) => a?.name.length - b?.name?.length,
+      sorter: {
+        compare: Sorter.DEFAULT
+      },
       render: (record: any) => {
         return <div>{record}</div>
       }
@@ -199,7 +224,9 @@ const ProductList = () => {
       title: 'Năm XB',
       dataIndex: 'publishing_year',
       key: '5',
-      sorter: (a, b) => a?.name?.length - b?.name?.length,
+      sorter: {
+        compare: Sorter.DEFAULT
+      },
       render: (record: any) => {
         return <div>{record}</div>
       }
@@ -242,7 +269,7 @@ const ProductList = () => {
   ]
 
   /// selectedColumns
-  const [selectedColumns, setSelectedColumns] = useState(columns.map((column) => column.key)) // Danh sách cột mặc định
+  const [selectedColumns, setSelectedColumns] = React.useState(columns.map((column) => column.key)) // Danh sách cột mặc định
   // React.useEffect(() => {
   //   if (columns) {
   //     setSelectedColumns(columns.map((column) => column.key))
@@ -316,17 +343,18 @@ const ProductList = () => {
           <Option value={30}>30</Option>
         </Select>
       </div>
-      <Table
+      <TableCustom
         columns={columns}
         dataSource={dataProducts}
         columns={selectedColumnsConfig}
         pagination={{
           current: current,
           pageSize: pageSize,
-          total: dataProducts?.length || 0,
+          total: totalItems || 0,
           showSizeChanger: true,
           onChange: (page, size) => {
             setCurrent(page) // Cập nhật trạng thái trang hiện tại
+            setPageSize(size)
           },
           onShowSizeChange: (current, size) => {
             setCurrent(current) // Cập nhật trạng thái trang hiện tại

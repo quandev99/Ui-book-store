@@ -1,5 +1,5 @@
 
-import {  createApi } from '@reduxjs/toolkit/dist/query/react'
+import { createApi } from '@reduxjs/toolkit/dist/query/react'
 import { baseQueryWithReauth } from './apiConfig'
 
 export const apiProduct = createApi({
@@ -7,9 +7,20 @@ export const apiProduct = createApi({
   tagTypes: ['Products'],
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    getAllProducts: builder.query<any, void>({
-      query: () => ({
-        url: '/products',
+    getAllProducts: builder.query<any, any>({
+      query: ({
+        category_id = '',
+        supplier_id = '',
+        publisher_id = '',
+        author_id = '',
+        genre_id = '',
+        search = '',
+        page = 1,
+        limit = 10,
+        sort = 'createdAt',
+        order = 'asc'
+      }) => ({
+        url: `/products?_category_id=${category_id}&_genre_id=${genre_id}&_supplier_id=${supplier_id}&_publisher_id=${publisher_id}&_author_id=${author_id}&_search=${search}&_page=${page}&_limit=${limit}&_sort=${sort}&_order=${order}`,
         method: 'GET'
       }),
       providesTags: ['Products']

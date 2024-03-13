@@ -136,7 +136,7 @@ const toggleExpand = (record:any) => {
       title: 'Tên danh mục',
       dataIndex: 'name',
       key: '1',
-      width: '20%',
+      width: '12%',
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps('name')
     },
@@ -144,7 +144,7 @@ const toggleExpand = (record:any) => {
       title: 'Ảnh danh mục',
       dataIndex: 'image',
       key: '2',
-      width: '20%',
+      width: '15%',
       render: (record: any) => {
         return <Image width={150} height={100} src={record?.url} />
       }

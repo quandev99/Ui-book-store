@@ -5,6 +5,12 @@ import moment from 'moment'
  * @param {string} dateB - a date, represented in string format
  */
 const dateSort = (dateA, dateB) => moment(dateA).diff(moment(dateB))
+const numberSort = ((numberA, numberB) => { 
+  return numberA - numberB
+})
+const textSort = ((textA, textB) => { 
+  return textA.length - textB.length 
+})
 
 /**
  *
@@ -18,5 +24,7 @@ const defaultSort = (a, b) => {
 }
 export const Sorter = {
   DEFAULT: defaultSort,
-  DATE: dateSort
+  DATE: dateSort,
+  NUMBER: numberSort,
+  TEXT: textSort
 }

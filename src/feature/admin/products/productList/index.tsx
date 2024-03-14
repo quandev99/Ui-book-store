@@ -13,7 +13,9 @@ import { Sorter } from '~/utils/sorter'
 
 interface DataType {
   key: string
+  title: string
   name: string
+  author_id: {name: string}
   image: object
   price: number
   quantity: number
@@ -26,7 +28,7 @@ const { Option } = Select
 const ProductList = () => {
   const [current, setCurrent] = React.useState<number>(1)
   const [pageSize, setPageSize] = React.useState<number>(5)
-  const [searchText, setSearchText] = React.useState('')
+  const [searchText, setSearchText] = React.useState({name: ""})
   const [searchedColumn, setSearchedColumn] = React.useState('')
   const searchInput = React.useRef<InputRef>(null)
   const dataQuery = {
@@ -35,7 +37,7 @@ const ProductList = () => {
       publisher_id : '',
       author_id : '',
       genre_id : '',
-      search: searchText,
+      search: searchText || {},
       page: current,
       limit: pageSize,
       sort: 'createdAt',
@@ -66,13 +68,14 @@ const ProductList = () => {
   }
   // end modal
 
-  const handleSearch = (
+  const handleSearch =  (
     selectedKeys: string[],
     confirm: (param?: FilterConfirmProps) => void,
     dataIndex: DataIndex
   ) => {
     confirm()
-    setSearchText(selectedKeys[0])
+    console.log('ADASDADS: :::: ', { dataIndex: selectedKeys[0] })
+     setSearchText({ dataIndex : selectedKeys[0] })
     setSearchedColumn(dataIndex)
   }
 
@@ -126,7 +129,7 @@ const ProductList = () => {
           <Button
             type='link'
             size='small'
-            icon={<FilterOutlined/>}
+            icon={<FilterOutlined />}
             onClick={() => {
               confirm({ closeDropdown: false })
               setSearchText((selectedKeys as string[])[0])
@@ -148,11 +151,16 @@ const ProductList = () => {
       </div>
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />,
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
+    onFilter: (value, record) => {
+      const text = value?.toString().toLowerCase()
+      if (
+        dataIndex === 'author_id'
+        ) {
+        return record[dataIndex]?.name?.toString().toLowerCase().includes(text)
+      } else {
+        return record[dataIndex].toString().toLowerCase().includes(text)
+      }
+    },
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
@@ -164,7 +172,7 @@ const ProductList = () => {
           highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
           searchWords={[searchText]}
           autoEscape
-          textToHighlight={text ? text.toString() : ''}
+          textToHighlight={text ? text?.toString() : ''}
         />
       ) : (
         text
@@ -175,28 +183,34 @@ const ProductList = () => {
   }
   const columns: ColumnsType<DataType> = [
     {
-      title: 'Tên Tác Giả',
-      dataIndex: 'name',
       key: '1',
+      title: 'Tên sách',
       width: '20%',
-      sorter: {
-        compare: Sorter.TEXT
-      },
-      ...getColumnSearchProps('name')
-    },
-    {
-      title: 'Ảnh',
-      dataIndex: 'image',
-      key: '2',
-      width: '10%',
-      render: (imageArray: any[]) => {
-        const firstImage = imageArray[0]
-        if (firstImage) {
-          return <Image width={150} height={100} src={firstImage?.url} />
-        }
-        return null
+      ...getColumnSearchProps('name'),
+      render: ({ name, image }) => {
+        const firstImage = image[0]?.url
+        return (
+          <div className='text-center'>
+            <h5 className=' mb-2'>{name}</h5>
+            <Image width={100} height={100} src={firstImage} />
+          </div>
+        )
       }
     },
+    {
+      key: '2',
+      title: 'Tên Tác Giả',
+      dataIndex: 'author_id',
+      width: '20%',
+      ...getColumnSearchProps('author_id'),
+      render: (name: any) => {
+        return <div>{name.name}</div>
+      },
+      sorter: {
+        compare: Sorter.TEXT
+      }
+    },
+
     {
       title: 'Giá',
       dataIndex: 'price',
@@ -279,19 +293,19 @@ const ProductList = () => {
     setSelectedColumns(checkedColumns)
   }
   const selectedColumnsConfig = columns.filter((column) => selectedColumns.includes(column?.key))
-  if (error) {
-    if ('data' in error) {
-      if (error.data) {
-        const errorWithMessage = error as { data: { message: string } }
-        return (
-          <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: {errorWithMessage.data.message}</div>
-        )
-      }
-    } else {
-      // Xử lý trường hợp `error` không có thuộc tính 'data' ở đây
-      return <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: Error connect server</div>
-    }
-  }
+  // if (error) {
+  //   if ('data' in error) {
+  //     if (error.data) {
+  //       const errorWithMessage = error as { data: { message: string } }
+  //       return (
+  //         <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: {errorWithMessage.data.message}</div>
+  //       )
+  //     }
+  //   } else {
+  //     // Xử lý trường hợp `error` không có thuộc tính 'data' ở đây
+  //     return <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: Error connect server</div>
+  //   }
+  // }
 
   ///
   const rowSelection: TableRowSelection<DataType> = {

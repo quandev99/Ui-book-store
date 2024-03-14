@@ -1,21 +1,34 @@
 import React from 'react'
-import { EditOutlined } from '@ant-design/icons'
+import Highlighter from 'react-highlight-words'
+import { EditOutlined, FilterOutlined, SearchOutlined } from '@ant-design/icons'
 import TableCustom from '~/components/ant/AntTable'
-import { ColumnsType } from 'antd/es/table'
 import { useGetAllReviewsQuery, useHiddenReviewMutation } from '~/app/services/review'
 import { formatDate } from '~/utils/format'
 import { Sorter } from '~/utils/sorter'
-import { Image, Rate, Switch, message } from 'antd'
-
+import { Button, Image, Input, InputRef, Rate, Space, Switch, message } from 'antd'
+import type { ColumnType, ColumnsType } from 'antd/es/table'
+import { FilterConfirmProps } from 'antd/es/table/interface'
+interface DataType {
+  key: string
+  title: string
+  comment: string
+  user_name: string
+  author_id: { name: string }
+  active: boolean
+}
+type DataIndex = keyof DataType
 const ListReviews = () => {
    const [current, setCurrent] = React.useState<number>(1)
    const [pageSize, setPageSize] = React.useState<number>(3)
+    const [searchText, setSearchText] = React.useState('')
+    const [searchedColumn, setSearchedColumn] = React.useState('')
+    const searchInput = React.useRef<InputRef>(null)
   const dataQuery = {
-    search : '',
-    page : current,
-    limit : pageSize,
-    sort : 'createdAt',
-    order : 'asc'
+    search: searchText,
+    page: current,
+    limit: pageSize,
+    sort: 'createdAt',
+    order: 'asc'
   }
   const { data: dataReviewsApi, isLoading} = useGetAllReviewsQuery(dataQuery)
   const [hiddenReview] = useHiddenReviewMutation()
@@ -42,11 +55,88 @@ const [messageApi, contextHolder] = message.useMessage()
   }
   const dataReviews = dataReviewsApi?.reviews ?? null
   const totalItems = dataReviewsApi?.pagination.totalItems ?? null
-
+  const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<DataType> => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type='primary'
+            onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size='small'
+            style={{ width: 90, backgroundColor: 'tomato' }}
+          >
+            Tìm kiếm
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size='small'
+            style={{ width: 90, backgroundColor: 'tomato' }}
+          >
+            Xóa
+          </Button>
+          <Button
+            type='link'
+            size='small'
+            icon={<FilterOutlined />}
+            onClick={() => {
+              confirm({ closeDropdown: false })
+              setSearchText((selectedKeys as string[])[0])
+              setSearchedColumn(dataIndex)
+            }}
+          >
+            Lọc
+          </Button>
+          <Button
+            type='link'
+            size='small'
+            onClick={() => {
+              close()
+            }}
+          >
+            Đóng
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />,
+    onFilter: (value, record) => {
+      const text = value?.toString().toLowerCase()
+        return record[dataIndex].toString().toLowerCase().includes(text)
+    },
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100)
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text?.toString() : ''}
+        />
+      ) : (
+        text
+      )
+  })
     const columns: ColumnsType<any> = [
       {
         title: 'Tên khách hàng',
-        dataIndex: 'user_name'
+        dataIndex: 'user_name',
+        ...getColumnSearchProps('user_name'),
+        sorter: {
+          compare: Sorter.DEFAULT
+        }
       },
       {
         title: 'Số sao',
@@ -65,6 +155,7 @@ const [messageApi, contextHolder] = message.useMessage()
       {
         title: 'Nhận xét',
         dataIndex: 'comment',
+        ...getColumnSearchProps('comment'),
         render: (record: any) => {
           return <p>{record}</p>
         }
@@ -116,7 +207,7 @@ const [messageApi, contextHolder] = message.useMessage()
         }
       },
       {
-        title: 'Thao tác',
+        title: 'Xem',
         render: (record: any) => {
           return (
             <div className='text-white px-1 py-1 block bg-green-500 rounded-md text-center'>
@@ -126,6 +217,23 @@ const [messageApi, contextHolder] = message.useMessage()
         }
       }
     ]
+
+    // Search 
+      const handleSearch = (
+        selectedKeys: string[],
+        confirm: (param?: FilterConfirmProps) => void,
+        dataIndex: DataIndex
+      ) => {
+        confirm()
+        setSearchText(selectedKeys[0])
+        setSearchedColumn(dataIndex)
+      }
+
+      const handleReset = (clearFilters: () => void) => {
+        clearFilters()
+        setSearchText('')
+      }
+    
   return (
     <div>
       {contextHolder}

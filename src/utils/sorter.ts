@@ -9,7 +9,7 @@ const numberSort = ((numberA, numberB) => {
   return numberA - numberB
 })
 const textSort = ((textA, textB) => { 
-  return textA.length - textB.length 
+  return textA?.length - textB?.length 
 })
 
 /**

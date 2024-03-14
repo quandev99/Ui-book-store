@@ -6,6 +6,7 @@ import OrderPage from './pages/clients/customer/order';
 import OrderAdmin from './feature/admin/orders';
 import UpdateOrderCustomer from './pages/clients/customer/order/updateOrder';
 import ListReviews from './feature/admin/reviews/reviewList';
+import Favorite from './pages/clients/customer/favorite';
 const CustomerPage = lazy(() => import('./pages/clients/customer'))
 const CheckOut = lazy(() =>  import( './pages/clients/checkout'))
 const CartPage = lazy(() =>  import(   './pages/clients/cart'))
@@ -66,6 +67,7 @@ export const AppRoutes = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to='account' /> },
           { path: 'account', element: <AccountPage /> },
+          { path: 'favorite', element: <Favorite /> },
           {
             path: 'order',
             children: [

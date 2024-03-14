@@ -28,7 +28,7 @@ const { Option } = Select
 const ProductList = () => {
   const [current, setCurrent] = React.useState<number>(1)
   const [pageSize, setPageSize] = React.useState<number>(5)
-  const [searchText, setSearchText] = React.useState({name: ""})
+  const [searchText, setSearchText] = React.useState('')
   const [searchedColumn, setSearchedColumn] = React.useState('')
   const searchInput = React.useRef<InputRef>(null)
   const dataQuery = {
@@ -37,7 +37,7 @@ const ProductList = () => {
       publisher_id : '',
       author_id : '',
       genre_id : '',
-      search: searchText || {},
+      search: searchText ,
       page: current,
       limit: pageSize,
       sort: 'createdAt',
@@ -74,8 +74,7 @@ const ProductList = () => {
     dataIndex: DataIndex
   ) => {
     confirm()
-    console.log('ADASDADS: :::: ', { dataIndex: selectedKeys[0] })
-     setSearchText({ dataIndex : selectedKeys[0] })
+     setSearchText(selectedKeys[0])
     setSearchedColumn(dataIndex)
   }
 
@@ -192,7 +191,7 @@ const ProductList = () => {
         return (
           <div className='text-center'>
             <h5 className=' mb-2'>{name}</h5>
-            <Image width={100} height={100} src={firstImage} />
+            <Image width={100} height={80} src={firstImage} />
           </div>
         )
       }

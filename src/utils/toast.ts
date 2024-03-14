@@ -10,7 +10,7 @@ export const handleError = (error) => {
       toast.error(error.message)
     }
   } else {
-    toast.error(error.message)
+    toast.error(error)
   }
 }
 export const handleSuccess = (message) => {
@@ -20,6 +20,9 @@ export const handleSuccess = (message) => {
     const key = successKeys[i]
     if (message === key) {
       toast.success(successMessages[key])
+      break
+    }else {
+      toast.success(message)
       break
     }
   }

@@ -122,9 +122,8 @@ const ProductPage = () => {
 
    const { user } = getUserData()
    const userId = React.useMemo(() => user?._id, [user])
-   console.log('userId 1:: ::', userId)
   const { data: dataFavProApi } = useGetFavoriteProductsByUserQuery(userId)
-  const likedProducts = dataFavProApi?.favorite?.products
+  const favoriteProducts = dataFavProApi?.favorite?.products
   
   return (
     <>
@@ -368,10 +367,9 @@ const ProductPage = () => {
                   <div className='grid grid-cols-4 gap-4 my-5'>
                     {dataProducts?.length > 0 &&
                       dataProducts?.map((item) =>  {
-                         const isLiked = likedProducts?.some((product: { _id: any }) => product?._id == item?._id)
-                         console.log('isLiked', isLiked)
+                         const isFavorite = favoriteProducts?.some((product: { _id: any }) => product?._id == item?._id)
                          return (
-                           <ProductItem key={item?._id} item={item} isLiked={isLiked} userId={userId}></ProductItem>
+                           <ProductItem key={item?._id} item={item} isFavorite={isFavorite} userId={userId}></ProductItem>
                          )
                       }
                       )}

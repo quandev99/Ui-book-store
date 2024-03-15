@@ -11,6 +11,7 @@ import { tabContentProductId } from "~/constans";
 import DescriptionProduct from "../components/DescriptionProduct";
 import { handleSuccess } from "~/utils/toast";
 import ListReviewProduct from "../components/ListReviewProduct";
+import { useGetFavoriteProductsByUserQuery } from "~/app/services/favorite";
 const ProductDetailPage = () => {
   const { id }: any = useParams()
   const { data: ProductByIdApi, isLoading: isLoadingProductById, error } = useGetProductByIdQuery(id)
@@ -89,6 +90,7 @@ const ProductDetailPage = () => {
   const handleTabChange = (key: any) => {
     setActiveTab(key)
   }
+
   const TabPane = (tabContentProductId, id) => {
     return tabContentProductId.map((item) => {
       return {
@@ -103,6 +105,9 @@ const ProductDetailPage = () => {
       }
     })
   }
+  // favorite
+  const { data: dataFavProApi } = useGetFavoriteProductsByUserQuery(userId)
+  const favoriteProducts = dataFavProApi?.favorite?.products
   return (
     <>
       <div className='container mx-auto px-[50px]'>
@@ -245,7 +250,10 @@ const ProductDetailPage = () => {
         <h3 className='text-2xl font-medium'>Sản phẩm liên quan</h3>
         <div className='mt-[15px] grid grid-cols-5 gap-5'>
           {uniqueProductByCategory && uniqueProductByCategory.length > 0 ? (
-            uniqueProductByCategory.map((item: any) => <ProductItem key={item?._id} item={item} />)
+            uniqueProductByCategory.map((item: any) => {
+              const isFavorite = favoriteProducts?.some((product: { _id: any }) => product?._id == item?._id)
+              return <ProductItem key={item?._id} item={item} isFavorite={isFavorite} userId={userId} />
+            })
           ) : (
             <p>Cuốn sách không có danh mục liên quan</p>
           )}

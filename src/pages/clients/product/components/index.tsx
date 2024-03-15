@@ -4,12 +4,12 @@ import { useAddFavoriteProductMutation } from '~/app/services/favorite'
 import { formatPrice } from '~/utils/format'
 import { handleError, handleSuccess } from '~/utils/toast'
 
-const ProductItem = ({ item, isLiked, userId }) => {
+const ProductItem = ({ item, isFavorite, userId }) => {
   const { _id, image, name, price } = item || {}
-  const [like, setLike] = React.useState(isLiked)
+  const [like, setLike] = React.useState(isFavorite)
   React.useEffect(() => {
-    setLike(isLiked)
-  }, [isLiked])
+    setLike(isFavorite)
+  }, [isFavorite])
   const [addFavoriteProduct] = useAddFavoriteProductMutation()
   const handleFavoriteProduct = async (id) => {
     if (!userId) return handleError('Bạn phải đăng nhập!')
@@ -31,7 +31,7 @@ const ProductItem = ({ item, isLiked, userId }) => {
           <span
             onClick={() => handleFavoriteProduct(_id)}
             className='bg-white shadow-xl absolute top-2 right-2 rounded-full w-9 h-9 flex items-center justify-center z-10'
-            title={isLiked ? 'Bỏ yêu thích' : 'Yêu thích'}
+            title={isFavorite ? 'Bỏ yêu thích' : 'Yêu thích'}
           >
             {like ? (
               <svg xmlns='http://www.w3.org/2000/svg' width='21' height='19' viewBox='0 0 21 19' fill='none'>

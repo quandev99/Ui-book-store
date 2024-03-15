@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import ReactPaginate from 'react-paginate'
 import { useGetAllProductsByClientQuery, useGetAllProductsQuery } from '~/app/services/product'
@@ -10,6 +10,8 @@ import { useGetAllPublishersQuery } from '~/app/services/publisher'
 import { useGetAllAuthorsQuery } from '~/app/services/author'
 import BookItemSkeleton from '~/components/loading/BookItemSkeleton'
 import { v4 } from 'uuid'
+import { useGetFavoriteProductsByUserQuery } from '~/app/services/favorite'
+import { getUserData } from '~/store/helper/getDataLocalStorage'
 
 const dataFakePrice = [
   { value: { _minPrice: 0, _maxPrice: 150000 }, title: '0₫ - 150,000₫' },
@@ -117,6 +119,13 @@ const ProductPage = () => {
   const handleSearchInputChange = (event: any) => {
     setSearch(event.target.value)
   }
+
+   const { user } = getUserData()
+   const userId = React.useMemo(() => user?._id, [user])
+   console.log('userId 1:: ::', userId)
+  const { data: dataFavProApi } = useGetFavoriteProductsByUserQuery(userId)
+  const likedProducts = dataFavProApi?.favorite?.products
+  
   return (
     <>
       <main className=' w-main mx-auto'>
@@ -351,16 +360,21 @@ const ProductPage = () => {
               <div className='grid grid-cols-1 w-full'>
                 <div className='grid grid-cols-4 gap-4 my-5'>
                   {isLoading &&
-                    (new Array(itemsPerPage)
-                      .fill(0)
-                      .map(() => <BookItemSkeleton key={`${v4()}`}></BookItemSkeleton>))}
+                    new Array(itemsPerPage).fill(0).map(() => <BookItemSkeleton key={`${v4()}`}></BookItemSkeleton>)}
                 </div>
               </div>
               {!error && dataProducts ? (
                 <div className='grid grid-cols-1 w-full'>
                   <div className='grid grid-cols-4 gap-4 my-5'>
                     {dataProducts?.length > 0 &&
-                      dataProducts?.map((item) => <ProductItem key={item._id} item={item}></ProductItem>)}
+                      dataProducts?.map((item) =>  {
+                         const isLiked = likedProducts?.some((product: { _id: any }) => product?._id == item?._id)
+                         console.log('isLiked', isLiked)
+                         return (
+                           <ProductItem key={item?._id} item={item} isLiked={isLiked} userId={userId}></ProductItem>
+                         )
+                      }
+                      )}
                   </div>
                   <div className='grid grid-cols-1'>
                     <ol className='flex items-center justify-center grid-cols-1 gap-1 text-xs font-medium w-full py-10'>

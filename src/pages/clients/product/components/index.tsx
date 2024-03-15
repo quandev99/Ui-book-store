@@ -1,22 +1,18 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useAddFavoriteProductMutation, useGetFavoriteProductsByUserQuery } from '~/app/services/favorite'
-import { getUserData } from '~/store/helper/getDataLocalStorage'
+import { useAddFavoriteProductMutation } from '~/app/services/favorite'
 import { formatPrice } from '~/utils/format'
-import { handleSuccess } from '~/utils/toast'
+import { handleError, handleSuccess } from '~/utils/toast'
 
-const ProductItem = (item: any) => {
-  const { _id, image, name, price } = item?.item || {}
-  const { user } = getUserData()
-  const userId = user?._id
-
-  const { data: dataFavProApi } = useGetFavoriteProductsByUserQuery(userId)
-  const likedProducts = dataFavProApi?.favorite?.products
-  const isLiked = likedProducts?.some((product: { _id: any }) => product?._id == _id)
-  
+const ProductItem = ({ item, isLiked, userId }) => {
+  const { _id, image, name, price } = item || {}
   const [like, setLike] = React.useState(isLiked)
+  React.useEffect(() => {
+    setLike(isLiked)
+  }, [isLiked])
   const [addFavoriteProduct] = useAddFavoriteProductMutation()
   const handleFavoriteProduct = async (id) => {
+    if (!userId) return handleError('Bạn phải đăng nhập!')
     const data = {
       userId,
       productId: id
@@ -25,7 +21,6 @@ const ProductItem = (item: any) => {
     const favoriteProduct = await addFavoriteProduct(data).unwrap()
     if (favoriteProduct) handleSuccess(favoriteProduct?.message)
   }
-
   return (
     <div className='flex flex-col h-full p-3 bg-white shadow-xl  rounded-lg select-none movie-cart'>
       <Link to='' className='overflow-hidden  rounded-md h-[250px]'>

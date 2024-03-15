@@ -67,7 +67,7 @@ export const AppRoutes = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to='account' /> },
           { path: 'account', element: <AccountPage /> },
-          { path: 'favorite', element: <Favorite /> },
+          { path: 'favorites', element: <Favorite /> },
           {
             path: 'order',
             children: [

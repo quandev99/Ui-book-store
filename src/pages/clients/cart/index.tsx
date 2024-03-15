@@ -15,7 +15,7 @@ const CartPage = () => {
   const userId = userData?._id
   const { data: dataCartApi, isLoading,error } = useGetCartByUserQuery(userId)
   const dataCart = dataCartApi?.carts
-  const isCheckedAll = dataCart?.products.every((item) => item.is_checked == true)
+  const isCheckedAll = dataCart?.products?.every((item) => item.is_checked == true)
 
 useEffect(() => {
   if (dataCart && dataCart?.products) {

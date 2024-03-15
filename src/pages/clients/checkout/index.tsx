@@ -8,6 +8,7 @@ import { useGetCartByUserCheckedQuery } from "~/app/services/cart";
 import React from "react";
 import { useAddBillMutation } from "~/app/services/bill";
 import { formatPrice } from "~/utils/format";
+import { useCreatePaymentMutation } from "~/app/services/payment";
 const schema = yup
   .object({
     userName: yup.string().required('Please enter your userName'),
@@ -24,6 +25,7 @@ const CheckOut = () => {
   const { user: userData } = getUserData()
   const userId = userData?._id
   const { data: dataCartApi, isLoading, error } = useGetCartByUserCheckedQuery(userId)
+  const [createPayment ] = useCreatePaymentMutation()
 const [addBill]=  useAddBillMutation()
   const dataCart = dataCartApi?.cart
     const {
@@ -42,7 +44,7 @@ const [addBill]=  useAddBillMutation()
       }
     })
     const onSubmit = async (values) => {
-      const data: any = {
+      const formCheckout: any = {
         user_id: userId,
         bill_userName: values.userName,
         bill_note: values.userNote,
@@ -50,20 +52,40 @@ const [addBill]=  useAddBillMutation()
         bill_phoneNumber: values.userPhone,
         payment_method: values.payment || undefined
       }
-      
-      console.log('Success', data)
-      // return 
-      const resolve = await addBill(data).unwrap()
-      alert("Đặt hàng thành công!")
-      if (resolve)
-        reset({
-          userName: 'quandeptrai',
-          userNote: '',
-          userAddress: '',
-          userPhone: '',
-          payment: 'CashPayment'
-        })
+      console.log('payment', values?.payment)
+      if (values?.payment == 'OnlinePayment') {
+        const data: any = await createPayment(formCheckout).unwrap()
+        alert('Đặt hàng thành công!')
+        if (data) {
+          window.location.href = data
+        }
+      } else {
+        const resolve = await addBill(formCheckout).unwrap()
+        alert('Đặt hàng thành công!')
+        if (resolve)
+          reset({
+            userName: 'quandeptrai',
+            userNote: '',
+            userAddress: '',
+            userPhone: '',
+            payment: 'CashPayment'
+          })
+        return
+      }
     }
+      // console.log('Success', data)
+      // return 
+      // const resolve = await addBill(data).unwrap()
+      // alert("Đặt hàng thành công!")
+      // if (resolve)
+      //   reset({
+      //     userName: 'quandeptrai',
+      //     userNote: '',
+      //     userAddress: '',
+      //     userPhone: '',
+      //     payment: 'CashPayment'
+      //   })
+  
       const watchPayment = watch('payment')
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='mx-auto my-10 '>
@@ -136,7 +158,7 @@ const [addBill]=  useAddBillMutation()
                 <span className='cursor-pointer'>Thanh toán khi nhận hàng</span>
               </div>
               <div className='flex items-center gap-x-3  '>
-                <Radio control={control} name='payment' value='vnpay' checked={watchPayment === 'vnpay'}></Radio>
+                <Radio control={control} name='payment' value='OnlinePayment' checked={watchPayment === 'OnlinePayment'}></Radio>
                 <span className='cursor-pointer'>Thanh toán bằng VnPay</span>
               </div>
             </div>

@@ -7,8 +7,8 @@ export const apiCart = createApi({
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     getCartByUser: builder.query<any, void>({
-      query: (_id) => ({
-        url: `/carts/getCartByUser/${_id}`,
+      query: (userId) => ({
+        url: `/carts/getCartByUser/${userId}`,
         method: 'GET'
       }),
       providesTags: ['Carts']

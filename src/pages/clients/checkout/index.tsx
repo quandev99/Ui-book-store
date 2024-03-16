@@ -9,6 +9,8 @@ import React from "react";
 import { useAddBillMutation } from "~/app/services/bill";
 import { formatPrice } from "~/utils/format";
 import { useCreatePaymentMutation } from "~/app/services/payment";
+import { useNavigate } from "react-router-dom";
+import { handleSuccess } from "~/utils/toast";
 const schema = yup
   .object({
     userName: yup.string().required('Please enter your userName'),
@@ -22,12 +24,13 @@ const schema = yup
   })
   .required()
 const CheckOut = () => {
+  const navigate = useNavigate()
   const { user: userData } = getUserData()
   const userId = userData?._id
   const { data: dataCartApi, isLoading, error } = useGetCartByUserCheckedQuery(userId)
   const [createPayment ] = useCreatePaymentMutation()
 const [addBill]=  useAddBillMutation()
-  const dataCart = dataCartApi?.cart
+  const dataCart = dataCartApi?.carts
     const {
       handleSubmit,
       getValues,
@@ -56,21 +59,23 @@ const [addBill]=  useAddBillMutation()
       if (values?.payment == 'OnlinePayment') {
         const data: any = await createPayment(formCheckout).unwrap()
         alert('Đặt hàng thành công!')
+        console.log("data",data);
         if (data) {
           window.location.href = data
         }
       } else {
         const resolve = await addBill(formCheckout).unwrap()
-        alert('Đặt hàng thành công!')
-        if (resolve)
-          reset({
-            userName: 'quandeptrai',
-            userNote: '',
-            userAddress: '',
-            userPhone: '',
-            payment: 'CashPayment'
-          })
-        return
+        if(resolve && resolve.success) 
+          handleSuccess(resolve.message)
+        reset({
+          userName: 'quandeptrai',
+          userNote: '',
+          userAddress: '',
+          userPhone: '',
+          payment: 'CashPayment'
+        })
+        
+        return navigate(`/customer/order/${resolve?.bill?._id}/update`)
       }
     }
       // console.log('Success', data)

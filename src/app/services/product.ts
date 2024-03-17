@@ -1,6 +1,7 @@
 
 import { createApi } from '@reduxjs/toolkit/dist/query/react'
 import { baseQueryWithReauth } from './apiConfig'
+import { IProduct } from '~/interfaces/product'
 
 export const apiProduct = createApi({
   reducerPath: 'product',
@@ -32,7 +33,7 @@ export const apiProduct = createApi({
       }),
       providesTags: ['Products']
     }),
-    getProductById: builder.query<any, void>({
+    getProductById: builder.query<any, IProduct>({
       query: (_id) => ({
         url: `/products/${_id}/getById`,
         method: 'GET'

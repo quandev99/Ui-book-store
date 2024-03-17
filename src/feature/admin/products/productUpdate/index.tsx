@@ -63,7 +63,7 @@ const onFileChange = async (event: any) => {
       for (let i = 0; i < files?.length; i++) {
         formData.append(`images`, files[i])
       }
-       const response = await createImages(formData as any)
+       const response = await createImages(formData as any).unwrap()
       if (response?.data) {
         const newImages = response?.data?.urls
          setSelectedImages((prevSelectedImages) => [...prevSelectedImages, ...newImages])
@@ -85,6 +85,7 @@ const onFileChange = async (event: any) => {
     name: dataProductById?.name || '',
     price: dataProductById?.price || '',
     quantity: dataProductById?.quantity || '',
+    discount_percentage: dataProductById?.discount_percentage || null,
     description: dataProductById?.description || '',
     publishing_year: dataProductById?.publishing_year || '',
     category_id: dataProductById?.category_id?._id || '',
@@ -176,6 +177,13 @@ const onFileChange = async (event: any) => {
           </Col>
           <Col span={8}>
             <Space>
+              <Form.Item
+                name='discount_percentage'
+                label='Giảm giá'
+                rules={[{ required: true, message: 'Discount is required!' }]}
+              >
+                <Input />
+              </Form.Item>
               <Form.Item
                 name='quantity'
                 label='Số lượng'

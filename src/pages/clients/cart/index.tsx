@@ -285,9 +285,18 @@ const handleBlur = async (product) => {
                                   >
                                     <h1>{product?.product_name}</h1>
                                   </Link>
-                                  <div className=''>{formatPrice(product?.product_price) || 0 + '  đ'}</div>
+                                  <div className='flex gap-2'>
+                                        <span className='line-through text-gray-500'>
+                                          {formatPrice(
+                                            product?.product_id?.price
+                                          )}
+                                        </span>
+                                        <span className='text-primary'>{formatPrice(product?.product_price || 0)}</span>
+                                  </div>
                                 </div>
-                                {errUpdate && errUpdate.productId == product?._id && <div className='text-red-500 p-2 '>{errUpdate?.error}</div>}
+                                {errUpdate && errUpdate.productId == product?._id && (
+                                  <div className='text-red-500 p-2 '>{errUpdate?.error}</div>
+                                )}
                               </div>
                             </td>
                             <td className='whitespace-nowrap py-2 text-gray-700  hidden lg:table-cell'>

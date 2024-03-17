@@ -48,7 +48,7 @@ const onFileChange = async (event: any) => {
         formData.append(`images`, files[i])
       }
 
-      const response = await createImages(formData as any)
+      const response = await createImages(formData as any).unwrap()
       if (response?.data) {
         setSelectedImages(response?.data?.urls)
         setImage(response?.data.urls)
@@ -88,11 +88,11 @@ const onFileChange = async (event: any) => {
     if (publicId) {
       try {
         // Gửi yêu cầu xóa ảnh đến máy chủ hoặc API
-        await deleteImage(publicId)
+        await deleteImage(publicId).unwrap()
         // Cập nhật danh sách ảnh trên máy khách bằng cách loại bỏ ảnh đã xóa
         const updatedImages = selectedImages.filter((image) => image?.publicId !== publicId)
         setSelectedImages(updatedImages)
-        const updatedImageList = image.filter((item) => item?.publicId !== publicId)
+        const updatedImageList = image.filter((item:any) => item?.publicId !== publicId)
         setImage(updatedImageList)
       } catch (error: any) {
         message.error('Error deleting image: ' + error?.message)
@@ -125,9 +125,16 @@ const onFileChange = async (event: any) => {
           <Col span={8}>
             <Space>
               <Form.Item
+                name='discount_percentage'
+                label='Phần trăm giảm giá'
+                rules={[{ required: true, message: 'Discount is required!' }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
                 name='quantity'
                 label='Số lượng'
-                rules={[{ required: true, message: 'quantity is required!' }]}
+                rules={[{ required: true, message: 'Quantity is required!' }]}
               >
                 <Input />
               </Form.Item>

@@ -12,6 +12,7 @@ const BookItemSkeleton = () => {
           <span>
             <LoadingSkeleton width='60px' height='10px' radius='8px'></LoadingSkeleton>
           </span>
+            <LoadingSkeleton width='60px' height='10px' radius='8px'></LoadingSkeleton>
         </div>
         <LoadingSkeleton width='100%' height='40px' radius='8px'></LoadingSkeleton>
       </div>

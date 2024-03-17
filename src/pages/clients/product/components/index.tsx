@@ -5,7 +5,7 @@ import { formatPrice } from '~/utils/format'
 import { handleError, handleSuccess } from '~/utils/toast'
 
 const ProductItem = ({ item, isFavorite, userId }) => {
-  const { _id, image, name, price } = item || {}
+  const { _id, image, name, price, discount_percentage, discounted_price } = item || {}
   const [like, setLike] = React.useState(isFavorite)
   React.useEffect(() => {
     setLike(isFavorite)
@@ -26,7 +26,7 @@ const ProductItem = ({ item, isFavorite, userId }) => {
       <Link to='' className='overflow-hidden  rounded-md h-[250px]'>
         <div className='flex justify-between relative'>
           <span className='z-10 bg-[#f7941e] font-semibold text-white absolute top-2 left-2 p-2 rounded-full text-sm block'>
-            {'8'} %
+            {discount_percentage || 0} %
           </span>
           <span
             onClick={() => handleFavoriteProduct(_id)}
@@ -70,7 +70,16 @@ const ProductItem = ({ item, isFavorite, userId }) => {
           <Link to={`/products/${_id}`}>{name}</Link>
         </h5>
         <div className='flex items-center justify-between mb-10 text-sm '>
-          <span className='font-bold text-[#CD151C] text-[15px]'>{formatPrice(price)}</span>
+          <span
+            className={` text-[18px] font-medium ${discounted_price ? 'line-through text-gray-500 italic' : 'text-primary'} `}
+          >
+            {formatPrice(price)}
+          </span>
+          {discounted_price > 0 && (
+            <span className='text-primary text-[18px] font-bold'>
+              {formatPrice(discounted_price)}
+            </span>
+          )}
         </div>
         <button className='w-full py-2 text-white  duration-300 transition-all  rounded-lg cursor-pointer hover:text-primary bg-primary hover:bg-white hover:border  mt-auto'>
           Xem chi tiết

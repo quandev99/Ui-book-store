@@ -12,6 +12,7 @@ import DescriptionProduct from "../components/DescriptionProduct";
 import { handleSuccess } from "~/utils/toast";
 import ListReviewProduct from "../components/ListReviewProduct";
 import { useGetFavoriteProductsByUserQuery } from "~/app/services/favorite";
+import LoadingSkeleton from "~/components/loading/LoadingSkeleton";
 const ProductDetailPage = () => {
   const { id }: any = useParams()
   const { data: ProductByIdApi, isLoading: isLoadingProductById, error } = useGetProductByIdQuery(id)
@@ -124,31 +125,38 @@ const ProductDetailPage = () => {
           <div className='col-span-3 w-full'>
             <div className=' w-full p-4 rounded-lg shadow  border border-gray-50 min-h-[360px]  bg-white'>
               <div className='w-[360px] h-[400px] mx-auto text-center'>
-                <img
-                  src={
-                    largeImage
-                      ? largeImage
-                      : dataProductById?.image[0]?.url
-                        ? dataProductById?.image[0]?.url
-                        : 'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'
-                  }
-                  className='w-full h-full object-cover block'
-                />
+                {isLoadingProductById ? (
+                  <LoadingSkeleton className={'h-full'}></LoadingSkeleton>
+                ) : (
+                  <img
+                    src={
+                      largeImage
+                        ? largeImage
+                        : dataProductById?.image[0]?.url
+                          ? dataProductById?.image[0]?.url
+                          : 'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'
+                    }
+                    className='w-full h-full object-cover block'
+                  />
+                )}
               </div>
             </div>
             <div className='col-span-3'>
               <ul className='w-full gird gap-x-5'>
                 <Slider {...settings} className='image-slider'>
-                  {dataProductById?.image?.map((item: any, index: any) => (
-                    <li key={index} className='image-slide p-4 mt-2' onClick={() => handleThumbnailClick(item)}>
-                      <img
-                        src={item?.url}
-                        className='image-container h-[100px] cursor-pointer bg-white p-4 bg-cover bg-center rounded-sm shadow-md'
-                        alt={`Image ${index + 1}`}
-                      />
-                    </li>
-                  ))}
+                  {dataFavProApi && (
+                    dataProductById?.image?.map((item: any, index: any) => (
+                      <li key={index} className='image-slide p-4 mt-2' onClick={() => handleThumbnailClick(item)}>
+                        <img
+                          src={item?.url}
+                          className='image-container h-[100px] cursor-pointer bg-white p-4 bg-cover bg-center rounded-sm shadow-md'
+                          alt={`Image ${index + 1}`}
+                        />
+                      </li>
+                    ))
+                  )}
                 </Slider>
+                <li className='image-slide p-4 mt-2'>{<LoadingSkeleton className={'h-full'}></LoadingSkeleton>}</li>
               </ul>
             </div>
           </div>
@@ -196,9 +204,18 @@ const ProductDetailPage = () => {
             <button onClick={() => handleModalABD()}>Chính sách đổi trả</button>
             <div className='mb-5'>
               <p>
-                <span className='text-primary text-3xl font-medium'>
+                <span
+                  className={` text-3xl font-medium ${
+                    dataProductById?.discounted_price ? 'line-through text-gray-500' : 'text-primary'
+                  } `}
+                >
                   {formatPrice(dataProductById?.price) || 'Đang cập nhật'}
                 </span>
+                {dataProductById?.discounted_price > 0 && (
+                  <span className='text-primary text-3xl font-medium ml-4'>
+                    {formatPrice(dataProductById?.discounted_price) || 'Đang cập nhật'}
+                  </span>
+                )}
               </p>
             </div>
             <div className='grid grid-cols-5 items-center gap-x-2'>

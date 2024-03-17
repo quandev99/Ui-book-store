@@ -2,6 +2,7 @@ import {
   createApi,
 } from '@reduxjs/toolkit/dist/query/react'
 import { baseQueryWithReauth } from './apiConfig'
+import { IImage } from '~/interfaces/image'
 export const apiImage = createApi({
   reducerPath: 'images',
   tagTypes: ['Images'],
@@ -30,7 +31,7 @@ export const apiImage = createApi({
       }),
       invalidatesTags: ['Images']
     }),
-    createImages: builder.mutation<any, void>({
+    createImages: builder.mutation<any, IImage>({
       query: (files) => ({
         url: `/images/uploads`,
         method: 'POST',

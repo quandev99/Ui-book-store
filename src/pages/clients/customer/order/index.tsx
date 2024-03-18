@@ -23,7 +23,7 @@ const OrderPage = () => {
             activeKey={activeTab}
             defaultActiveKey={activeTab}
             onChange={handleTabChange}
-            tabBarGutter={90}
+            tabBarGutter={80}
             items={TabPane(tabContent, renderChildComponent)}
           ></Tabs>
         </div>

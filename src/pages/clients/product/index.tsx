@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from 'react'
 
 import ReactPaginate from 'react-paginate'
-import { useGetAllProductsByClientQuery, useGetAllProductsQuery } from '~/app/services/product'
 import ProductItem from './components'
-import { useGetAllCategoriesQuery } from '~/app/services/category'
-import { useGetAllGenresQuery } from '~/app/services/genre'
-import { useGetAllSuppliersQuery } from '~/app/services/supplier'
-import { useGetAllPublishersQuery } from '~/app/services/publisher'
-import { useGetAllAuthorsQuery } from '~/app/services/author'
 import BookItemSkeleton from '~/components/loading/BookItemSkeleton'
 import { v4 } from 'uuid'
 import { useGetFavoriteProductsByUserQuery } from '~/app/services/favorite'
 import { getUserData } from '~/store/helper/getDataLocalStorage'
+import { useGetAllAuthorsClientQuery, useGetAllGenresClientQuery, useGetAllPublishersClientQuery, useGetAllSuppliersClientQuery, useGetCategoriesClientQuery, useGetProductsClientQuery } from '~/app/services/client'
 
 const dataFakePrice = [
   { value: { _minPrice: 0, _maxPrice: 150000 }, title: '0₫ - 150,000₫' },
@@ -28,17 +23,18 @@ const dataFakePrice = [
 const itemsPerPage = 20
 const ProductPage = () => {
   const [url, setUrl] = useState('')
-   const { data: productsApi, isLoading, error } = useGetAllProductsByClientQuery(url as any)
+   const { data: productsApi, isLoading, error } = useGetProductsClientQuery(url as any)
   const dataProducts = productsApi?.products;
-   const { data:categoriesApi} = useGetAllCategoriesQuery()
+  console.log("dataProducts", dataProducts);
+   const { data: categoriesApi } = useGetCategoriesClientQuery()
    const categories = categoriesApi?.categories?.filter((category) => category?.parent)
-    const { data: gendersApi} = useGetAllGenresQuery()
+    const { data: gendersApi} = useGetAllGenresClientQuery()
     const dataGenres = gendersApi?.genres
-   const { data: suppliersApi } = useGetAllSuppliersQuery()
+   const { data: suppliersApi } = useGetAllSuppliersClientQuery()
    const dataSuppliers = suppliersApi?.suppliers
-    const { data: publishersApi } = useGetAllPublishersQuery()
+    const { data: publishersApi } = useGetAllPublishersClientQuery()
     const dataPublishers = publishersApi?.publishers
-    const { data: authorsApi } = useGetAllAuthorsQuery()
+    const { data: authorsApi } = useGetAllAuthorsClientQuery()
     const dataAuthors = authorsApi?.authors
   const pageCount = productsApi?.pagination?.totalPages
   const [limit] = useState(10)

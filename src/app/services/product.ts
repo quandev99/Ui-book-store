@@ -26,7 +26,7 @@ export const apiProduct = createApi({
       }),
       providesTags: ['Products']
     }),
-    getAllProductsByClient: builder.query<any, void>({
+    getAllProductsByClients: builder.query<any, void>({
       query: (url) => ({
         url: '/products' + url,
         method: 'GET'
@@ -99,7 +99,7 @@ export const apiProduct = createApi({
 
 export const {
   useGetAllProductsQuery,
-  useGetAllProductsByClientQuery,
+  useGetAllProductsByClientsQuery,
   useGetProductByCateQuery,
   useForceProductMutation,
   useRestoreProductMutation,

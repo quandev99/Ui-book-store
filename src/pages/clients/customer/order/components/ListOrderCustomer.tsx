@@ -70,7 +70,7 @@ const ListOrderCustomer = ({ tabKey }: any) => {
       }
     },
     {
-      title: 'Trạng thái đơn hàng',
+      title: 'Trạng thái',
       dataIndex: 'bill_status',
       render: (bill_status: any) => {
         return (

@@ -21,6 +21,7 @@ import { apiBill } from './services/bill'
 import { apiReview } from './services/review'
 import { apiFavorite } from './services/favorite'
 import { apiPayment } from './services/payment'
+import { apiClient } from './services/client'
 
 
 const persistConfig = {
@@ -43,6 +44,7 @@ const rootReducer = combineReducers({
   [apiReview.reducerPath]: apiReview.reducer,
   [apiFavorite.reducerPath]: apiFavorite.reducer,
   [apiPayment.reducerPath]: apiPayment.reducer,
+  [apiClient.reducerPath]: apiClient.reducer,
   authSlice: authReducer,
   cartSlice: cartReducer
 })
@@ -61,7 +63,8 @@ const attinalMiddleware = [
   apiBill.middleware,
   apiReview.middleware,
   apiFavorite.middleware,
-  apiPayment.middleware
+  apiPayment.middleware,
+  apiClient.middleware
 ]
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 export const store = configureStore({

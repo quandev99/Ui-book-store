@@ -57,10 +57,10 @@ const Reviews = ({ open, billId, setOpen }: { open: boolean; billId: any; setOpe
     setIsLoading(true)
 
     billList?.bill_details?.map(async (pro: any) => {
-      const uploadPromises = productImages[pro.product_id]?.files?.map((file: any) => {
+      const uploadPromises = productImages[pro.product_id]?.files?.map(async (file: any) => {
         const formData = new FormData()
         formData.append('images', file)
-        return createImages(formData)
+        return await createImages(formData as any).unwrap()
       })
 
       let updatedImages = []
@@ -202,8 +202,10 @@ const Reviews = ({ open, billId, setOpen }: { open: boolean; billId: any; setOpe
             )
           })}
           <div className='mt-5 flex justify-between mb-4'>
-            <div></div>
-            <button className=' border-gray-50 px-6 bg-[#ee4d2d] hover:bg-red-600 transition-all hover: py-1 shadow rounded-sm hover:shadow-sm text-white'>
+            <button
+              disabled={billList?.is_review}
+              className=' border-gray-50 px-6 bg-[#ee4d2d] hover:bg-red-600 transition-all hover: py-1 shadow rounded-sm hover:shadow-sm text-white'
+            >
               Đánh giá
             </button>
           </div>

@@ -37,7 +37,7 @@ const CustomerPage = () => {
               <Link
                 to='account'
                 className={`  ${
-                  currentPage === '/account' ? 'text-[#2c7be5]' : 'hover:text-blue-600'
+                  currentPage === '/account' ? 'text-primary' : 'hover:text-primary'
                 }  cursor-pointer  md:text-[15px]  px-3 py-1 duration-300 flex  items-center gap-2 transition-all `}
               >
                 Thông tin tài khoản
@@ -45,7 +45,7 @@ const CustomerPage = () => {
               <Link
                 to='change-password-new'
                 className={`  ${
-                  currentPage === '/account/change-password-new' ? 'text-[#2c7be5]' : 'hover:text-blue-600'
+                  currentPage === '/account/change-password-new' ? 'text-primary' : 'hover:text-primary'
                 } cursor-pointer  md:text-[15px]  px-3 py-1 duration-300 flex  items-center gap-2 transition-all `}
               >
                 Đổi mật khẩu
@@ -54,7 +54,7 @@ const CustomerPage = () => {
               <Link
                 to='favorites'
                 className={` ${
-                  currentPage === '/account/favorites' ? 'text-[#2c7be5]' : 'hover:text-blue-600'
+                  currentPage === '/account/favorites' ? 'text-primary' : 'hover:text-primary'
                 } cursor-pointer  md:text-[15px]  px-3 py-1 duration-300 flex  items-center gap-2 transition-all `}
               >
                 Yêu thích
@@ -62,7 +62,7 @@ const CustomerPage = () => {
               <Link
                 to='order'
                 className={` ${
-                  currentPage === '/account/order' ? 'text-[#2c7be5]' : 'hover:text-blue-600'
+                  currentPage === '/account/order' ? 'text-primary' : 'hover:text-primary'
                 } cursor-pointer  md:text-[15px]  px-3 py-1 duration-300 flex  items-center gap-2 transition-all `}
               >
                 Đơn hàng
@@ -70,7 +70,7 @@ const CustomerPage = () => {
               <Link
                 to='vouchers'
                 className={` ${
-                  currentPage === '/account/vouchers' ? 'text-[#2c7be5]' : 'hover:text-blue-600'
+                  currentPage === '/account/vouchers' ? 'text-primary' : 'hover:text-primary'
                 } cursor-pointer flex items-center gap-2 md:text-[15px]   px-3 py-1 duration-300 transition-all `}
               >
                 Kho voucher
@@ -78,7 +78,7 @@ const CustomerPage = () => {
               <Link
                 to='reviews'
                 className={` ${
-                  currentPage === '/account/reviews' ? 'text-[#2c7be5]' : 'hover:text-blue-600'
+                  currentPage === '/account/reviews' ? 'text-primary' : 'hover:text-primary'
                 } cursor-pointer  md:text-[15px]  px-3 py-1 duration-300 flex  items-center gap-2 transition-all `}
               >
                 Đánh giá

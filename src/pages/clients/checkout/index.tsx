@@ -46,10 +46,13 @@ const [addBill]=  useAddBillMutation()
         payment: 'CashPayment'
       }
     })
+    React.useEffect(() => {
+      if (userData) setValue('userName', userData?.name)
+    }, [userData])
     const onSubmit = async (values) => {
       const formCheckout: any = {
         user_id: userId,
-        bill_userName: values.userName,
+        bill_userName: values.userName || userData?.name,
         bill_note: values.userNote,
         bill_shippingAddress: values.userAddress,
         bill_phoneNumber: values.userPhone,

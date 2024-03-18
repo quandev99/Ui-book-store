@@ -87,6 +87,7 @@ const UpdateOrderCustomer = () => {
   }
   const billSucceeded = dataBillUser?.bill_status === 'Delivering'
   const hiddenButton = dataBillUser?.bill_status !== 'Pending'
+  const hiddenButtonReview = dataBillUser?.bill_status === 'Completed'
   if (error) {
     if ('data' in error) {
       if (error.data) {
@@ -158,8 +159,8 @@ const UpdateOrderCustomer = () => {
               <div className='bg-white p-5'>
                 <div className='flex justify-between items-center'>
                   <div className='mb-5'>
-                    <span className='text-white bg-primary px-4 py-2 rounded-md mr-4'>Book Store</span>
-                    <span className='text-white bg-blue-500 px-4  py-2  rounded-md'>
+                    <span className='text-white bg-primary p-2 rounded-md mr-2'>Book Store</span>
+                    <span className='text-white bg-blue-500 p-2  rounded-md'>
                       Mã đơn hàng : {dataBillUser?.bill_code}
                     </span>
                   </div>
@@ -186,12 +187,16 @@ const UpdateOrderCustomer = () => {
                       </div>
                       <div className='ml-4'>
                         <h1>{items?.product_name}</h1>
-                        <span className='text-medium'>x {items?.quantity}</span>
+                        <span className='text-medium'>
+                          x <b>{items?.quantity}</b>
+                        </span>
                       </div>
                     </div>
                     <div className='text-[18px]'>
-                      <span className='text-gray-400 mr-1'>{formatPrice(items?.price)}</span>
-                      <span className='text-primary'>{formatPrice(items?.price * items?.quantity)}</span>
+                      <span className='text-gray-400 mr-1'>
+                        {formatPrice(items?.product_id?.discounted_price || items?.product_id?.price)}
+                      </span>
+                      <span className='text-primary'>{formatPrice(items?.price)}</span>
                     </div>
                   </div>
                 ))}
@@ -206,7 +211,7 @@ const UpdateOrderCustomer = () => {
           </div>
           <div className='col-span-1 bg-gray-100 p-4 '>
             <div className='flex flex-col mb-5'>
-              <h3 className='font-medium text-xl mb-3'>Trạng thái đơn hàng</h3>
+              <h3 className='font-medium  mb-3'>Trạng thái đơn hàng</h3>
               {items?.map((item) => {
                 if (item?.key == billStatus) {
                   return <span className='p-2 bg-slate-100 text-green-500 border bottom-1'>{item?.title}</span>
@@ -214,8 +219,8 @@ const UpdateOrderCustomer = () => {
                 return null
               })}
             </div>
-            <div className='flex flex-col'>
-              <h3 className='font-medium text-xl mb-3'>Trạng thái Thánh toán</h3>
+            <div className='flex flex-col mb-8'>
+              <h3 className='font-medium mb-3'>Trạng thái Thánh toán</h3>
               <span className='p-2 bg-slate-100 text-green-500 border bottom-1'>
                 {dataBillUser?.status ? 'Đã thanh toán' : 'Chưa thanh toán'}
               </span>
@@ -223,7 +228,7 @@ const UpdateOrderCustomer = () => {
             <button
               onClick={updateBill}
               disabled={!billSucceeded}
-              className={`text-white  w-full mt-5 p-2 block rounded-md ${
+              className={`text-white  w-full mb-3 p-2 block rounded-md ${
                 billSucceeded ? 'bg-blue-500' : 'bg-blue-200'
               }`}
             >
@@ -233,25 +238,24 @@ const UpdateOrderCustomer = () => {
             <button
               onClick={handleCancelBill}
               disabled={hiddenButton}
-              className={`text-white bg-primary w-full mt-5 p-2 block rounded-md ${
+              className={`text-white bg-primary hover:border-primary  transition-all w-full mb-3 p-2 block rounded-md ${
                 hiddenButton ? 'bg-red-200' : ' bg-primary'
               }`}
             >
               Hủy
             </button>
-            {
-            // dataBillUser?.status_name === 'Completed' && dataBillUser?.isReview === true 
-            true
-            && (
-              <div>
-                <button
-                  className='  px-5 max-w-[200px] bg-yellow-400 hover:bg-yellow-600 text-white border-2 border-green-100 hover:border-green-300  transition-all rounded-md w-full  py-2'
-                  onClick={() => openReviewModal(dataBillUser?._id)}
-                >
-                  Đánh giá
-                </button>
-                <Reviews open={open} setOpen={setOpen} billId={reviewBillId} />
-              </div>)}
+            <div>
+              <button
+                className={` text-white border-2 border-green-100   transition-all rounded-md p-2 block w-full ${
+                  hiddenButtonReview ? 'bg-green-400 hover:bg-green-600' : 'bg-green-200 hover:border-green-300'
+                }`}
+                onClick={() => openReviewModal(dataBillUser?._id)}
+                disabled={dataBillUser?.is_review}
+              >
+                Đánh giá
+              </button>
+              <Reviews open={open} setOpen={setOpen} billId={reviewBillId} />
+            </div>
           </div>
         </div>
       </div>

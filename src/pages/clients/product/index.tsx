@@ -25,7 +25,6 @@ const ProductPage = () => {
   const [url, setUrl] = useState('')
    const { data: productsApi, isLoading, error } = useGetProductsClientQuery(url as any)
   const dataProducts = productsApi?.products;
-  console.log("dataProducts", dataProducts);
    const { data: categoriesApi } = useGetCategoriesClientQuery()
    const categories = categoriesApi?.categories?.filter((category) => category?.parent)
     const { data: gendersApi} = useGetAllGenresClientQuery()

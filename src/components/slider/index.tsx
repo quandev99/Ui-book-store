@@ -1,4 +1,4 @@
-import Slider from 'react-slick'
+import CustomSlider from './CustomSlider'
 const BannerHomePage = () => {
   var settings = {
     dots: true,
@@ -7,11 +7,11 @@ const BannerHomePage = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true, 
-    autoplaySpeed: 3000
+    autoplaySpeed: 3000,
   }
   return (
     <div className='w-full h-[500px] mb-10'>
-      <Slider {...settings}>
+      <CustomSlider settings={settings}>
         <div className='w-full h-full'>
           <img
             className='w-full h-full object-cover'
@@ -40,7 +40,7 @@ const BannerHomePage = () => {
             alt=''
           />
         </div>
-      </Slider>
+      </CustomSlider>
     </div>
   )
 }

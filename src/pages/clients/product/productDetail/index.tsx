@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import {  useNavigate, useParams } from 'react-router-dom'
-import { useGetProductByCateQuery, useGetProductByIdQuery } from "~/app/services/product";
 import { Modal, Rate, Tabs } from "antd";
 import {formatPrice} from "~/utils/format";
 import ProductItem from "../components";
@@ -13,12 +12,15 @@ import { handleSuccess } from "~/utils/toast";
 import ListReviewProduct from "../components/ListReviewProduct";
 import { useGetFavoriteProductsByUserQuery } from "~/app/services/favorite";
 import LoadingSkeleton from "~/components/loading/LoadingSkeleton";
+import { useGetProductByCategoryIdClientQuery, useGetProductByIdClientQuery } from "~/app/services/client";
+import CustomSlider from "~/components/slider/CustomSlider";
+import BookItemSkeleton from "~/components/loading/BookItemSkeleton";
 const ProductDetailPage = () => {
   const { id }: any = useParams()
-  const { data: ProductByIdApi, isLoading: isLoadingProductById, error } = useGetProductByIdQuery(id)
+  const { data: ProductByIdApi, isLoading: isLoadingProductById, error } = useGetProductByIdClientQuery(id)
   const dataProductById = ProductByIdApi?.product
   const categoryId = dataProductById?.category_id?._id
-  const { data: dataProductByCate } = useGetProductByCateQuery(categoryId)
+  const { data: dataProductByCate } = useGetProductByCategoryIdClientQuery(categoryId)
   const uniqueProductByCategory = dataProductByCate?.products?.filter((product) => product?._id !== id)
   let dataImage = dataProductById?.image
   const isQuantity = dataProductById?.quantity <= 0
@@ -46,9 +48,47 @@ const ProductDetailPage = () => {
     initialSlide: 0,
     centerMode: false // Ensure slides are left-aligned
   }
+  const settingsByProductCate = {
+    dots: false,
+    infinite: true,
+    speed: 1000,
+    slidesToShow: 4,
+    slidesToScroll: 2,
+    centerMode: true,
+    className: 'center',
+    centerPadding: '40px',
+    autoplaySpeed: 2000,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          centerPadding: '30px'
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2,
+          centerPadding: '10px'
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerPadding: '0px'
+        }
+      }
+    ]
+  }
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [])
+  }, [id])
 
   // add to cart
   // Input
@@ -109,6 +149,7 @@ const ProductDetailPage = () => {
   // favorite
   const { data: dataFavProApi } = useGetFavoriteProductsByUserQuery(userId)
   const favoriteProducts = dataFavProApi?.favorite?.products
+  const isFavorite = favoriteProducts?.some((product: { _id: any }) => product?._id == id)
   return (
     <>
       <div className='container mx-auto px-[50px]'>
@@ -143,20 +184,27 @@ const ProductDetailPage = () => {
             </div>
             <div className='col-span-3'>
               <ul className='w-full gird gap-x-5'>
-                <Slider {...settings} className='image-slider'>
-                  {dataFavProApi && (
-                    dataProductById?.image?.map((item: any, index: any) => (
-                      <li key={index} className='image-slide p-4 mt-2' onClick={() => handleThumbnailClick(item)}>
-                        <img
-                          src={item?.url}
-                          className='image-container h-[100px] cursor-pointer bg-white p-4 bg-cover bg-center rounded-sm shadow-md'
-                          alt={`Image ${index + 1}`}
-                        />
-                      </li>
-                    ))
-                  )}
-                </Slider>
-                <li className='image-slide p-4 mt-2'>{<LoadingSkeleton className={'h-full'}></LoadingSkeleton>}</li>
+                <CustomSlider settings={settings}>
+                  {!isLoadingProductById
+                    ? dataProductById?.image?.map((item: any, index: any) => (
+                        <li
+                          key={item?.publicId}
+                          className='image-slide p-4 mt-2'
+                          onClick={() => handleThumbnailClick(item)}
+                        >
+                          <img
+                            src={item?.url}
+                            className='image-container h-[100px] cursor-pointer bg-white p-4 bg-cover bg-center rounded-sm shadow-md'
+                            alt={`Image ${index + 1}`}
+                          />
+                        </li>
+                      ))
+                    : [1, 2, 3, 4].map((key) => (
+                        <li key={key} className='image-slide p-4 mt-2 h-20'>
+                          <LoadingSkeleton key={key} className={'h-full'} />
+                        </li>
+                      ))}
+                </CustomSlider>
               </ul>
             </div>
           </div>
@@ -245,7 +293,7 @@ const ProductDetailPage = () => {
               <button
                 onClick={addToCartItem}
                 disabled={isQuantity}
-                className={`col-span-2 hover:shadow-md ${
+                className={`col-span-2 hover:shadow-md ml-4 ${
                   isQuantity ? `bg-[#234a99]` : `bg-[#1f66ef]`
                 } rounded-full transition-all hover:bg-blue-800 text-white font-medium w-full p-2 text-center`}
               >
@@ -255,7 +303,7 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
-      <div className='  mb-5'>
+      <div className='mb-5'>
         <Tabs
           activeKey={activeTab}
           onChange={handleTabChange}
@@ -263,18 +311,32 @@ const ProductDetailPage = () => {
           items={TabPane(tabContentProductId, id)}
         ></Tabs>
       </div>
-      <div className='grid w-full mb-5'>
-        <h3 className='text-2xl font-medium'>Sản phẩm liên quan</h3>
-        <div className='mt-[15px] grid grid-cols-5 gap-5'>
-          {uniqueProductByCategory && uniqueProductByCategory.length > 0 ? (
-            uniqueProductByCategory.map((item: any) => {
-              const isFavorite = favoriteProducts?.some((product: { _id: any }) => product?._id == item?._id)
-              return <ProductItem key={item?._id} item={item} isFavorite={isFavorite} userId={userId} />
-            })
+      <div className='w-full mb-5'>
+        <h3 className='text-2xl mb-5 font-medium'>Sản phẩm liên quan</h3>
+        {isLoadingProductById && (
+          <CustomSlider settings={settingsByProductCate}>
+            {[1, 2, 3, 4, 5].map((key) => (
+              <BookItemSkeleton key={key} />
+            ))}
+          </CustomSlider>
+        )}
+        {uniqueProductByCategory && uniqueProductByCategory.length > 0 ? (
+          uniqueProductByCategory.length > settingsByProductCate.slidesToShow ? (
+            <CustomSlider settings={settingsByProductCate}>
+              {uniqueProductByCategory.map((item: any) => (
+                <ProductItem key={item?._id} item={item} isFavorite={isFavorite} userId={userId} />
+              ))}
+            </CustomSlider>
           ) : (
-            <p>Cuốn sách không có danh mục liên quan</p>
-          )}
-        </div>
+            <div className='grid grid-cols-5 gap-4'>
+              {uniqueProductByCategory.map((item: any) => (
+                <ProductItem key={item?._id} item={item} isFavorite={isFavorite} userId={userId} />
+              ))}
+            </div>
+          )
+        ) : (
+          <p>Cuốn sách không có danh mục liên quan</p>
+        )}
       </div>
       <Modal
         title='Chính sách đổi trả'

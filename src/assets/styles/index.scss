@@ -53,9 +53,35 @@
 }
 
 /// slider home page
-// button.slick-arrow.slick-prev{
-//    background-color: red;
-// }
+
+.slick-arrow.slick-prev {
+  z-index: 100;
+  background-color: #c3c3c3;
+  width: 50px;
+  font-size: 20px;
+  height: 30px;
+  border-radius: 3px;
+}
+.slick-arrow.slick-prev:hover {
+  z-index: 100; 
+  background-color: #ee3131 !important;
+  transition: all ease-in .8 ;
+}
+.slick-arrow.slick-next {
+  z-index: 100;
+  background-color: #c3c3c3;
+  width: 50px;
+  font-size: 20px;
+  height: 30px;
+  border-radius: 3px;
+}
+.slick-arrow.slick-next:hover {
+  z-index: 100;
+  background-color: #ee3131 !important;
+  transition: all ease-in 0.8 ;
+ 
+}
+
 
 // Skeleton
 .skeleton {

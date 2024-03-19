@@ -12,7 +12,28 @@ export const apiClient = createApi({
       }),
       providesTags: ['Clients']
     }),
-  
+    getProductByIdClient: builder.query<any, void>({
+      query: (id) => ({
+        url: `/clients/product/${id}`,
+        method: 'GET'
+      }),
+      providesTags: ['Clients']
+    }),
+    getProductByCategoryIdClient: builder.query<any, void>({
+      query: (categoryId) => ({
+        url: `/clients/product/${categoryId}/getByCate`,
+        method: 'GET'
+      }),
+      providesTags: ['Clients']
+    }),
+    getReviewProductIdClient: builder.query<any, any>({
+      query: ({ productId, page = 1, limit = 5 }) => ({
+        url: `/clients/reviews/${productId}?_page=${page}&_limit=${limit}&_sort=createdAt&_order=asc`,
+        method: 'GET'
+      }),
+      providesTags: ['Clients']
+    }),
+
     getCategoriesClient: builder.query<any, void>({
       query: () => ({
         url: `/clients/categories`,
@@ -53,6 +74,9 @@ export const apiClient = createApi({
 
 export const {
   useGetProductsClientQuery,
+  useGetProductByIdClientQuery,
+  useGetProductByCategoryIdClientQuery,
+  useGetReviewProductIdClientQuery,
   useGetCategoriesClientQuery,
   useGetAllGenresClientQuery,
   useGetAllAuthorsClientQuery,

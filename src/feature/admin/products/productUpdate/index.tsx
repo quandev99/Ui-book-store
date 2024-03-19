@@ -64,8 +64,8 @@ const onFileChange = async (event: any) => {
         formData.append(`images`, files[i])
       }
        const response = await createImages(formData as any).unwrap()
-      if (response?.data) {
-        const newImages = response?.data?.urls
+      if (response) {
+        const newImages = response?.urls
          setSelectedImages((prevSelectedImages) => [...prevSelectedImages, ...newImages])
          setImage((prevImages) => [...prevImages, ...newImages])
       }

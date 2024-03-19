@@ -1,6 +1,6 @@
 import React from 'react'
 import { Pagination, Rate } from 'antd'
-import { useGetReviewProductIdQuery } from '~/app/services/review';
+import { useGetReviewProductIdClientQuery } from '~/app/services/client';
 const ListReviewProduct = ({productId}) => {
    const [page, setPage] = React.useState(1)
    const [limitPage] = React.useState(6)
@@ -10,7 +10,7 @@ const ListReviewProduct = ({productId}) => {
        limit: limitPage,
        page
      }
-    const { data: dataReViewApi, isLoading, error } = useGetReviewProductIdQuery(dataQuery)
+    const { data: dataReViewApi, isLoading, error } = useGetReviewProductIdClientQuery(dataQuery)
     const dataReview = dataReViewApi?.review ?? null;
      const totalItems = dataReViewApi?.pagination?.totalItems
      const onHandlePageChange = (page: number) => {
@@ -60,7 +60,7 @@ const ListReviewProduct = ({productId}) => {
                   <div className='flex gap-2 mt-2'>
                     {review?.images?.map((image: { url: string; publicId: string }) => {
                       return (
-                        <div className='w-[60px] h-[60px] border'>
+                        <div key={image?.publicId} className='w-[60px] h-[60px] border'>
                           <img src={image?.url} alt='No Image' className='w-full h-full' />
                         </div>
                       )
@@ -72,7 +72,7 @@ const ListReviewProduct = ({productId}) => {
           })}
         </div>
       ) : (
-        <div className='text-white p-4 text-2xl font-medium bg-blue-300'>Error: Danh sách trống</div>
+        <div className='text-white p-4 text-2xl font-medium bg-blue-300'>Danh sách trống</div>
       )}
 
       <div className='text-center'>

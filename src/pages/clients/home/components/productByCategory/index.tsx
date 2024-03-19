@@ -1,23 +1,28 @@
 
-import { useGetProductByCateQuery } from '~/app/services/product'
 import BookItemSkeleton from '~/components/loading/BookItemSkeleton'
 import ProductItem from '~/pages/clients/product/components'
-import Slider from 'react-slick'
 import { getUserData } from '~/store/helper/getDataLocalStorage'
 import { useGetFavoriteProductsByUserQuery } from '~/app/services/favorite'
 import React from 'react'
+import { useGetProductByCategoryIdClientQuery } from '~/app/services/client'
+import CustomSlider from '~/components/slider/CustomSlider'
 
 const ProductByCate = () => {
   const id = '65573c32d12c597d294035b5'
-  const { data: dataProductByCate, isLoading } = useGetProductByCateQuery(id as any)
+  const { data: dataProductByCate, isLoading } = useGetProductByCategoryIdClientQuery(id as any)
 
-  var settings = {
+  let settings = {
     dots: false,
     infinite: true,
-    speed: 500,
+    speed: 1000,
     slidesToShow: 5,
-    slidesToScroll: 5,
+    slidesToScroll: 2,
     initialSlide: 0,
+    centerMode: true,
+    className: 'center',
+    centerPadding: '20px',
+    autoplaySpeed: 2000,
+    cssEase: 'linear',
     responsive: [
       {
         breakpoint: 1024,
@@ -54,18 +59,18 @@ const ProductByCate = () => {
         <h3 className='text-2xl font-medium'>Những cuốn sách thuộc danh mục Tiểu Thuyết</h3>
         <div className='mt-[15px]'>
           {isLoading && (
-            <Slider {...settings}>
+            <CustomSlider settings={settings}>
               {[1, 2, 3, 4, 5].map((key) => (
                 <BookItemSkeleton key={key} />
               ))}
-            </Slider>
+            </CustomSlider>
           )}
           {dataProductByCate && dataProductByCate?.products?.length > 0 && (
-            <Slider {...settings}>
+            <CustomSlider settings={settings}>
               {dataProductByCate.products.map((item: any) => {
                 const isFavorite = favoriteProducts?.some((product: { _id: any }) => product?._id == item?._id)
                 return <ProductItem key={item._id} item={item} userId={userId} isFavorite={isFavorite} />})}
-            </Slider>
+            </CustomSlider>
           )}
           {dataProductByCate?.products?.length === 0 && <p>Cuốn sách không có danh mục liên quan</p>}
         </div>

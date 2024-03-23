@@ -14,16 +14,25 @@ export const handleError = (error) => {
   }
 }
 export const handleSuccess = (message) => {
-  const successMessages = ToastMessages.success
-  const successKeys = Object.keys(successMessages)
-  for (let i = 0; i < successKeys.length; i++) {
-    const key = successKeys[i]
-    if (message === key) {
-      toast.success(successMessages[key])
-      break
-    }else {
-      toast.success(message)
-      break
-    }
-  }
+  // const successMessages = ToastMessages.success
+  // const successKeys = Object.keys(successMessages)
+  // for (let i = 0; i < successKeys.length; i++) {
+  //   const key = successKeys[i]
+  //   if (message === key) {
+  //     toast.success(successMessages[key])
+  //     break
+  //   }else {
+  //     console.log('message', message)
+  //     toast.success(message)
+  //     break
+  //   }
+  // }
+   const successMessages = ToastMessages.success
+
+   if (successMessages.hasOwnProperty(message)) {
+     toast.success(successMessages[message])
+   } else {
+     console.log('message', message)
+     toast.success(message)
+   }
 }

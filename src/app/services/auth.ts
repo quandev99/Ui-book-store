@@ -27,6 +27,14 @@ export const apiAuth = createApi({
       }),
       invalidatesTags: ['Auths']
     }),
+    register: builder.mutation<any, void>({
+      query: (data: any) => ({
+        url: `/auths/sign-up`,
+        method: 'POST',
+        body: data
+      }),
+      invalidatesTags: ['Auths']
+    }),
     logout: builder.mutation<any, void>({
       query: () => {
         return {
@@ -49,5 +57,5 @@ export const apiAuth = createApi({
   })
 })
 
-export const { useLoginMutation, useLogoutMutation, useRefreshTokenMutation } = apiAuth
+export const { useLoginMutation, useRegisterMutation, useLogoutMutation, useRefreshTokenMutation } = apiAuth
 

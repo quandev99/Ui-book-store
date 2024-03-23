@@ -193,7 +193,7 @@ const ProductDetailPage = () => {
                           onClick={() => handleThumbnailClick(item)}
                         >
                           <img
-                            src={item?.url}
+                            src={item?.url || 'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'}
                             className='image-container h-[100px] cursor-pointer bg-white p-4 bg-cover bg-center rounded-sm shadow-md'
                             alt={`Image ${index + 1}`}
                           />

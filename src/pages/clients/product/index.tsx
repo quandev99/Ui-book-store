@@ -122,8 +122,8 @@ const ProductPage = () => {
   
   return (
     <>
-      <main className=' w-main mx-auto'>
-        <div className=' px-2 md:px-5'>
+      <main className='w-main mx-auto'>
+        <div className='px-2 md:px-5'>
           <nav aria-label='Breadcrumb' className='w-[180px] my-5'>
             <div className='flex'>
               <span>Trang chủ</span>
@@ -132,197 +132,201 @@ const ProductPage = () => {
             </div>
           </nav>
         </div>
-        <div className='product_content page-container px-2 md:px-5'>
-          <div className='grid md:grid-cols-5 gap-4'>
-            <div className='col-span-1 '>
-              <div className='product_category mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
-                <h4 className='text-xl text-center border border-gray-50 bg-gray-50  shadow-sm  mt-3 font-bold'>
-                  Tìm kiếm sản phẩm
-                </h4>
-                <ul className='grid grid-cols-4 md:grid-cols-1 gap-3 w-[350px] md:w-[200px] md:ml-3 border-gray-300 pt-3'>
-                  <li className='cursor-pointer  md:text-[15px] py-1 duration-300 transition-all '>
-                    <div className='relative border border-gray-100  hover:shadow-sm ml-4 px-2 pr-10 rounded-md'>
-                      <input
-                        value={search} // Đặt giá trị trường nhập liệu bằng searchValue
-                        onChange={handleSearchInputChange}
-                        type='text'
-                        placeholder='Tìm kiếm giày...'
-                        className='w-full  py-2 shadow-sm sm:text-sm outline-none'
-                      />
+        <div className='page-container px-0 md:px-5'>
+          <div className='grid grid-cols-5 gap-4'>
+            <div className='col-span-1'>
+              <div className='w-full'>
+                <div className='product_category mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
+                  <h4 className='text-xl text-center border border-gray-50 bg-gray-50  shadow-sm  mt-3 font-bold'>
+                    Tìm kiếm sản phẩm
+                  </h4>
+                  <ul className='grid grid-cols-4 md:grid-cols-1 gap-3 w-[350px] md:w-[200px] md:ml-3 border-gray-300 pt-3'>
+                    <li className='cursor-pointer  md:text-[15px] py-1 duration-300 transition-all '>
+                      <div className='relative border border-gray-100  hover:shadow-sm ml-4 px-2pr-10 rounded-md'>
+                        <input
+                          value={search} // Đặt giá trị trường nhập liệu bằng searchValue
+                          onChange={handleSearchInputChange}
+                          type='text'
+                          placeholder='Tìm kiếm giày...'
+                          className='w-full py-2 shadow-sm sm:text-sm outline-none'
+                        />
 
-                      <span className='absolute inset-y-0 end-0 grid w-10 place-content-center'>
-                        <button type='button' className='text-gray-600 hover:text-gray-700'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='none'
-                            viewBox='0 0 24 24'
-                            strokeWidth='1.5'
-                            stroke='currentColor'
-                            className='h-4 w-4'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
-                            />
-                          </svg>
-                        </button>
-                      </span>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
-                <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
-                  Danh mục sản phẩm
-                </h4>
-                <ul className=' border-gray-300  pt-3'>
-                  {categories?.map((category: any) => (
-                    <li
-                      key={category?._id}
-                      className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
-                    >
-                      <input
-                        type='checkbox'
-                        name={category?.name}
-                        className='cursor-pointer '
-                        id={category?.name}
-                        onClick={() => handleSortCategory(category?._id)}
-                        checked={categoryId === category?._id}
-                      />
-                      <label htmlFor={category?.name} className='block w-full'>
-                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{category?.name}</h1>
-                      </label>
+                        <span className='absolute inset-y-0 end-0 grid w-10 place-content-center'>
+                          <button type='button' className='text-gray-600 hover:text-gray-700'>
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              fill='none'
+                              viewBox='0 0 24 24'
+                              strokeWidth='1.5'
+                              stroke='currentColor'
+                              className='h-4 w-4'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
+                              />
+                            </svg>
+                          </button>
+                        </span>
+                      </div>
                     </li>
-                  ))}
-                </ul>
-              </div>
+                  </ul>
+                </div>
+                <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
+                  <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
+                    Danh mục sản phẩm
+                  </h4>
+                  <ul className=' border-gray-300  pt-3'>
+                    {categories?.map((category: any) => (
+                      <li
+                        key={category?._id}
+                        className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
+                      >
+                        <input
+                          type='checkbox'
+                          name={category?.name}
+                          className='cursor-pointer '
+                          id={category?.name}
+                          onClick={() => handleSortCategory(category?._id)}
+                          checked={categoryId === category?._id}
+                        />
+                        <label htmlFor={category?.name} className='block w-full'>
+                          <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{category?.name}</h1>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-              <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
-                <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
-                  Loại sách
-                </h4>
-                <ul className='border-gray-300  pt-3'>
-                  {dataGenres?.map((gender: any) => (
-                    <li
-                      key={gender?._id}
-                      className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
-                    >
-                      <input
-                        type='checkbox'
-                        className='cursor-pointer '
-                        name={gender?.name}
-                        id={gender?.name}
-                        onClick={() => handleSortGender(gender?._id)}
-                        checked={genderId === gender?._id}
-                      />
-                      <label htmlFor={gender?.name} className='block w-full'>
-                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{gender?.name}</h1>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
-                <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
-                  Nhà Cung Cấp
-                </h4>
-                <ul className='border-gray-300  pt-3'>
-                  {dataSuppliers?.map((supplier: any) => (
-                    <li
-                      key={supplier?._id}
-                      className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
-                    >
-                      <input
-                        type='checkbox'
-                        className='cursor-pointer '
-                        name={supplier?.name}
-                        id={supplier?.name}
-                        onClick={() => handleSortSupplier(supplier?._id)}
-                        checked={supplierId === supplier?._id}
-                      />
-                      <label htmlFor={supplier?.name} className='block w-full'>
-                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{supplier?.name}</h1>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
-                <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
-                  Nhà Phát Hành
-                </h4>
-                <ul className='border-gray-300  pt-3'>
-                  {dataPublishers?.map((publisher: any) => (
-                    <li
-                      key={publisher?._id}
-                      className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
-                    >
-                      <input
-                        type='checkbox'
-                        className='cursor-pointer '
-                        name={publisher?.name}
-                        id={publisher?.name}
-                        onClick={() => handlePublisher(publisher?._id)}
-                        checked={supplierId === publisher?._id}
-                      />
-                      <label htmlFor={publisher?.name} className='block w-full'>
-                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{publisher?.name}</h1>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
-                <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
-                  Tác giả
-                </h4>
-                <ul className='border-gray-300  pt-3'>
-                  {dataAuthors?.map((author: any) => (
-                    <li
-                      key={author?._id}
-                      className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
-                    >
-                      <input
-                        type='checkbox'
-                        className='cursor-pointer '
-                        name={author?.name}
-                        id={author?.name}
-                        onClick={() => handleAuthor(author?._id)}
-                        checked={authorId === author?._id}
-                      />
-                      <label htmlFor={author?.name} className='block w-full'>
-                        <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{author?.name}</h1>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
+                  <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
+                    Loại sách
+                  </h4>
+                  <ul className='border-gray-300  pt-3'>
+                    {dataGenres?.map((gender: any) => (
+                      <li
+                        key={gender?._id}
+                        className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
+                      >
+                        <input
+                          type='checkbox'
+                          className='cursor-pointer '
+                          name={gender?.name}
+                          id={gender?.name}
+                          onClick={() => handleSortGender(gender?._id)}
+                          checked={genderId === gender?._id}
+                        />
+                        <label htmlFor={gender?.name} className='block w-full'>
+                          <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{gender?.name}</h1>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
+                  <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
+                    Nhà Cung Cấp
+                  </h4>
+                  <ul className='border-gray-300  pt-3'>
+                    {dataSuppliers?.map((supplier: any) => (
+                      <li
+                        key={supplier?._id}
+                        className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
+                      >
+                        <input
+                          type='checkbox'
+                          className='cursor-pointer '
+                          name={supplier?.name}
+                          id={supplier?.name}
+                          onClick={() => handleSortSupplier(supplier?._id)}
+                          checked={supplierId === supplier?._id}
+                        />
+                        <label htmlFor={supplier?.name} className='block w-full'>
+                          <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{supplier?.name}</h1>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
+                  <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
+                    Nhà Phát Hành
+                  </h4>
+                  <ul className='border-gray-300  pt-3'>
+                    {dataPublishers?.map((publisher: any) => (
+                      <li
+                        key={publisher?._id}
+                        className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
+                      >
+                        <input
+                          type='checkbox'
+                          className='cursor-pointer '
+                          name={publisher?.name}
+                          id={publisher?.name}
+                          onClick={() => handlePublisher(publisher?._id)}
+                          checked={supplierId === publisher?._id}
+                        />
+                        <label htmlFor={publisher?.name} className='block w-full'>
+                          <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>
+                            {publisher?.name}
+                          </h1>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
+                  <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
+                    Tác giả
+                  </h4>
+                  <ul className='border-gray-300  pt-3'>
+                    {dataAuthors?.map((author: any) => (
+                      <li
+                        key={author?._id}
+                        className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
+                      >
+                        <input
+                          type='checkbox'
+                          className='cursor-pointer '
+                          name={author?.name}
+                          id={author?.name}
+                          onClick={() => handleAuthor(author?._id)}
+                          checked={authorId === author?._id}
+                        />
+                        <label htmlFor={author?.name} className='block w-full'>
+                          <h1 className='cursor-pointer transition-all group-hover:text-[#fb7317]'>{author?.name}</h1>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-              <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
-                <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
-                  Lọc giá
-                </h4>
-                <ul className='grid grid-cols-4 md:grid-cols-1 gap-3 w-[350px] md:w-[200px] md:ml-3 border-gray-300  pt-3'>
-                  {dataFakePrice?.map((item) => (
-                    <li
-                      key={item.title}
-                      className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
-                    >
-                      <input
-                        type='checkbox'
-                        className='cursor-pointer'
-                        name={item.title}
-                        id={item.title}
-                        onClick={() => handleCheckboxClick(item?.value)}
-                        checked={checkboxStates === (item?.value as any)}
-                      />
-                      <label htmlFor={item?.title} className='block w-full'>
-                        <h1 className='cursor-pointer'>{item?.title}</h1>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
+                <div className='product_category  mb-5 border-gray-100 bg-white border shadow rounded-lg py-2'>
+                  <h4 className='text-xl  text-center border border-gray-50 bg-gray-50  shadow-sm  mb-5  mt-3 font-bold'>
+                    Lọc giá
+                  </h4>
+                  <ul className='grid grid-cols-4 md:grid-cols-1 gap-3 w-[350px] md:w-[200px] md:ml-3 border-gray-300  pt-3'>
+                    {dataFakePrice?.map((item) => (
+                      <li
+                        key={item.title}
+                        className='cursor-pointer border border-gray-50 flex gap-2 group items-center hover:text-[#fb7317] hover:shadow-md md:text-[15px] px-3 py-1 duration-300 transition-all '
+                      >
+                        <input
+                          type='checkbox'
+                          className='cursor-pointer'
+                          name={item.title}
+                          id={item.title}
+                          onClick={() => handleCheckboxClick(item?.value)}
+                          checked={checkboxStates === (item?.value as any)}
+                        />
+                        <label htmlFor={item?.title} className='block w-full'>
+                          <h1 className='cursor-pointer'>{item?.title}</h1>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
             <div className='col-span-4'>
@@ -359,15 +363,19 @@ const ProductPage = () => {
               </div>
               {!error && dataProducts ? (
                 <div className='grid grid-cols-1 w-full'>
-                  <div className='grid grid-cols-4 gap-4 my-5'>
+                  <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 my-5'>
                     {dataProducts?.length > 0 &&
-                      dataProducts?.map((item) =>  {
-                         const isFavorite = favoriteProducts?.some((product: { _id: any }) => product?._id == item?._id)
-                         return (
-                           <ProductItem key={item?._id} item={item} isFavorite={isFavorite} userId={userId}></ProductItem>
-                         )
-                      }
-                      )}
+                      dataProducts?.map((item) => {
+                        const isFavorite = favoriteProducts?.some((product: { _id: any }) => product?._id == item?._id)
+                        return (
+                          <ProductItem
+                            key={item?._id}
+                            item={item}
+                            isFavorite={isFavorite}
+                            userId={userId}
+                          ></ProductItem>
+                        )
+                      })}
                   </div>
                   <div className='grid grid-cols-1'>
                     <ol className='flex items-center justify-center grid-cols-1 gap-1 text-xs font-medium w-full py-10'>

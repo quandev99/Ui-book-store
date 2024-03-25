@@ -24,7 +24,8 @@ const ProductUpdate = () => {
   const dataProductById = ProductByIdApi?.product
   
   const [image, setImage] = useState<any[]>(dataProductById?.image || [])
-  const [selectedImages, setSelectedImages] = useState<any[]>([])
+  console.log("Product",image);
+  const [selectedImages, setSelectedImages] = useState<any[]>(image || [])
   const [updateProduct] = useUpdateProductMutation()
     const [deleteImage] = useDeleteImageMutation()
     const [createImages] = useCreateImagesMutation()
@@ -64,10 +65,12 @@ const onFileChange = async (event: any) => {
         formData.append(`images`, files[i])
       }
        const response = await createImages(formData as any).unwrap()
+
       if (response) {
         const newImages = response?.urls
-         setSelectedImages((prevSelectedImages) => [...prevSelectedImages, ...newImages])
-         setImage((prevImages) => [...prevImages, ...newImages])
+        console.log("Images", newImages);
+        setImage((prevImages) => [...prevImages,...newImages])
+         setSelectedImages((prevSelectedImages) => [...prevSelectedImages,...newImages])
       }
     } catch (error: any) {
       message.error('Error uploading image: ' + error?.message)
@@ -98,9 +101,13 @@ const onFileChange = async (event: any) => {
   
  useEffect(() => {
    form.setFieldsValue(initialValues)
-   setSelectedImages(image)
- }, [form, initialValues, image])
-
+ }, [form, initialValues])
+  useEffect(() => {
+    setImage(dataProductById?.image)
+  }, [dataProductById])
+  useEffect(() => {
+    setSelectedImages(image)
+  }, [ image])
   const onFinish = async (values: any) => {
     if (imageUploading) {
       // Nếu đang tải ảnh, không cho phép gọi onFinish
@@ -180,7 +187,7 @@ const onFileChange = async (event: any) => {
               <Form.Item
                 name='discount_percentage'
                 label='Giảm giá'
-                rules={[{ required: true, message: 'Discount is required!' }]}
+                rules={[{  message: 'Discount is required!' }]}
               >
                 <Input />
               </Form.Item>

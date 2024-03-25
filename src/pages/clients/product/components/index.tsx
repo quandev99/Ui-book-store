@@ -23,7 +23,7 @@ const ProductItem = ({ item, isFavorite, userId }) => {
   }
   return (
     <div className='flex flex-col h-full p-3 bg-white shadow-xl  rounded-lg select-none movie-cart'>
-      <Link to='' className='overflow-hidden  rounded-md h-[250px]'>
+      <Link to='' className='overflow-hidden  rounded-md h-[180px] md:h-[250px]'>
         <div className='flex justify-between relative'>
           <span className='z-10 bg-[#f7941e] font-semibold text-white absolute top-2 left-2 p-2 rounded-full text-sm block'>
             {discount_percentage || 0} %

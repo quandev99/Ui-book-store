@@ -82,6 +82,27 @@
  
 }
 
+// slick-dots
+ul.slick-dots> li{
+  text-align: center;
+  background-color: #c3c3c3;
+  width: 15px;
+  height: 15px;
+  border-radius: 100%;
+  margin-left:5px;
+  margin-right: 15px;
+  text-align: center;
+transition: all 0.3s ease
+}
+ul.slick-dots>li.slick-active .dost-container{
+  background: #ee3131;
+  text-align: center;
+  border-radius: 10px;
+  width: 30px;
+  height: 100%;
+  margin-left:-10px ;
+}
+// slick and
 
 // Skeleton
 .skeleton {
@@ -100,7 +121,7 @@
     background-position-x: -200%;
   }
 }
-
+// Skeleton end
 
 // Checkout (forms)
 .custom-radio {

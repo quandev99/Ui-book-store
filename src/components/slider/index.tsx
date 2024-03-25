@@ -6,8 +6,29 @@ const BannerHomePage = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true, 
+    autoplay: true,
     autoplaySpeed: 3000,
+    // appendDots: (dots) => (
+    //   <div
+    //     style={{
+    //       backgroundColor: '#ddd',
+    //       borderRadius: '10px',
+    //       padding: '10px'
+    //     }}
+    //   >
+    //     <ul style={{ margin: '0px' }}> {dots} </ul>
+    //   </div>
+    // ),
+    customPaging: (i) => (
+      <div
+        className='dost-container'
+        style={{
+          color: 'transparent',
+        }}
+      >
+        {i}
+      </div>
+    )
   }
   return (
     <div className='w-full h-[500px] mb-10'>

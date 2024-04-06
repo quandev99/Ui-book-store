@@ -5,6 +5,7 @@ import { LoadingPage } from '~/components/loading/LoadingPage'
 import LoadingSkeleton from '~/components/loading/LoadingSkeleton'
 import { getUserData } from '~/store/helper/getDataLocalStorage'
 import { formatPrice } from '~/utils/format'
+import ApplyDiscount from './components/ApplyDiscount'
 
 const CartPage = () => {
   
@@ -216,7 +217,7 @@ const handleBlur = async (product) => {
 
   return (
     <div className='w-full'>
-      {isLoading || loadingChecked && <LoadingPage />}
+      {isLoading || (loadingChecked && <LoadingPage />)}
       <div className='grid grid-cols-1 gap-4 mt-10 px-2 lg:px-0 lg:grid-cols-3 lg:gap-8'>
         <div className='mb-4  rounded-lg  lg:col-span-2'>
           {isLoading ? (
@@ -286,12 +287,10 @@ const handleBlur = async (product) => {
                                     <h1>{product?.product_name}</h1>
                                   </Link>
                                   <div className='flex gap-2'>
-                                        <span className='line-through text-gray-500'>
-                                          {formatPrice(
-                                            product?.product_id?.price
-                                          )}
-                                        </span>
-                                        <span className='text-primary'>{formatPrice(product?.product_price || 0)}</span>
+                                    <span className='line-through text-gray-500'>
+                                      {formatPrice(product?.product_id?.price)}
+                                    </span>
+                                    <span className='text-primary'>{formatPrice(product?.product_price || 0)}</span>
                                   </div>
                                 </div>
                                 {errUpdate && errUpdate.productId == product?._id && (
@@ -350,42 +349,45 @@ const handleBlur = async (product) => {
             </>
           )}
         </div>
-        <div className=''>
+        <div className='flex flex-col gap-y-5'>
           {isLoading ? (
             <LoadingSkeleton width='100%' height='250px' className='mb-5 rounded-xl'></LoadingSkeleton>
           ) : (
-            <div className='bg-gray-100 border border-gray-100  shadow-xl'>
-              <div className='box-header  px-4 py-2'>
-                <h1 className='uppercase font-medium text-[17px]'>Tổng số lượng</h1>
-              </div>
-              <hr />
-              <div className='box-content px-4 py-3'>
-                {dataCart?.totals &&
-                  dataCart?.totals.length > 0 &&
-                  dataCart?.totals?.map((total: any, index) => {
-                    return (
-                      <React.Fragment key={total?.code + index}>
-                        <div className=' flex justify-between py-3' key={total?.code}>
-                          <h1>{total?.title}</h1>
-                          <span
-                            className={`${
-                              total?.code == 'grand_total' ? 'text-2xl font-bold text-red-500' : 'font-medium '
-                            }`}
-                          >
-                            {formatPrice(total?.price) || 0}
-                          </span>
-                        </div>
-                        <hr />
-                      </React.Fragment>
-                    )
-                  })}
-                <div className=' bg-[#d26e4b] hover:bg-[#b86142] transition-all duration-200 text-white text-center w-full mt-3'>
-                  <Link to={`/checkout`} className='uppercase block py-3 font-medium'>
-                    Tiến hành thanh toán
-                  </Link>
+            <>
+              <div className='bg-gray-100 border border-gray-100 shadow-xl'><ApplyDiscount></ApplyDiscount></div>
+              <div className='bg-gray-100 border border-gray-100  shadow-xl'>
+                <div className='box-header  px-4 py-2'>
+                  <h1 className='uppercase font-medium text-[17px]'>Tổng số lượng</h1>
+                </div>
+                <hr />
+                <div className='box-content px-4 py-3'>
+                  {dataCart?.totals &&
+                    dataCart?.totals.length > 0 &&
+                    dataCart?.totals?.map((total: any, index) => {
+                      return (
+                        <React.Fragment key={total?.code + index}>
+                          <div className=' flex justify-between py-3' key={total?.code}>
+                            <h1>{total?.title}</h1>
+                            <span
+                              className={`${
+                                total?.code == 'grand_total' ? 'text-2xl font-bold text-red-500' : 'font-medium '
+                              }`}
+                            >
+                              {formatPrice(total?.price) || 0}
+                            </span>
+                          </div>
+                          <hr />
+                        </React.Fragment>
+                      )
+                    })}
+                  <div className=' bg-[#d26e4b] hover:bg-[#b86142] transition-all duration-200 text-white text-center w-full mt-3'>
+                    <Link to={`/checkout`} className='uppercase block py-3 font-medium'>
+                      Tiến hành thanh toán
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>

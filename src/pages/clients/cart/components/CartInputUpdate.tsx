@@ -1,23 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React from 'react'
 
 const QuantityInput = ({ product, onIncrease, onDecrease, onUpdate }) => {
- const [inputValue, setInputValue] = useState(product.quantity)
- const initialQuantityRef = useRef(product.quantity)
+ const [inputValue, setInputValue] = React.useState(product.quantity)
+ const initialQuantityRef = React.useRef(product.quantity)
 
- useEffect(() => {
-   setInputValue(product.quantity)
-   initialQuantityRef.current = product.quantity
- }, [product.quantity])
+  React.useEffect(() => {
+    setInputValue(product.quantity)
+    initialQuantityRef.current = product.quantity
+  }, [product.quantity])
 
  const handleBlur = () => {
-   onUpdate(inputValue)
+    if (isNaN(inputValue)) {
+      onUpdate(1)
+    } else {
+      onUpdate(inputValue)
+    }
  }
 
  const handleChange = (e) => {
-   setInputValue(e.target.value)
+  const value = e.target.value
+  if (isNaN(value)) {
+    setInputValue(1)
+  } else {
+    setInputValue(value)
+  }
  }
 
- useEffect(() => {
+ React.useEffect(() => {
    return () => {
      // Revert inputValue to the initial quantity if there is an error
      setInputValue(initialQuantityRef.current)

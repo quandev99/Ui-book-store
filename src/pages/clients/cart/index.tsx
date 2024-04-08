@@ -6,7 +6,7 @@ import LoadingSkeleton from '~/components/loading/LoadingSkeleton'
 import { getUserData } from '~/store/helper/getDataLocalStorage'
 import { formatPrice } from '~/utils/format'
 import ApplyDiscount from './components/ApplyDiscount'
-
+import Icon from '../../../assets/images/coupon.png'
 const CartPage = () => {
   
   const [errUpdate, setErrUpdate] =useState<any>({error:"",productId:""})
@@ -14,7 +14,7 @@ const CartPage = () => {
   const [loadingChecked, setLoadingChecked] =useState(false)
   const { user: userData } = getUserData()
   const userId = userData?._id
-  const { data: dataCartApi, isLoading,error } = useGetCartByUserQuery(userId)
+  const { data: dataCartApi, isLoading, error, refetch } = useGetCartByUserQuery(userId,{refetchOnMountOrArgChange: true,})
   const dataCart = dataCartApi?.carts
   const isCheckedAll = dataCart?.products?.every((item) => item.is_checked == true)
 
@@ -27,6 +27,9 @@ useEffect(() => {
   }
   setCheckedAll(isCheckedAll)
 }, [dataCart?.products, isCheckedAll])
+useEffect(() => {
+  refetch()
+}, [dataCartApi])
   const [addCheckedProduct] = useAddCheckedProductMutation()
   const [addCheckedAllProduct] = useAddCheckedAllProductMutation()
   const [removeCartItem] = useRemoveCartItemMutation()
@@ -215,6 +218,12 @@ const handleBlur = async (product) => {
   }
 }
 
+
+ const [isModalOpen, setIsModalOpen] = React.useState(false)
+
+ const showModal = () => {
+   setIsModalOpen(true)
+ }
   return (
     <div className='w-full'>
       {isLoading || (loadingChecked && <LoadingPage />)}
@@ -354,7 +363,22 @@ const handleBlur = async (product) => {
             <LoadingSkeleton width='100%' height='250px' className='mb-5 rounded-xl'></LoadingSkeleton>
           ) : (
             <>
-              <div className='bg-gray-100 border border-gray-100 shadow-xl'><ApplyDiscount></ApplyDiscount></div>
+              <div className='bg-gray-100 border border-gray-100 shadow-xl'>
+                <div className='box-header px-4 py-2 cursor-pointer'>
+                  <div className='flex items-center gap-x-4' onClick={showModal}>
+                    <div className='h-full w-10'>
+                      <img src={Icon} alt='' />
+                    </div>
+                    <h1 className='uppercase font-medium text-[17px]'>Khuyến mãi</h1>
+                  </div>
+                </div>
+                <ApplyDiscount
+                  discountId={dataCart?.discount_id}
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                  refetch={refetch}
+                ></ApplyDiscount>
+              </div>
               <div className='bg-gray-100 border border-gray-100  shadow-xl'>
                 <div className='box-header  px-4 py-2'>
                   <h1 className='uppercase font-medium text-[17px]'>Tổng số lượng</h1>

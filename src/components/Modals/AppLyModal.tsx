@@ -1,11 +1,56 @@
-import { Form, Input, Modal } from 'antd'
+import { Button, Col, Form, Input, Modal, Row, Space, } from 'antd'
 import React from 'react'
-import { useApplyDiscountToCartMutation, useGetAllDiscountsQuery } from '~/app/services/discount'
+import { useApplyDiscountToCartMutation, useGetAllDiscountsQuery, useUnDiscountCartMutation } from '~/app/services/discount'
 import { getUserData } from '~/store/helper/getDataLocalStorage'
 import { handleError, handleSuccess } from '~/utils/toast'
 function ListCoupon(props) {
-  const { discount_amount, discount_content, discount_name, expiration_date } = props?.item
-  const handleApplyCoupon = () => {}
+  const [applyDiscountToCart] = useApplyDiscountToCartMutation()
+  const [unDiscountCart] = useUnDiscountCartMutation()
+  const {
+    _id,
+    discount_amount,
+    discount_content,
+    refetch,
+    discount_name,
+    discount_code,
+    userId,
+    discountId,
+    expiration_date
+  } = props?.item
+  const handleApplyCoupon = async (discount_code) => {
+    console.log(discountId == _id)
+    console.log('dataDiscount', discount_code)
+    try {
+      const data: any = {
+        userId,
+        discountCode: discount_code
+      }
+      const result = await applyDiscountToCart(data).unwrap()
+      if (result) {
+        refetch()
+        handleSuccess(result?.message)
+      }
+    } catch (error) {
+      handleError(error?.data?.message)
+      console.log(error)
+    }
+  }
+  const handleUnDiscountCart = async (discount_code) => {
+    try {
+      const data: any = {
+        userId,
+        discountCode: discount_code
+      }
+      const result = await unDiscountCart(data).unwrap()
+      if (result) {
+        refetch()
+        handleSuccess(result?.message)
+      }
+    } catch (error) {
+      handleError(error?.data?.message)
+      console.log(error)
+    }
+  }
   return (
     <div className='flex flex-row items-start justify-stretch rounded-lg relative h-[145px] cursor-pointer select-none mb-4'>
       <svg
@@ -54,31 +99,52 @@ function ListCoupon(props) {
             <img src='https://cdn0.fahasa.com/skin/frontend/ma_vanese/fahasa/images/promotion/ico_check.svg?q=105567' />
             <span style={{ paddingLeft: '4px', color: '#2F80ED' }}>Đã áp dụng</span>
           </div>
+
           <div>
-            <button
-              type='button'
-              title='Bỏ chọn'
-              className='text-[#2F80ED] font-medium py-1 w-[100px] rounded-md border border-[#2F80ED]'
-              onClick={() => handleApplyCoupon()} // Thay đổi hàm xử lý sự kiện
-            >
-              <span>Bỏ chọn</span>
-            </button>
+            {discountId === _id ? (
+              <button
+                type='button'
+                title='Bỏ chọn'
+                className='text-[#2F80ED] font-medium py-1 w-[100px] rounded-md border border-[#2F80ED]'
+                onClick={() => handleUnDiscountCart(discount_code)} // Thay đổi hàm xử lý sự kiện
+              >
+                <span>Bỏ chọn</span>
+              </button>
+            ) : (
+              <button
+                type='button'
+                title='Bỏ chọn'
+                className='text-[#2F80ED] font-medium py-1 w-[100px] rounded-md border border-[#2F80ED]'
+                onClick={() => handleApplyCoupon(discount_code)} // Thay đổi hàm xử lý sự kiện
+              >
+                <span>Áp dụng</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
     </div>
   )
 }
-const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible }) => {
-   const { data } = useGetAllDiscountsQuery()
-   const dataDiscount = data?.discounts
-   console.log('data', dataDiscount)
+const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible, discountId, refetch }) => {
+  const { data } = useGetAllDiscountsQuery()
+  const dataDiscount = data?.discounts
+
   const [applyDiscountToCar] = useApplyDiscountToCartMutation()
-  const [messageError, setMessageError] = React.useState("")
+  const [messageError, setMessageError] = React.useState('')
   const [form]: any = Form.useForm()
   const { user: userData } = getUserData()
   const userId = userData?._id
   const handleOk = async () => {
+    setIsAddAppLyVisible(false)
+    form.resetFields()
+  }
+  const handleCancel = () => {
+    setIsAddAppLyVisible(false)
+    form.resetFields()
+  }
+
+  const onFinish = async () => {
     try {
       const data: any = {
         userId,
@@ -88,6 +154,7 @@ const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible }) => {
       if (result) {
         setMessageError(result?.message)
         handleSuccess(result?.message)
+         refetch()
         setTimeout(() => {
           setMessageError('')
         }, 2000)
@@ -98,29 +165,58 @@ const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible }) => {
       setMessageError(error?.data?.message)
       handleError(error?.data?.message)
       setTimeout(() => {
-        setMessageError("")
+        setMessageError('')
       }, 2000)
     }
   }
-  const handleCancel = () => {
-    setIsAddAppLyVisible(false)
-    form.resetFields()
+
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo)
   }
+
   return (
-    <Modal title='Tạo phòng' open={isAddAppLyVisible} onOk={handleOk} onCancel={handleCancel}>
-      <Form form={form}>
-        <Form.Item name='code' label='Áp mã' rules={[{ required: true, message: 'Code is required!' }]}>
-          <Input placeholder='Áp mã giảm giá' />
-        </Form.Item>
-        <p className='text-primary'>{messageError}</p>
-      </Form>
-        <div className='overflow-y-auto h-full'>
-          <div className='overflow-x-hidden h-[250px] max-h-full p-2'>
-            <div className=''>
-              <h3>Mã giảm </h3>
-              {dataDiscount?.map((item) => <ListCoupon item={item} key={item?._id}></ListCoupon>)}
-            </div>
+    <Modal width={550} title='Tạo phòng' open={isAddAppLyVisible} onOk={handleOk} onCancel={handleCancel}>
+      <Form
+        form={form}
+        name='form'
+        style={{ maxWidth: '100%' }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete='off'
+      >
+        <div className='relative z-10 h-[60px] w-full '>
+          <div className='absolute w-full h-full top-0 left-0'>
+            <Form.Item name='code' label='Tên' rules={[{ required: true, message: 'Code is required!' }]}>
+              <Input placeholder='Áp mã giảm giá' />
+            </Form.Item>
           </div>
+          <p className='text-primary absolute left-0 bottom-0'>{messageError}</p>
+          <div
+            className='absolute w-auto right-1  top-1 flex items-center justify-between'
+            style={{ height: 'calc(100% - 35px)' }}
+          >
+            <>
+              <Button
+                className='bg-primary h-full text-[12px] text-center'
+                type='primary'
+                htmlType='submit'
+                // onClick={onFinish}
+              >
+                Áp mã
+              </Button>
+            </>
+          </div>
+        </div>
+      </Form>
+      <div className='overflow-y-auto h-full'>
+        <div className='overflow-x-hidden h-[250px] max-h-full p-2 overflow-y-auto '>
+          <div className=''>
+            <h3>Mã giảm </h3>
+            {dataDiscount?.map((item) => (
+              <ListCoupon item={{ userId, discountId,refetch, ...item }}  key={item?._id}></ListCoupon>
+            ))}
+          </div>
+        </div>
       </div>
     </Modal>
   )

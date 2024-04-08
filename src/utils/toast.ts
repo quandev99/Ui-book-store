@@ -32,7 +32,6 @@ export const handleSuccess = (message) => {
    if (successMessages.hasOwnProperty(message)) {
      toast.success(successMessages[message])
    } else {
-     console.log('message', message)
      toast.success(message)
    }
 }

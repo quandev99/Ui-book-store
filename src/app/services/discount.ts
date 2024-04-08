@@ -14,10 +14,18 @@ export const apiDiscount = createApi({
       }),
       invalidatesTags: ['Discounts']
     }),
-    applyDiscountToCart: builder.mutation<ApiResponse, { data: dataAddToCart }>({
+    applyDiscountToCart: builder.mutation<ApiResponse, any>({
       query: (data) => ({
         url: `/discounts/apply`,
         method: 'POST',
+        body: data
+      }),
+      invalidatesTags: ['Discounts']
+    }),
+    unDiscountCart: builder.mutation<ApiResponse, any>({
+      query: (data) => ({
+        url: `/discounts/unDiscount`,
+        method: 'DELETE',
         body: data
       }),
       invalidatesTags: ['Discounts']
@@ -59,5 +67,6 @@ export const {
   useGetAllDiscountsQuery,
   useGetDiscountByUserQuery,
   useApplyDiscountToCartMutation,
-  useRemoveDiscountMutation
+  useRemoveDiscountMutation,
+  useUnDiscountCartMutation
 } = apiDiscount

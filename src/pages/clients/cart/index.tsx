@@ -7,6 +7,9 @@ import { getUserData } from '~/store/helper/getDataLocalStorage'
 import { formatPrice } from '~/utils/format'
 import ApplyDiscount from './components/ApplyDiscount'
 import Icon from '../../../assets/images/coupon.png'
+import { useGetAllDiscountsQuery, useUnDiscountCartMutation } from '~/app/services/discount'
+import { handleError, handleSuccess } from '~/utils/toast'
+import { PurchaseDiscount } from './components/PurchaseDiscount'
 const CartPage = () => {
   
   const [errUpdate, setErrUpdate] =useState<any>({error:"",productId:""})
@@ -224,24 +227,54 @@ const handleBlur = async (product) => {
  const showModal = () => {
    setIsModalOpen(true)
  }
+
+ // Discount
+const [url,setUrl] = React.useState<String>("")
+const [pageDiscount, setPageDiscount] = React.useState(1)
+const [limitPage, setLimitPage] = React.useState(2)
+const [sortDiscount, setSortDiscount] = React.useState('updatedAt')
+const [orderDiscount, setOrderDiscount] = React.useState('desc')
+
+const { data: dataDiscountApi } = useGetAllDiscountsQuery(url)
+const dataDiscount = dataDiscountApi?.discounts
+React.useEffect(() => {
+  setUrl(`?_page=${pageDiscount}&_limit=${limitPage}&_sort=${sortDiscount}&_order=${orderDiscount}`)
+}, [ url, orderDiscount, sortDiscount, limitPage, pageDiscount])
+
+ const [unDiscountCart] = useUnDiscountCartMutation()
+ const discountUse = dataCart?.totals.find((t) => t.code === 'discount');
+ const handleUnDiscount =async(value)=>{
+  try {
+    const data: any = {
+      userId,
+      ...value
+    }
+    const result = await unDiscountCart(data).unwrap()
+    if (result) {
+      refetch()
+      handleSuccess(result?.message)
+    }
+  } catch (error) {
+    handleError(error?.data?.message)
+    console.log(error)
+  }
+ }
+  const subtotalTotal = dataCart?.totals.find((t) => t.code === 'subtotal')?.price
+ // Kiểm tra xem phần trăm có vượt quá 80% không (trong trường hợp này)
   return (
-    <div className='w-full'>
+    <div className='w-full h-auto'>
       {isLoading || (loadingChecked && <LoadingPage />)}
-      <div className='grid grid-cols-1 gap-4 mt-10 px-2 lg:px-0 lg:grid-cols-3 lg:gap-8'>
-        <div className='mb-4  rounded-lg  lg:col-span-2'>
+      <div className=' grid grid-cols-1 lg:px-0  md:grid-cols-3 gap-y-5 gap-x-2 md:gap-x-4 '>
+        <div className='lg:h-auto w-full z-10  col-span-1 rounded-lg md:col-span-2'>
           {isLoading ? (
             <LoadingSkeleton width='100%' height='250px' className='mb-5 rounded-xl'></LoadingSkeleton>
           ) : (
             <>
-              <div className='overflow-x-auto bg-gray-100 border border-gray-200  shadow-xl'>
-                <table className='min-w-full  divide-y-2 divide-gray-200 bg-gray-100 text-sm border border-gray-50 shadow-md shadow-gray-300'>
-                  <thead className='ltr:text-left rtl:text-right font-medium text-[12px] lg:text-[16px] uppercase'>
-                    <tr>
-                      <td onClick={(e) => e.stopPropagation()} className='sticky inset-y-0 start-0 px-2 lg:px-4 py-2'>
-                        <label htmlFor='SelectAll' className='sr-only'>
-                          Select All
-                        </label>
-
+              <div className='overflow-x-auto overscroll-x-auto bg-white border border-gray-200 shadow-xl'>
+                <table className=' min-w-full text-sm  h-auto'>
+                  <thead className='ltr:text-left lg:mb-2 rtl:text-right  font-medium text-[12px] lg:text-[16px] uppercase'>
+                    <tr className=''>
+                      <th onClick={(e) => e.stopPropagation()} className='sticky inset-y-0 start-0 px-2 lg:px-4 py-2'>
                         <input
                           type='checkbox'
                           id='SelectAll'
@@ -249,23 +282,25 @@ const handleBlur = async (product) => {
                           checked={isCheckedAll}
                           onChange={() => handleCheckedAllChange()}
                         />
-                      </td>
-                      <td className='whitespace-nowrap px-4 py-2 font-medium text-gray-900'>Sản phẩm</td>
-                      <td className=' whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900 hidden lg:table-cell'>
+                      </th>
+                      <th className='whitespace-nowrap px-4 py-2 font-medium text-gray-900'>
+                        Chọn tất cả ({dataCart?.products?.length})
+                      </th>
+                      <th className=' whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900 hidden lg:table-cell'>
                         Số lượng
-                      </td>
-                      <td className=' whitespace-nowrap lg:px-4 text-center py-2 font-medium text-gray-900'>Số tiền</td>
-                      <td className=' whitespace-nowrap px-1 lg:px-4 py-2 text-center font-medium text-gray-900 hidden lg:table-cell'>
+                      </th>
+                      <th className=' whitespace-nowrap lg:px-4 text-center py-2 font-medium text-gray-900'>Số tiền</th>
+                      <th className=' whitespace-nowrap px-1 lg:px-4 py-2 text-center font-medium text-gray-900 hidden lg:table-cell'>
                         Thao tác
-                      </td>
+                      </th>
                     </tr>
                   </thead>
 
-                  <tbody className='divide-y divide-gray-200'>
+                  <tbody className=''>
                     {dataCart !== null &&
                       dataCart?.products?.map((product: any) => {
                         return (
-                          <tr key={product?._id}>
+                          <tr key={product?._id} className='border border-y'>
                             <td
                               onClick={() => handlerChecked(product)}
                               className='sticky inset-y-0 start-0 px-2 lg:px-4 py-2'
@@ -279,7 +314,7 @@ const handleBlur = async (product) => {
                               />
                             </td>
 
-                            <td className=' col-span-2 gap-2 flex lg:m-4 lg:space-x-2 w-full'>
+                            <td className='col-span-2 m-2 gap-2 flex lg:m-4 lg:space-x-2 w-full'>
                               <div className='lg:max-w-[80px] w-[40px] h-[40px] lg:h-[80px] lg:w-full border '>
                                 <img
                                   src={product?.product_id?.image[0]?.url || product?.product_image}
@@ -307,7 +342,7 @@ const handleBlur = async (product) => {
                                 )}
                               </div>
                             </td>
-                            <td className='whitespace-nowrap py-2 text-gray-700  hidden lg:table-cell'>
+                            <td className='whitespace-nowrap py-2 text-gray-700  lg:table-cell'>
                               <div className='flex items-center justify-center cursor-pointer w-full'>
                                 <p
                                   onClick={() => decrease(product)}
@@ -351,26 +386,58 @@ const handleBlur = async (product) => {
               </div>
               <button
                 onClick={deleteAllCartUser}
-                className='bg-red-600 hover:bg-red-700 transition-all duration-200 px-4 lg:px-8 text-white py-1 lg:py-2 mt-5 rounded-sm'
+                className='hidden sm:block bg-red-600 hover:bg-red-700 transition-all duration-200 px-4 lg:px-8 text-white py-1 lg:py-2 mt-5 rounded-sm'
               >
                 Xóa tất cả
               </button>
             </>
           )}
         </div>
-        <div className='flex flex-col gap-y-5'>
+        <div className='w-full relative grid grid-flow-row h-auto  lg:h-[800px] lg:gap-y-5 md:sticky top-[10px]'>
           {isLoading ? (
-            <LoadingSkeleton width='100%' height='250px' className='mb-5 rounded-xl'></LoadingSkeleton>
+            <>
+              <LoadingSkeleton width='100%' height='300px' className='mb-2 rounded-xl'></LoadingSkeleton>
+              <LoadingSkeleton width='100%' height='300px' className=' rounded-xl'></LoadingSkeleton>
+            </>
           ) : (
             <>
-              <div className='bg-gray-100 border border-gray-100 shadow-xl'>
-                <div className='box-header px-4 py-2 cursor-pointer'>
-                  <div className='flex items-center gap-x-4' onClick={showModal}>
-                    <div className='h-full w-10'>
+              <div className=' shadow-xl bg-white'>
+                <div className='box-header px-3 py-4 cursor-pointer  '>
+                  <div className='flex items-center gap-x-4 border-b border-gray-300 pb-4' onClick={showModal}>
+                    <div className='h-full w-10 '>
                       <img src={Icon} alt='' />
                     </div>
                     <h1 className='uppercase font-medium text-[17px]'>Khuyến mãi</h1>
                   </div>
+                  <div className='my-3'>
+                    <PurchaseDiscount
+                      subtotalTotal={subtotalTotal}
+                      dataDiscount={dataDiscount}
+                    ></PurchaseDiscount>
+                  </div>
+                  {discountUse && (
+                    <div className='p-2 w-full h-[40px] bg-orange-200 text-orange-500  rounded-lg text-sm  flex justify-between items-center mb-1'>
+                      <div className=''>{discountUse?.title}</div>
+                      <div
+                        onClick={() => handleUnDiscount({ discountId: dataCart?.discount_id })}
+                        className=' text-primary font-semibold'
+                      >
+                        X
+                      </div>
+                    </div>
+                  )}
+                  {discountUse && (
+                    <div className='p-2 w-full h-[40px] bg-green-200 text-green-700  rounded-lg text-sm  flex justify-between items-center'>
+                      <div className=''>{discountUse?.title}</div>
+                      <div
+                        onClick={() => handleUnDiscount({ discountId: dataCart?.discount_id })}
+                        className=' text-primary font-semibold'
+                      >
+                        X
+                      </div>
+                    </div>
+                  )}
+                  <span className='text-[11px] text-gray-400 font-medium'>Có thể áp dụng đồng thời nhiều mã</span>
                 </div>
                 <ApplyDiscount
                   discountId={dataCart?.discount_id}
@@ -379,22 +446,22 @@ const handleBlur = async (product) => {
                   refetch={refetch}
                 ></ApplyDiscount>
               </div>
-              <div className='bg-gray-100 border border-gray-100  shadow-xl'>
-                <div className='box-header  px-4 py-2'>
-                  <h1 className='uppercase font-medium text-[17px]'>Tổng số lượng</h1>
-                </div>
+              <div className='bg-white fixed z-10 bottom-0 left-0 w-full lg:relative border border-gray-100  shadow-xl'>
+                <h1 className='uppercase px-4 py-2 font-medium text-sm lg:text-[17px]'>Tổng số lượng</h1>
                 <hr />
-                <div className='box-content px-4 py-3'>
+                <div className='px-4 py-3'>
                   {dataCart?.totals &&
                     dataCart?.totals.length > 0 &&
                     dataCart?.totals?.map((total: any, index) => {
                       return (
                         <React.Fragment key={total?.code + index}>
                           <div className=' flex justify-between py-3' key={total?.code}>
-                            <h1>{total?.title}</h1>
+                            <h1 className='text-sm md:text-[16px]'>{total?.title}</h1>
                             <span
                               className={`${
-                                total?.code == 'grand_total' ? 'text-2xl font-bold text-red-500' : 'font-medium '
+                                total?.code == 'grand_total'
+                                  ? ' md:text-xl lg:text-2xl font-bold text-red-500'
+                                  : 'font-medium '
                               }`}
                             >
                               {formatPrice(total?.price) || 0}

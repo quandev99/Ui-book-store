@@ -2,9 +2,9 @@ import { FacebookOutlined, InstagramOutlined, TwitterOutlined, YoutubeOutlined }
 
 const Footer = () => {
   return (
-    <div className='w-xl px-10 mx-auto h-[100px] bg-gray-100 w-full'>
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 py-3 '>
-        <div className='col-span-1 grid-flow-col border-gray-200 border-r-2'>
+    <div className='w-xl px-5 mx-auto md:px-10 h-auto bg-white w-full '>
+      <div className='grid grid-cols-1 md:grid-cols-3  gap-4 py-3 '>
+        <div className='col-span-1 grid-flow-col border-none lg:border-gray-200 lg:border-r-2'>
           <div className='w-[200px] mb-3'>
             <img
               className='w-full h-full object-contain'
@@ -46,8 +46,8 @@ const Footer = () => {
           </div>
         </div>
         <div className='w-full col-span-2 gax-x-4'>
-          <div className='grid grid-cols-3'>
-            <div className='grid-flow-col'>
+          <div className='grid grid-cols-1 items-center justify-center gap-x-4 sm:grid-cols-2 md:grid-cols-3'>
+            <div className='col-span-1 grid-flow-col'>
               <h3>DỊCH VỤ</h3>
               <p>Điều khoản sử dụng</p>
               <p>Chính sách bảo mật thông tin cá nhân</p>

@@ -6,7 +6,7 @@ const LayoutClient = () => {
   return (
     <div>
       <Header></Header>
-      <main className='w-xl p-10 mx-auto  bg-white w-full'>
+      <main className='w-xl p-5 mx-auto  bg-gray-100 w-full'>
         <Outlet></Outlet>
       </main>
       <Footer></Footer>

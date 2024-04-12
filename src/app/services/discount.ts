@@ -38,8 +38,8 @@ export const apiDiscount = createApi({
       providesTags: ['Discounts']
     }),
     getAllDiscounts: builder.query<any, void>({
-      query: () => ({
-        url: `/discounts`,
+      query: (url) => ({
+        url: `/discounts${url}`,
         method: 'GET'
       }),
       providesTags: ['Discounts']

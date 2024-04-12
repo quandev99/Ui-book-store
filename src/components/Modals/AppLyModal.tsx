@@ -1,3 +1,4 @@
+import { StepForwardOutlined } from '@ant-design/icons'
 import { Button, Col, Form, Input, Modal, Row, Space, } from 'antd'
 import React from 'react'
 import { useApplyDiscountToCartMutation, useGetAllDiscountsQuery, useUnDiscountCartMutation } from '~/app/services/discount'
@@ -35,11 +36,11 @@ function ListCoupon(props) {
       console.log(error)
     }
   }
-  const handleUnDiscountCart = async (discount_code) => {
+  const handleUnDiscountCart = async (value) => {
     try {
       const data: any = {
         userId,
-        discountCode: discount_code
+        discountId: value
       }
       const result = await unDiscountCart(data).unwrap()
       if (result) {
@@ -94,40 +95,48 @@ function ListCoupon(props) {
           </div>
           <p className='text-[10px] text-slate-400'>Không Áp Dụng Cho Sách Giáo Khoa</p>
         </div>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center justify-between'>
-            <img src='https://cdn0.fahasa.com/skin/frontend/ma_vanese/fahasa/images/promotion/ico_check.svg?q=105567' />
-            <span style={{ paddingLeft: '4px', color: '#2F80ED' }}>Đã áp dụng</span>
-          </div>
 
-          <div>
-            {discountId === _id ? (
+        {discountId === _id ? (
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center justify-between'>
+              <img src='https://cdn0.fahasa.com/skin/frontend/ma_vanese/fahasa/images/promotion/ico_check.svg?q=105567' />
+              <span style={{ paddingLeft: '4px', color: '#2F80ED' }}>Đã áp dụng</span>
+            </div>
+            <div>
               <button
                 type='button'
                 title='Bỏ chọn'
                 className='text-[#2F80ED] font-medium py-1 w-[100px] rounded-md border border-[#2F80ED]'
-                onClick={() => handleUnDiscountCart(discount_code)} // Thay đổi hàm xử lý sự kiện
+                onClick={() => handleUnDiscountCart(_id)} // Thay đổi hàm xử lý sự kiện
               >
                 <span>Bỏ chọn</span>
               </button>
-            ) : (
-              <button
-                type='button'
-                title='Bỏ chọn'
-                className='text-[#2F80ED] font-medium py-1 w-[100px] rounded-md border border-[#2F80ED]'
-                onClick={() => handleApplyCoupon(discount_code)} // Thay đổi hàm xử lý sự kiện
-              >
-                <span>Áp dụng</span>
-              </button>
-            )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className='flex items-center justify-end '>
+            <button
+              type='button'
+              title='Bỏ chọn'
+              className='text-[#2F80ED] font-medium py-1 w-[100px] rounded-md border border-[#2F80ED]'
+              onClick={() => handleApplyCoupon(discount_code)} // Thay đổi hàm xử lý sự kiện
+            >
+              <span>Áp dụng</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
 }
 const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible, discountId, refetch }) => {
-  const { data } = useGetAllDiscountsQuery()
+
+  const [url, setUrl] = React.useState('')
+  React.useEffect(() => {
+    setUrl(`?_page=${1}&_limit=${10}&_order=${'asc'}`)
+    // setUrl(`?_page=${pageDiscount}&_limit=${limitPage}&_sort=${sortDiscount}&_order=${orderDiscount}`)
+  }, [url])
+  const { data } = useGetAllDiscountsQuery(url)
   const dataDiscount = data?.discounts
 
   const [applyDiscountToCar] = useApplyDiscountToCartMutation()
@@ -148,7 +157,7 @@ const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible, discountId, refet
     try {
       const data: any = {
         userId,
-        discountCode: form.getFieldValue('code')
+        discountCode: form.getFieldValue('code').trim()
       }
       const result = await applyDiscountToCar(data).unwrap()
       if (result) {
@@ -175,7 +184,13 @@ const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible, discountId, refet
   }
 
   return (
-    <Modal width={550} title='Tạo phòng' open={isAddAppLyVisible} onOk={handleOk} onCancel={handleCancel}>
+    <Modal
+      width={550}
+      title='CHỌN MÃ KHUYẾN MÃI'
+      open={isAddAppLyVisible}
+      onOk={handleOk}
+      onCancel={handleCancel}
+    >
       <Form
         form={form}
         name='form'
@@ -186,7 +201,7 @@ const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible, discountId, refet
       >
         <div className='relative z-10 h-[60px] w-full '>
           <div className='absolute w-full h-full top-0 left-0'>
-            <Form.Item name='code' label='Tên' rules={[{ required: true, message: 'Code is required!' }]}>
+            <Form.Item name='code' rules={[{ required: true, message: 'Mã giảm giá không được để trống!' }]}>
               <Input placeholder='Áp mã giảm giá' />
             </Form.Item>
           </div>
@@ -213,7 +228,7 @@ const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible, discountId, refet
           <div className=''>
             <h3>Mã giảm </h3>
             {dataDiscount?.map((item) => (
-              <ListCoupon item={{ userId, discountId,refetch, ...item }}  key={item?._id}></ListCoupon>
+              <ListCoupon item={{ userId, discountId, refetch, ...item }} key={item?._id}></ListCoupon>
             ))}
           </div>
         </div>

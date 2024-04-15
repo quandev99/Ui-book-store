@@ -1,5 +1,5 @@
 import { LoginOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLogoutMutation } from '~/app/services/auth'
@@ -13,33 +13,45 @@ const Header = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { user, tokens } = getUserData()
-  const userId = user?._id
-  const { data: dataCartApi } = useGetCartByUserQuery(userId)
-  const dataCart = dataCartApi?.carts
+   const userId = user?._id
+  const { data: dataCartApi, refetch } = useGetCartByUserQuery(userId)
+
+
+   const dataCart = dataCartApi?.carts ?? null
+   const [totalCartLength, setTotalCartLength] = useState<number | null>(null)
+
+   useEffect(() => {
+     if (dataCartApi?.carts?.products) {
+       setTotalCartLength(dataCartApi?.carts?.products?.length ?? 0)
+     }
+   }, [dataCartApi])
+
   const [decodedToken, setDecodedToken] = useState<any | null>(null)
   useEffect(() => {
     if (tokens?.accessToken) {
       const decoded: JwtPayload | null = decodeAccessToken(tokens?.accessToken)
       setDecodedToken(decoded)
     }
-  }, [ tokens?.accessToken])
+  }, [tokens?.accessToken])
   const userImage = user?.image?.url || 'https://cdn0.fahasa.com/skin/frontend/ma_vanese/fahasa/images/fahasa-logo.png'
   const userEmail = user?.name
   const userRole = decodedToken?.role
   const [logout] = useLogoutMutation()
-const handleLogout = async () => {
-  try {
-    // Xóa localStorage
-    localStorage.removeItem('dataUsers')
-    dispatch(resetState())
-    const data = await logout().unwrap()
-    if (data) handleSuccess('logout')
-    // navigate("/")
-  location.href = '/'
+  const handleLogout = async () => {
+    try {
+     localStorage.clear()
+
+     const data = await logout().unwrap()
+     dispatch(resetState())
+     if (data) handleSuccess('logout')
+     navigate('/')
+        return  navigate('/')
+      // dispatch(resetState())
   } catch (error) {
-    console.log("Failed to log out", error)
+    console.log('Failed to log out', error)
   }
 }
+
   return (
     <div className='w-xl p-10 mx-auto h-[100px] bg-white w-full'>
       <div className='flex items-center justify-between'>
@@ -80,7 +92,7 @@ const handleLogout = async () => {
                   <ShoppingCartOutlined />
                 </span>
                 <span className='absolute text-center px-1 text-sm leading-4; rounded-[50%]  bg-primary text-white'>
-                  {dataCart?.products?.length}
+                  {totalCartLength || 0}
                 </span>
               </Link>
               <span className=' text-black transition-all text-2xl'>

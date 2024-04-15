@@ -242,7 +242,7 @@ React.useEffect(() => {
 }, [ url, orderDiscount, sortDiscount, limitPage, pageDiscount])
 
  const [unDiscountCart] = useUnDiscountCartMutation()
- const discountUse = dataCart?.totals.find((t) => t.code === 'discount');
+ const discountUse = dataCart?.totals?.find((t) => t?.code === 'discount');
  const handleUnDiscount =async(value)=>{
   try {
     const data: any = {
@@ -259,7 +259,7 @@ React.useEffect(() => {
     console.log(error)
   }
  }
-  const subtotalTotal = dataCart?.totals.find((t) => t.code === 'subtotal')?.price
+  const subtotalTotal = dataCart?.totals?.find((t) => t?.code === 'subtotal')?.price
  // Kiểm tra xem phần trăm có vượt quá 80% không (trong trường hợp này)
   return (
     <div className='w-full h-auto'>
@@ -272,25 +272,28 @@ React.useEffect(() => {
             <>
               <div className='overflow-x-auto overscroll-x-auto bg-white border border-gray-200 shadow-xl'>
                 <table className=' min-w-full text-sm  h-auto'>
-                  <thead className='ltr:text-left lg:mb-2 rtl:text-right  font-medium text-[12px] lg:text-[16px] uppercase'>
+                  <thead className='px-4 py-2 font-medium text-[12px] lg:text-[16px] uppercase'>
                     <tr className=''>
-                      <th onClick={(e) => e.stopPropagation()} className='sticky inset-y-0 start-0 px-2 lg:px-4 py-2'>
+                      <th
+                        onClick={(e) => e.stopPropagation()}
+                        className='text-center block sticky ml-4 inset-y-0 start-0 '
+                      >
                         <input
                           type='checkbox'
                           id='SelectAll'
-                          className='lg:h-5 lg:w-5 rounded border-gray-300'
+                          className='lg:h-8 lg:w-5 block rounded border-gray-300'
                           checked={isCheckedAll}
                           onChange={() => handleCheckedAllChange()}
                         />
                       </th>
-                      <th className='whitespace-nowrap px-4 py-2 font-medium text-gray-900'>
+                      <th className='whitespace-nowrap text-left  font-medium text-gray-900'>
                         Chọn tất cả ({dataCart?.products?.length})
                       </th>
-                      <th className=' whitespace-nowrap px-4 py-2 text-center font-medium text-gray-900 hidden lg:table-cell'>
+                      <th className=' whitespace-nowrap  text-center font-medium text-gray-900 hidden lg:table-cell'>
                         Số lượng
                       </th>
                       <th className=' whitespace-nowrap lg:px-4 text-center py-2 font-medium text-gray-900'>Số tiền</th>
-                      <th className=' whitespace-nowrap px-1 lg:px-4 py-2 text-center font-medium text-gray-900 hidden lg:table-cell'>
+                      <th className=' whitespace-nowrap px-1 text-center font-medium text-gray-900 hidden lg:table-cell'>
                         Thao tác
                       </th>
                     </tr>
@@ -410,12 +413,9 @@ React.useEffect(() => {
                     <h1 className='uppercase font-medium text-[17px]'>Khuyến mãi</h1>
                   </div>
                   <div className='my-3'>
-                    <PurchaseDiscount
-                      subtotalTotal={subtotalTotal}
-                      dataDiscount={dataDiscount}
-                    ></PurchaseDiscount>
+                    <PurchaseDiscount subtotalTotal={subtotalTotal} dataDiscount={dataDiscount}></PurchaseDiscount>
                   </div>
-                  {discountUse && (
+                  {/* {discountUse && (
                     <div className='p-2 w-full h-[40px] bg-orange-200 text-orange-500  rounded-lg text-sm  flex justify-between items-center mb-1'>
                       <div className=''>{discountUse?.title}</div>
                       <div
@@ -425,7 +425,7 @@ React.useEffect(() => {
                         X
                       </div>
                     </div>
-                  )}
+                  )} */}
                   {discountUse && (
                     <div className='p-2 w-full h-[40px] bg-green-200 text-green-700  rounded-lg text-sm  flex justify-between items-center'>
                       <div className=''>{discountUse?.title}</div>

@@ -40,7 +40,7 @@ const CategoryNews = () => {
       <h2 className='text-2xl font-medium mb-8'>Danh mục nổi bật</h2>
       <CustomSlider settings={settings}>
         {categoriesApi?.categories?.map((item: any) => (
-          <div className='flex items-center'>
+          <div key={item?._id} className='flex items-center'>
             <div className='w-[120px] ' key={item?._id}>
               <div className='w-full h-[100px] mb-3'>
                 <img className='w-full h-full object-cover' src={item?.image?.url} alt='' />

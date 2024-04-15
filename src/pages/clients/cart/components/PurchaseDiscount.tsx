@@ -3,8 +3,8 @@ import { formatPrice } from "~/utils/format"
 
 export  function PurchaseDiscount({ subtotalTotal, dataDiscount }) {
   return dataDiscount?.map((discount) => {
-    const minPurchaseAmount = discount.min_purchase_amount - subtotalTotal
-    const minPrice = discount.min_purchase_amount
+    const minPurchaseAmount = discount?.min_purchase_amount - subtotalTotal
+    const minPrice = discount?.min_purchase_amount
     const percentage = Math.floor((subtotalTotal / minPrice) * 100)
     const isExceed = percentage >= 100
 

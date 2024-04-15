@@ -45,6 +45,12 @@ const SignIn = () => {
         handleError(error?.data?.message)
       }
     }
+    const handleGoogleLogin = () => {
+      window.location.href = import.meta.env.VITE_API_URL + '/oauth/google'
+    }
+    const handleFaceBookLogin = () => {
+      window.location.href = import.meta.env.VITE_API_URL + '/oauth/facebook'
+    }
 
     return (
       <>
@@ -104,13 +110,19 @@ const SignIn = () => {
                   </span>
                 </div>
                 <div className='w-full grid grid-cols-1 gap-y-2 sm:grid-cols-2 sm:gap-x-5'>
-                  <div className='w-full flex items-center justify-center border cursor-pointer'>
+                  <div
+                    className='w-full flex items-center justify-center border cursor-pointer'
+                    onClick={handleGoogleLogin}
+                  >
                     <div className='w-10 h-10 bg-white '>
                       <img className='h-full w-full object-cover' src={iconGoogle} alt='' />
                     </div>
                     <span>Đăng nhập bằng Google</span>
                   </div>
-                  <div className='w-full flex items-center justify-center border cursor-pointer'>
+                  <div
+                    className='w-full flex items-center justify-center border cursor-pointer'
+                    onClick={handleFaceBookLogin}
+                  >
                     <div className='w-10 h-10 bg-white'>
                       <img className='h-full w-full object-cover' src={iconFacebook} alt='' />
                     </div>

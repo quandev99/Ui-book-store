@@ -1,14 +1,17 @@
-import { LoginOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
+import { BellOutlined, LoginOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLogoutMutation } from '~/app/services/auth'
 import { useGetCartByUserQuery } from '~/app/services/cart'
+import { useGetNotificationByUserQuery } from '~/app/services/notificotion'
 import { decodeAccessToken } from '~/hooks/decodeToken'
 import { JwtPayload } from '~/interfaces/JwtPayload'
 import { resetState } from '~/store/authSlice/authSlice'
 import { getUserData } from '~/store/helper/getDataLocalStorage'
 import { handleSuccess } from '~/utils/toast'
+import moment from 'moment'
+import Notification from './components/Notification'
 const Header = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -51,7 +54,24 @@ const Header = () => {
     console.log('Failed to log out', error)
   }
 }
-
+const notificationParams = {
+  userId :userId,
+  page:1,
+  limit:10,
+}
+const {
+  data: dataNotificationApi,
+  isLoading,
+  error,
+  refetch: notificationRefetch
+} = useGetNotificationByUserQuery(notificationParams, {
+  refetchOnMountOrArgChange: true
+})
+useEffect(() => {
+  notificationRefetch()
+}, [dataNotificationApi])
+const dataNotifications = dataNotificationApi?.notifications
+console.log('Notification', dataNotifications)
   return (
     <div className='w-xl p-10 mx-auto h-[100px] bg-white w-full'>
       <div className='flex items-center justify-between'>
@@ -85,13 +105,16 @@ const Header = () => {
               Tin tức
             </Link>
           </ul>
-          <div className='flex cursor-pointer items-center gap-x-5'>
-            <div className='ml-2'>
-              <Link to='carts' className='relative mr-4 '>
-                <span className=' transition-all text-2xl'>
-                  <ShoppingCartOutlined />
+          <div className='flex cursor-pointer items-center justify-between gap-x-5'>
+            <div className='ml-2 flex items-center justify-between'>
+              <Link to='' className='relative mr-4'>
+                <Notification notifications={dataNotifications} refetch={notificationRefetch} />
+              </Link>
+              <Link to='carts' className='relative mr-4'>
+                <span className=' transition-all'>
+                  <ShoppingCartOutlined className='text-2xl'/>
                 </span>
-                <span className='absolute text-center px-1 text-sm leading-4; rounded-[50%]  bg-primary text-white'>
+                <span className='items-center absolute w-[20px] h-[20px] rounded-full -top-2 -right-3 text-sm  flex justify-center bg-primary text-white'>
                   {totalCartLength || 0}
                 </span>
               </Link>
@@ -158,3 +181,6 @@ const Header = () => {
 }
 
 export default Header
+
+
+

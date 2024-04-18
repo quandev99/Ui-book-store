@@ -1,0 +1,14 @@
+export { default as IconMenu } from "./IconMenu";
+export { default as IconBell } from "./IconBell";
+export { default as IconDate } from "./IconDate";
+export { default as IconDocument } from "./IconDocument";
+export { default as IconUser } from "./IconUser";
+export { default as IconProduct } from "./IconProduct";
+export { default as IconFolder } from "./IconFolder";
+export { default as IconSearch } from "./IconSearch";
+export { default as IconSetting } from "./IconSetting";
+export { default as IconPlus } from "./IconPlus";
+export { default as IconRectangle } from "./IconRectangle";
+export { default as IconRadio } from "./IconRadio";
+export { default as IconPhone } from "./IconPhone";
+export { default as IconTrash } from "./IconTrash";

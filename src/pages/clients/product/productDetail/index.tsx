@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Slider from "react-slick";
 import {  useNavigate, useParams } from 'react-router-dom'
 import { Modal, Rate, Tabs } from "antd";
 import {formatPrice} from "~/utils/format";
@@ -17,7 +16,7 @@ import CustomSlider from "~/components/slider/CustomSlider";
 import BookItemSkeleton from "~/components/loading/BookItemSkeleton";
 const ProductDetailPage = () => {
   const { id }: any = useParams()
-  const { data: ProductByIdApi, isLoading: isLoadingProductById, error } = useGetProductByIdClientQuery(id)
+  const { data: ProductByIdApi, isLoading: isLoadingProductById } = useGetProductByIdClientQuery(id)
   const dataProductById = ProductByIdApi?.product
   const categoryId = dataProductById?.category_id?._id
   const { data: dataProductByCate } = useGetProductByCategoryIdClientQuery(categoryId)

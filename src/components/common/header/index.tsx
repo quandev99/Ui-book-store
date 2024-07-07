@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLogoutMutation } from '~/app/services/auth'
 import { useGetCartByUserQuery } from '~/app/services/cart'
-import { useGetNotificationByUserQuery } from '~/app/services/notificotion'
+import { useGetNotificationByUserQuery } from '~/app/services/notification'
 import { decodeAccessToken } from '~/hooks/decodeToken'
 import { JwtPayload } from '~/interfaces/JwtPayload'
 import { resetState } from '~/store/authSlice/authSlice'
@@ -71,7 +71,6 @@ useEffect(() => {
   notificationRefetch()
 }, [dataNotificationApi])
 const dataNotifications = dataNotificationApi?.notifications
-console.log('Notification', dataNotifications)
   return (
     <div className='w-xl p-10 mx-auto h-[100px] bg-white w-full'>
       <div className='flex items-center justify-between'>
@@ -107,9 +106,9 @@ console.log('Notification', dataNotifications)
           </ul>
           <div className='flex cursor-pointer items-center justify-between gap-x-5'>
             <div className='ml-2 flex items-center justify-between'>
-              <Link to='' className='relative mr-4'>
+              <div className='relative mr-4'>
                 <Notification notifications={dataNotifications} refetch={notificationRefetch} />
-              </Link>
+              </div>
               <Link to='carts' className='relative mr-4'>
                 <span className=' transition-all'>
                   <ShoppingCartOutlined className='text-2xl'/>

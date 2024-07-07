@@ -1,7 +1,7 @@
 import React from 'react'
 import { DeleteOutlined, EditOutlined, EyeOutlined, FilterOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import type { InputRef } from 'antd'
-import { Button, Input, Space, Table, Switch, Image, Popconfirm, message, Modal, Select, Checkbox } from 'antd'
+import { Button, Input, Space, Switch, Image, Popconfirm, message, Modal, Select, Checkbox } from 'antd'
 import type { ColumnType, ColumnsType } from 'antd/es/table'
 import type { FilterConfirmProps, FilterValue, TableRowSelection } from 'antd/es/table/interface'
 import { Link } from 'react-router-dom'
@@ -44,6 +44,7 @@ const ProductList = () => {
       order: 'asc'
   }
   const { data: productsApi, isLoading, error } = useGetAllProductsQuery(dataQuery)
+  console.log('Product - error', error)
   const dataProducts = productsApi?.products ?? null
   const totalItems = productsApi?.pagination?.totalItems ?? null
   const [deleteAuthor] = useDeleteAuthorMutation()
@@ -177,9 +178,7 @@ const ProductList = () => {
         text
       )
   })
-  const toggleExpand = (record: any) => {
-    console.log('toggleExpand', record)
-  }
+
   const columns: ColumnsType<DataType> = [
     {
       key: '1',
@@ -211,9 +210,9 @@ const ProductList = () => {
     },
 
     {
+      key: '3',
       title: 'Giá',
       dataIndex: 'price',
-      key: '3',
       width: '10%',
       sorter: {
         compare: Sorter.DEFAULT
@@ -223,9 +222,9 @@ const ProductList = () => {
       }
     },
     {
+      key: '4',
       title: 'Số lượng',
       dataIndex: 'quantity',
-      key: '4',
       sorter: {
         compare: Sorter.DEFAULT
       },
@@ -234,9 +233,9 @@ const ProductList = () => {
       }
     },
     {
+      key: '5',
       title: 'Năm XB',
       dataIndex: 'publishing_year',
-      key: '5',
       sorter: {
         compare: Sorter.DEFAULT
       },
@@ -245,16 +244,16 @@ const ProductList = () => {
       }
     },
     {
+      key: '6',
       title: 'Trạng thái',
       dataIndex: 'active',
-      key: '6',
       render: (record: any) => {
         return <Switch checked={record} onChange={onChange} />
       }
     },
     {
-      title: 'Action',
       key: '7',
+      title: 'Action',
       render: (record: any) => (
         <Space size='middle' key={record?._id}>
           <Button className='bg-green-400 text-white' onClick={() => handleNameClick(record?.name)}>
@@ -283,28 +282,11 @@ const ProductList = () => {
 
   /// selectedColumns
   const [selectedColumns, setSelectedColumns] = React.useState(columns.map((column) => column.key)) // Danh sách cột mặc định
-  // React.useEffect(() => {
-  //   if (columns) {
-  //     setSelectedColumns(columns.map((column) => column.key))
-  //   }
-  // }, [columns])
+
   const handleColumnCheckboxChange = (checkedColumns:any) => {
     setSelectedColumns(checkedColumns)
   }
   const selectedColumnsConfig = columns.filter((column) => selectedColumns.includes(column?.key))
-  // if (error) {
-  //   if ('data' in error) {
-  //     if (error.data) {
-  //       const errorWithMessage = error as { data: { message: string } }
-  //       return (
-  //         <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: {errorWithMessage.data.message}</div>
-  //       )
-  //     }
-  //   } else {
-  //     // Xử lý trường hợp `error` không có thuộc tính 'data' ở đây
-  //     return <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: Error connect server</div>
-  //   }
-  // }
 
   ///
   const rowSelection: TableRowSelection<DataType> = {
@@ -333,7 +315,7 @@ const ProductList = () => {
       </div>
       <div style={{ marginBottom: 16 }}>
         <span style={{ marginRight: 8 }}>Show Columns:</span>
-        {columns.map((column) => (
+        {columns.map((column: any) => (
           <Checkbox
             key={column.key}
             checked={selectedColumns.includes(column.key)}
@@ -357,7 +339,6 @@ const ProductList = () => {
         </Select>
       </div>
       <TableCustom
-        columns={columns}
         dataSource={dataProducts}
         columns={selectedColumnsConfig}
         pagination={{
@@ -366,19 +347,19 @@ const ProductList = () => {
           total: totalItems || 0,
           showSizeChanger: true,
           onChange: (page, size) => {
-            setCurrent(page) // Cập nhật trạng thái trang hiện tại
+            setCurrent(page)
             setPageSize(size)
           },
           onShowSizeChange: (current, size) => {
-            setCurrent(current) // Cập nhật trạng thái trang hiện tại
-            setPageSize(size) // Cập nhật trạng thái số lượng dòng trên mỗi trang
+            setCurrent(current)
+            setPageSize(size)
           }
         }}
         rowSelection={{ ...rowSelection }}
         loading={isLoading}
         key={dataProducts?._id}
       />
-      <Modal title='Chi tiết cuốn sách' visible={isModalVisible} onCancel={handleModalClose} footer={null}>
+      <Modal title='Chi tiết cuốn sách' visible={isModalVisible} onCancel={handleModalClose} footer={null} width={850}>
         {selectedNameDetails && (
           <div>
             <p>Tên: {selectedNameDetails?.name}</p>

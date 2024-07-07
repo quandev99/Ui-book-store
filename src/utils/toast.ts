@@ -35,3 +35,16 @@ export const handleSuccess = (message) => {
      toast.success(message)
    }
 }
+export const handleMessage = (message) => {
+   const successMessages = ToastMessages.success
+
+   if (successMessages.hasOwnProperty(message)) {
+     toast.info(successMessages[message], {
+       position: toast.POSITION.TOP_CENTER
+     })
+   } else {
+     toast.info(message, {
+       position: toast.POSITION.TOP_CENTER
+     })
+   }
+}

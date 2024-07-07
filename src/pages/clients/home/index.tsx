@@ -1,14 +1,12 @@
 import BannerHomePage from "~/components/slider"
 import ProductByCate from "./components/productByCategory"
 import CategoryNews from "./components/categoryNews"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 const HomePage = () => {
   const urlParams = new URLSearchParams(window.location.search)
   const encodedToken = urlParams.get('token')
 const getTokenFromURL = (encodedToken) => {
-  console.log('encodedToken', encodedToken)
-
   if (encodedToken) {
     const tokenWithoutHash = encodedToken.replace(/#_=_/, '')
     try {

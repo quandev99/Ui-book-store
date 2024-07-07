@@ -1,6 +1,6 @@
-import { Table, TableProps, Tabs } from 'antd'
+import { TableProps} from 'antd'
 import { ColumnsType } from 'antd/es/table'
-import React, { useEffect, useState } from 'react'
+import{  useState } from 'react'
 import {  useGetBillByUserQuery } from '~/app/services/bill'
 import { formatDate, formatPrice } from '~/utils/format'
 import { Sorter } from '~/utils/sorter'
@@ -14,9 +14,6 @@ const ListOrderCustomer = ({ tabKey }: any) => {
   const userId = user?._id
   const [page, setPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
-  const [current, setCurrent] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
   const params = {
     userId,
     page,
@@ -100,6 +97,8 @@ const ListOrderCustomer = ({ tabKey }: any) => {
   ]
   const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra)
+    setPage(pagination.current) 
+    setLimit(pagination.pageSize)
   }
   if (error) {
     if ('data' in error) {
@@ -116,28 +115,30 @@ const ListOrderCustomer = ({ tabKey }: any) => {
       return <div className='text-red-500 p-4 text-2xl font-medium bg-red-300'>Error: Error connect server</div>
     }
   }
+  const totalItems = dataBillsApi?.pagination?.totalItems ?? null;
   return (
-    <div className='mb-5'>
+    <>
       <TableCustom
         loading={isLoading}
         dataSource={dataBills}
         columns={columns}
         onChange={onChange}
         pagination={{
-          current: current,
-          pageSize: pageSize,
-          total: dataBills?.length || 0,
+          current: page,
+          pageSize: limit,
+          total: totalItems,
           showSizeChanger: true,
           onChange: (page, size) => {
-            setCurrent(page) // Cập nhật trạng thái trang hiện tại
+            setPage(size) 
+            setLimit(page) 
           },
           onShowSizeChange: (current, size) => {
-            setCurrent(current) // Cập nhật trạng thái trang hiện tại
-            setPageSize(size) // Cập nhật trạng thái số lượng dòng trên mỗi trang
+            setPage(size) 
+            setLimit(current)
           }
         }}
       />
-    </div>
+    </>
   )
 }
 

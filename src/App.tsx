@@ -2,39 +2,46 @@ import { RouterProvider } from 'react-router-dom'
 import { AppRoutes } from './routes'
 import React, {  Suspense } from 'react'
 import { LoadingPage } from './components/loading/LoadingPage'
-import { fetchToken, onMessageListener } from './firebase/config'
-import { io } from 'socket.io-client'
-export const socketIO = io(import.meta.env.VITE_API_URL, {
+import { getUserData } from './store/helper/getDataLocalStorage'
+import io from 'socket.io-client'
+import { fetchTokenComponent, onMessageListener, useGenerateRegistrationToken } from './firebase/config'
+import { useGetOneNotificationTokenQuery } from './app/services/notificationToken'
+const apiUrl = import.meta.env.VITE_API_URL
+const baseUrl = new URL(apiUrl).origin
+export const socket = io(baseUrl, {
   transports: ['websocket']
 })
 function App() {
-  const [show, setShow] = React.useState(false)
-  const [notification, setNotification] = React.useState({ title: '', body: '' })
-  const [isTokenFound, setTokenFound] = React.useState(false)
+  const { user, tokens } = getUserData()
+  const userId = user?._id
+    React.useEffect(() => {
+      if (userId) {
+        socket.emit('authenticate', userId)
+      }
+      // Ngắt kết nối khi component bị hủy
+      return () => {
+        socket.disconnect()
+      }
+    }, [userId])
+ React.useEffect(() => {
+   
+}, [])
 
-  React.useEffect(() => {
-    fetchToken(setTokenFound)
-  }, [])
+useGenerateRegistrationToken()
+React.useEffect(() => {
+  fetchTokenComponent()
+}, [])
 
-  onMessageListener()
-    .then((payload) => {
-      setNotification({ title: payload?.notification?.title, body: payload?.notification?.body })
-      setShow(true)
-      console.log(payload)
-    })
-    .catch((err) => console.log('failed: ', err))
+// onMessageListener()
+//   .then((payload) => {
+//     console.log(payload)
+//   })
+//   .catch((err) => console.log('failed: ', err))
 
-  const onShowNotificationClicked = () => {
-    setNotification('Notification', { title: 'Notification', body: 'This is a test notification' })
-    setShow(true)
-  }
+
   return (
     <div className='min-h-screen'>
       <Suspense fallback={<LoadingPage />}>
-        <header className='App-header'>
-          {isTokenFound && <h1> Notification permission enabled 👍🏻 </h1>}
-          {!isTokenFound && <h1> Need notification permission ❗️ </h1>}
-        </header>
         <RouterProvider router={AppRoutes} />
       </Suspense>
     </div>

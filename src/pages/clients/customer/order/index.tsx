@@ -15,7 +15,6 @@ const OrderPage = () => {
   return (
     <div>
       <>
-        <div className='mb-5 '>
           <div className='flex items-center justify-between p-4'>
             <h1 className='text-xl font-bold'>Danh sách đơn hàng của bạn</h1>
           </div>
@@ -26,7 +25,6 @@ const OrderPage = () => {
             tabBarGutter={80}
             items={TabPane(tabContent, renderChildComponent)}
           ></Tabs>
-        </div>
       </>
     </div>
   )

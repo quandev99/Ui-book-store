@@ -104,7 +104,7 @@ const { Statistic, Divider } = StatisticCard
   const style: React.CSSProperties = { background: '#fff', padding: '20px 0',textAlign: 'center' }
   return (
     <div>
-      <Row className='rowgap-vbox' gutter={[24, 0]}>
+      {/* <Row className='rowgap-vbox' gutter={[24, 0]}>
         {count.map((c, index) => (
           <Col key={index} xs={24} sm={24} md={12} lg={6} xl={6} className='mb-10 drop-shadow-lg'>
             <Card bordered={false} className='criclebox '>
@@ -236,7 +236,7 @@ const { Statistic, Divider } = StatisticCard
         <Col className='gutter-row drop-shadow-lg' xs={24} sm={24} md={12} lg={6} xl={6}>
           <div style={style}>col-6</div>
         </Col>
-      </Row>
+      </Row> */}
     </div>
   )
 }

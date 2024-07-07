@@ -11,6 +11,7 @@ import { useLoginMutation } from '~/app/services/auth'
 import { setCredentials } from '~/store/authSlice/authSlice'
 import iconGoogle from '../../../assets/images/google.png'
 import iconFacebook from '../../../assets/images/facebook.png'
+import { socket } from '~/App'
 const schema = yup
   .object({
     email: yup.string().email().required('Please enter your email'),
@@ -38,6 +39,7 @@ const SignIn = () => {
         const { metaData } = await login(values).unwrap()
         if (metaData) {
           localStorage.setItem('dataUsers', JSON.stringify(metaData))
+          socket.emit('authenticate', metaData?.user?._id)
           handleSuccess('welcome')
           navigate('/')
         }

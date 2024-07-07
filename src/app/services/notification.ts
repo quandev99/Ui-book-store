@@ -19,7 +19,14 @@ export const apiNotification = createApi({
       }),
       providesTags: ['Notifications']
     }),
+    updateSeenStatus: builder.mutation<any, any>({
+      query: (id) => ({
+        url: `/notifications/${id}/seenByUser`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Notifications']
+    }),
   })
 })
 
-export const { useGetNotificationByUserQuery } = apiNotification
+export const { useGetNotificationByUserQuery, useUpdateSeenStatusMutation } = apiNotification

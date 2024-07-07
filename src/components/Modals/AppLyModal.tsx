@@ -1,6 +1,6 @@
-import { StepForwardOutlined } from '@ant-design/icons'
-import { Button, Col, Form, Input, Modal, Row, Space, } from 'antd'
+import { Button, Form, Input, Modal } from 'antd'
 import React from 'react'
+import { socket } from '~/App'
 import { useApplyDiscountToCartMutation, useGetAllDiscountsQuery, useUnDiscountCartMutation } from '~/app/services/discount'
 import { getUserData } from '~/store/helper/getDataLocalStorage'
 import { handleError, handleSuccess } from '~/utils/toast'
@@ -19,8 +19,6 @@ function ListCoupon(props) {
     expiration_date
   } = props?.item
   const handleApplyCoupon = async (discount_code) => {
-    console.log(discountId == _id)
-    console.log('dataDiscount', discount_code)
     try {
       const data: any = {
         userId,
@@ -131,7 +129,7 @@ function ListCoupon(props) {
 }
 const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible, discountId, refetch }) => {
 
-  const [url, setUrl] = React.useState('')
+  const [url, setUrl] = React.useState<string | any>('')
   React.useEffect(() => {
     setUrl(`?_page=${1}&_limit=${10}&_order=${'asc'}`)
     // setUrl(`?_page=${pageDiscount}&_limit=${limitPage}&_sort=${sortDiscount}&_order=${orderDiscount}`)
@@ -161,14 +159,15 @@ const AppLyModal = ({ isAddAppLyVisible, setIsAddAppLyVisible, discountId, refet
       }
       const result = await applyDiscountToCar(data).unwrap()
       if (result) {
+        socket.emit('client_newNotify', 'Bạn Áp mã giảm giá thành công')
         setMessageError(result?.message)
-        handleSuccess(result?.message)
+        // handleSuccess(result?.message)
          refetch()
         setTimeout(() => {
           setMessageError('')
         }, 2000)
       }
-      form.resetFields(['code'])
+      // form.resetFields(['code'])
     } catch (error) {
       form.resetFields(['code'])
       setMessageError(error?.data?.message)

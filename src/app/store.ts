@@ -23,7 +23,8 @@ import { apiFavorite } from './services/favorite'
 import { apiPayment } from './services/payment'
 import { apiClient } from './services/client'
 import { apiDiscount } from './services/discount'
-import { apiNotification } from './services/notificotion'
+import { apiNotification } from './services/notification'
+import { apiNotificationToken } from './services/notificationToken'
 
 
 const persistConfig = {
@@ -49,6 +50,7 @@ const rootReducer = combineReducers({
   [apiClient.reducerPath]: apiClient.reducer,
   [apiDiscount.reducerPath]: apiDiscount.reducer,
   [apiNotification.reducerPath]: apiNotification.reducer,
+  [apiNotificationToken.reducerPath]: apiNotificationToken.reducer,
   authSlice: authReducer,
   cartSlice: cartReducer
 })
@@ -70,7 +72,8 @@ const attinalMiddleware = [
   apiPayment.middleware,
   apiClient.middleware,
   apiDiscount.middleware,
-  apiNotification.middleware
+  apiNotification.middleware,
+  apiNotificationToken.middleware
 ]
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 export const store = configureStore({

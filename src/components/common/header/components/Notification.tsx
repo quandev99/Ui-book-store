@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import moment from 'moment'
 import { Link } from 'react-router-dom'
-import { message } from 'antd'
 import useClickOutSide from '~/hooks/useClickOutSide'
 import { IconBell } from '~/components/icons'
-import { socketIO } from '~/App'
+import { handleMessage } from '~/utils/toast'
+import { socket } from '~/App'
+import { useUpdateSeenStatusMutation } from '~/app/services/notification'
+
 
 const Notification = ({ notifications, refetch }) => {
+
   const [isOpenNoti, setIsOpenNoti] = useState(false)
   const dropdownRef = useRef<any>(null)
 
@@ -19,14 +22,13 @@ const Notification = ({ notifications, refetch }) => {
   }
 
   useEffect(() => {
-    socketIO.on('server_newNotify', (data) => {
-      console.log('data', data)
+    socket.on('server_newNotify', (data) => {
+      handleMessage(data)
       refetch()
-      message.info(data)
     })
 
     return () => {
-      socketIO.off('server_newNotify')
+      socket.off('server_newNotify')
     }
   }, [])
 
@@ -76,19 +78,14 @@ const notiMenu = (dropdownRef: any, showMenuNoti: any, notifications: any, refet
     const firstLetters = lastTwoWords?.map((word: any) => word?.charAt(0)) // Lấy chữ cái đầu của từng từ
     return firstLetters?.join('').toUpperCase() // Ghép chữ cái đầu thành chuỗi kết quả
   }
-
+  const [updateSeenStatus] = useUpdateSeenStatusMutation()
   const checkOnClick = async (id: number) => {
-    refetch()
-    const params = {
-      _id: id,
-      status: 1
+    
+    const seenNotify = notifications.find((item: any) => item._id === id)
+    if (seenNotify && seenNotify.seen_status === 0) {
+      await updateSeenStatus(id)
     }
-
-    // const seenNotify = notifications.find((item: any) => item._id === id)
-    // if (seenNotify && seenNotify.status === 0) {
-    //   await updateNotifications(params)
-    //   store.dispatch(updateTotalElements(id))
-    // }
+    refetch()
   }
 
   return (
@@ -106,10 +103,11 @@ const notiMenu = (dropdownRef: any, showMenuNoti: any, notifications: any, refet
         {notifications?.map((item: any) => {
           return (
             <Link
+            key={item?._id}
               to={item?.url}
               className='flex px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700'
               style={{
-                background: item?.seen_status === 1 ? '#5ba8f5' : 'rgba(72, 168, 0, 0.1)'
+                background: item?.seen_status === 1 ? '#fff' : 'rgba(72, 168, 0, 0.1)'
               }}
               onClick={() => checkOnClick(item?._id)}
             >

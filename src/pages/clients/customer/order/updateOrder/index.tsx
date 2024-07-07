@@ -171,16 +171,20 @@ const UpdateOrderCustomer = () => {
                       </span>
                     </Popover>
 
-                    {items?.map((item) => {
+                    {items?.map((item, index) => {
                       if (item?.key === dataBillUser?.bill_status) {
-                        return <span className='text-primary'>{item?.title}</span>
+                        return (
+                          <span className='text-primary' key={index}>
+                            {item?.title}
+                          </span>
+                        )
                       }
                       return null
                     })}
                   </div>
                 </div>
-                {dataBillUser?.bill_details?.map((items) => (
-                  <div className='shadow-lg flex justify-between items-center px-2 mb-5'>
+                {dataBillUser?.bill_details?.map((items, index) => (
+                  <div className='shadow-lg flex justify-between items-center px-2 mb-5' key={index}>
                     <div className='flex justify-between items-center'>
                       <div className='w-20 h-20'>
                         <img src={items?.product_image} className='w-full h-full object-cover' />
@@ -200,8 +204,8 @@ const UpdateOrderCustomer = () => {
                     </div>
                   </div>
                 ))}
-                {dataBillUser?.bill_totals?.map((items) => (
-                  <div className='mr-auto text-right mb-5'>
+                {dataBillUser?.bill_totals?.map((items, index) => (
+                  <div className='mr-auto text-right mb-5' key={index}>
                     {items?.title} :
                     <span className='text-primary font-medium text-xl'>{formatPrice(items?.price)}</span>
                   </div>
@@ -212,15 +216,19 @@ const UpdateOrderCustomer = () => {
           <div className='col-span-1 bg-gray-100 p-4 '>
             <div className='flex flex-col mb-5'>
               <h3 className='font-medium  mb-3'>Trạng thái đơn hàng</h3>
-              {items?.map((item) => {
+              {items?.map((item, index) => {
                 if (item?.key == billStatus) {
-                  return <span className='p-2 bg-slate-100 text-green-500 border bottom-1'>{item?.title}</span>
+                  return (
+                    <span className='p-2 bg-slate-100 text-green-500 border bottom-1' key={index}>
+                      {item?.title}
+                    </span>
+                  )
                 }
                 return null
               })}
             </div>
             <div className='flex flex-col mb-8'>
-              <h3 className='font-medium mb-3'>Trạng thái Thánh toán</h3>
+              <h3 className='font-medium mb-3'>Trạng thái thanh toán</h3>
               <span className='p-2 bg-slate-100 text-green-500 border bottom-1'>
                 {dataBillUser?.status ? 'Đã thanh toán' : 'Chưa thanh toán'}
               </span>

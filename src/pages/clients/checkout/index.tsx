@@ -11,6 +11,7 @@ import { formatPrice } from "~/utils/format";
 import { useCreatePaymentMutation } from "~/app/services/payment";
 import { useNavigate } from "react-router-dom";
 import { handleSuccess } from "~/utils/toast";
+import { socket } from "~/App";
 const schema = yup
   .object({
     userName: yup.string().required('Please enter your userName'),
@@ -69,7 +70,8 @@ const [addBill]=  useAddBillMutation()
       } else {
         const resolve = await addBill(formCheckout).unwrap()
         if(resolve && resolve.success) 
-          handleSuccess(resolve.message)
+        socket.emit('client_newNotify', 'Bạn đặt hàng thành công!')
+        handleSuccess(resolve.message)
         reset({
           userName: 'quandeptrai',
           userNote: '',

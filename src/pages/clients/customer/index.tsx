@@ -16,7 +16,7 @@ const CustomerPage = () => {
     setCurrentPage(path)
   }, [location])
   return (
-    <div className='px-2 mx-auto mt-10 w-main md:px-5'>
+    <div className='px-2 mx-auto mt-1 md:px-5'>
       <div className='grid gap-4 lg:grid-cols-5'>
         <div className='col-span-1'>
           <div className='py-2 mb-5 rounded-md'>
@@ -86,7 +86,7 @@ const CustomerPage = () => {
             </ul>
           </div>
         </div>
-        <div className='col-span-4 bg-gray-50  shadow-md p-4 mb-10'>
+        <div className='col-span-4 bg-gray-50  shadow-md p-4'>
           <Outlet />
         </div>
       </div>

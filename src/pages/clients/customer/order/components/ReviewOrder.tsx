@@ -132,8 +132,7 @@ const Reviews = ({ open, billId, setOpen }: { open: boolean; billId: any; setOpe
         width={800}
       >
         <form onSubmit={handleSubmit(onHandleReview)}>
-          {billList?.bill_details?.map((pro: any, index: string) => {
-            console.log('pro', pro)
+          {billList?.bill_details?.map((pro: any, index: number) => {
             return (
               <div className='my-5' key={index}>
                 <input type='hidden' defaultValue={pro.product_id} {...register(`pro[${pro.product_id}].product_id`)} />
@@ -162,7 +161,6 @@ const Reviews = ({ open, billId, setOpen }: { open: boolean; billId: any; setOpe
                 <div className='bg-gray-50 min-h-[50px]'>
                   <div className='border shadow p-4'>
                     <textarea
-                      id=''
                       {...register(`pro[${pro.product_id}].comment`)}
                       className='w-full outline-none border shadow-sm px-3 py-2'
                       rows={5}
